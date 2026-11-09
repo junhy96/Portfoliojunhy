@@ -207,6 +207,7 @@
     if (name === 'settings') fillSettings();
     if (name === 'board') renderBoard();
     if (name === 'stats') window.StudioStats?.open(db.settings?.analytics);
+    if (name === 'presets') openPresets();
     window.scrollTo(0, 0);
     return true;
   }
@@ -723,85 +724,182 @@
       .filter((x) => x.title || x.period);
   }
 
-  /* --- 지원처별 링크 (꼬리표마다 보여 줄 기획서·경력) --- */
+  /* --- 링크 프리셋: 고르기 → 이름 → 프리셋 생성(바로 저장) → 링크 복사 --- */
   const SITE_ROOT = new URL('../', location.href).href;
   const cleanTag = (raw) =>
     String(raw || '').trim().toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 40);
-  function presetEditor(list) {
-    const box = $('#preset-list');
-    const works = db.projects || [];
-    const timeline = Array.isArray(db.settings?.timeline) ? db.settings.timeline : [];
-    const card = (pr = { name: '', tag: '', hide: {} }) => {
-      const c = h('div', { className: 'preset' });
-      const name = h('input', { value: pr.name || '', placeholder: '이름 (예: 넥슨 전투 기획)', maxLength: 60 });
-      const tag = h('input', { value: pr.tag || '', placeholder: '꼬리표 (예: nexon-combat)', maxLength: 40, spellcheck: false, autocomplete: 'off' });
-      const url = h('input', { readOnly: true, className: 'preset-url', 'aria-label': '링크' });
-      const copy = h('button', { type: 'button', className: 'btn sm', textContent: '복사' });
-      const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '이 링크 삭제' });
-      const setUrl = () => {
-        const t = cleanTag(tag.value);
-        url.value = t ? `${SITE_ROOT}?from=${encodeURIComponent(t)}` : '';
-        copy.disabled = !t;
-      };
-      tag.addEventListener('input', setUrl);
-      tag.addEventListener('blur', () => { tag.value = cleanTag(tag.value); setUrl(); });
-      copy.onclick = async () => {
-        try { await navigator.clipboard.writeText(url.value); toast('링크를 복사했어요.'); } catch { url.select(); }
-      };
-      del.onclick = () => { c.remove(); dirty = true; };
-      const hideW = new Set(pr.hide?.works || []);
-      const hideT = new Set(pr.hide?.timeline || []);
-      const check = (kind, id, label, sub, on) => {
-        const i = h('input', { type: 'checkbox', checked: on });
-        i.dataset.kind = kind;
-        i.dataset.id = id;
-        i.addEventListener('change', () => { dirty = true; count(); });
-        return h('label', { className: 'preset-check' }, i, h('span', { textContent: label }), sub ? h('small', { className: 'muted', textContent: sub }) : null);
-      };
-      const wList = works.map((p) => check('works', p.id, p.title, [p.docType, p.visible === false ? '비공개' : ''].filter(Boolean).join(' · '), !hideW.has(p.id)));
-      const tList = timeline.filter((x) => x.id).map((x) => check('timeline', x.id, x.title || x.period, x.period, !hideT.has(x.id)));
-      const sum = h('summary');
-      const count = () => {
-        const on = (kind) => $$(`input[data-kind="${kind}"]`, c).filter((i) => i.checked).length;
-        sum.textContent = `보여 줄 항목 — 기획서 ${on('works')}/${wList.length} · 경력 ${on('timeline')}/${tList.length}`;
-      };
-      const all = (kind, v) => h('button', { type: 'button', className: 'linkish', textContent: v ? '모두 켜기' : '모두 끄기', onclick: () => { $$(`input[data-kind="${kind}"]`, c).forEach((i) => (i.checked = v)); dirty = true; count(); } });
-      const details = h(
-        'details', { className: 'preset-items' }, sum,
-        h('div', { className: 'preset-cols' },
-          h('div', {}, h('p', { className: 'preset-head' }, h('b', { textContent: 'Works 기획서' }), all('works', true), all('works', false)), ...wList),
-          h('div', {}, h('p', { className: 'preset-head' }, h('b', { textContent: '타임라인 경력' }), all('timeline', true), all('timeline', false)), ...(tList.length ? tList : [h('p', { className: 'muted sm', textContent: '경력을 저장하면 여기에 나와요.' })]))
-        )
-      );
-      [name, tag].forEach((n) => n.addEventListener('input', () => (dirty = true)));
-      c.append(h('div', { className: 'preset-top' }, name, tag, del), h('div', { className: 'preset-link' }, url, copy), details);
-      setUrl();
-      count();
-      return c;
-    };
-    const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 링크 추가' });
-    add.onclick = () => {
-      const c = card();
-      box.insertBefore(c, add);
-      $('details', c).open = true;
-      $('input', c).focus();
-      dirty = true;
-    };
-    box.replaceChildren(...list.map(card), add);
-  }
-  function readPresets() {
-    const out = [];
-    for (const c of $$('#preset-list .preset')) {
-      const [name, tag] = $$('.preset-top input', c);
-      const t = cleanTag(tag.value);
-      if (!t && !name.value.trim()) continue;
-      if (!t) throw new Error('지원처별 링크의 꼬리표를 입력해 주세요.');
-      if (out.some((x) => x.tag === t)) throw new Error(`꼬리표 '${t}'가 두 번 쓰였어요. 링크마다 다르게 정해 주세요.`);
-      const off = (kind) => $$(`input[data-kind="${kind}"]`, c).filter((i) => !i.checked).map((i) => i.dataset.id);
-      out.push({ name: name.value.trim(), tag: t, hide: { works: off('works'), timeline: off('timeline') } });
+  const presetUrl = (tag) => `${SITE_ROOT}?from=${encodeURIComponent(tag)}`;
+  let prEditing = null; // 불러와서 고치는 중인 프리셋의 이름표
+  const copyText = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast('링크를 복사했어요. 지원서에 붙여 넣으세요.');
+    } catch {
+      toast('복사하지 못했어요. 링크를 길게 눌러 직접 복사해 주세요.', true);
     }
-    return out;
+  };
+  const prItems = () => ({
+    works: db.projects || [],
+    timeline: (Array.isArray(db.settings?.timeline) ? db.settings.timeline : []).filter((x) => x.id),
+  });
+  function prTiles(hide = { works: [], timeline: [] }) {
+    const { works, timeline } = prItems();
+    const hw = new Set(hide.works || []), ht = new Set(hide.timeline || []);
+    const tile = (kind, id, on, ...kids) => {
+      const b = h('button', { type: 'button', className: 'pr-tile' }, h('i', { className: 'pr-check', ariaHidden: 'true' }), ...kids);
+      b.dataset.kind = kind;
+      b.dataset.id = id;
+      b.setAttribute('aria-pressed', String(on));
+      return b;
+    };
+    $('#pr-works').replaceChildren(
+      ...works.map((p) => {
+        const t = p.thumb || p.cover;
+        return tile('works', p.id, !hw.has(p.id), t ? img(t, { className: 'pr-thumb' }) : h('span', { className: 'pr-thumb empty' }), h('b', { textContent: p.title }), h('small', { textContent: [p.docType, p.visible === false ? '비공개' : ''].filter(Boolean).join(' · ') }));
+      })
+    );
+    $('#pr-timeline').replaceChildren(
+      ...(timeline.length
+        ? timeline.map((x) => tile('timeline', x.id, !ht.has(x.id), h('b', { textContent: x.title || x.period }), h('small', { textContent: [x.type, x.period].filter(Boolean).join(' · ') })))
+        : [h('p', { className: 'muted sm', textContent: '사이트 설정에서 타임라인 경력을 저장하면 여기에 나와요.' })])
+    );
+    prCount();
   }
+  function prCount() {
+    const n = (kind, on) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => on === undefined || (b.getAttribute('aria-pressed') === 'true') === on).length;
+    $('#pr-picked').textContent = `기획서 ${n('works', true)}/${n('works')} · 경력 ${n('timeline', true)}/${n('timeline')}`;
+  }
+  function prSlots() {
+    const links = db.settings?.links || [];
+    const { works, timeline } = prItems();
+    $('#pr-count').textContent = links.length ? `${links.length}개` : '';
+    $('#pr-slots').replaceChildren(
+      ...(links.length
+        ? links.map((l) => {
+            const w = works.filter((p) => !(l.hide?.works || []).includes(p.id)).length;
+            const t = timeline.filter((x) => !(l.hide?.timeline || []).includes(x.id)).length;
+            const copy = h('button', { type: 'button', className: 'btn sm primary', textContent: '링크 복사' });
+            copy.onclick = () => copyText(presetUrl(l.tag));
+            const load = h('button', { type: 'button', className: 'btn sm', textContent: '불러오기' });
+            load.onclick = () => prLoad(l);
+            const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
+            del.onclick = () => prDelete(l);
+            return h(
+              'div', { className: 'pr-slot' + (prEditing === l.tag ? ' is-editing' : '') },
+              h('div', { className: 'pr-slot-head' }, h('b', { textContent: l.name || l.tag }), del),
+              h('p', { className: 'pr-slot-tag', textContent: '?from=' + l.tag }),
+              h('p', { className: 'pr-slot-stat', textContent: `기획서 ${w} · 경력 ${t}` }),
+              h('div', { className: 'pr-slot-acts' }, copy, load)
+            );
+          })
+        : [h('p', { className: 'muted sm pr-empty', textContent: '아직 프리셋이 없어요. 아래에서 첫 프리셋을 만들어 보세요.' })])
+    );
+  }
+  function prReset() {
+    prEditing = null;
+    $('#pr-title').textContent = '새 프리셋 만들기';
+    $('#pr-create').textContent = '프리셋 생성';
+    $('#pr-reset').hidden = true;
+    $('#pr-name').value = '';
+    $('#pr-tag').value = '';
+    $('#pr-tag').dataset.touched = '';
+    $('#pr-result').hidden = true;
+    prTiles();
+    prSlots();
+  }
+  function prLoad(l) {
+    prEditing = l.tag;
+    $('#pr-title').textContent = `‘${l.name || l.tag}’ 고치기`;
+    $('#pr-create').textContent = '프리셋 저장';
+    $('#pr-reset').hidden = false;
+    $('#pr-name').value = l.name || '';
+    $('#pr-tag').value = l.tag;
+    $('#pr-tag').dataset.touched = '1';
+    $('#pr-url').value = presetUrl(l.tag);
+    $('#pr-result').hidden = false;
+    prTiles(l.hide);
+    prSlots();
+    $('#pr-builder').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  async function prDelete(l) {
+    if (!(await confirmBox(`‘${l.name || l.tag}’ 프리셋을 지울까요?\n이 링크로 들어오면 전부 보이게 돼요.`, '삭제'))) return;
+    try {
+      await save(`링크 프리셋 삭제: ${l.name || l.tag}`, (d) => {
+        d.settings.links = (d.settings.links || []).filter((x) => x.tag !== l.tag);
+      });
+      toast('프리셋을 지웠어요.');
+      if (prEditing === l.tag) prReset();
+      else prSlots();
+    } catch (err) {
+      toast(err.message, true);
+    }
+  }
+  function openPresets() {
+    prReset();
+  }
+  $('#pr-builder')?.addEventListener('click', (e) => {
+    const t = e.target.closest('.pr-tile');
+    if (t) {
+      t.setAttribute('aria-pressed', String(t.getAttribute('aria-pressed') !== 'true'));
+      return prCount();
+    }
+    const all = e.target.closest('[data-all]');
+    if (all) {
+      $$(`#pr-builder .pr-tile[data-kind="${all.dataset.all}"]`).forEach((b) => b.setAttribute('aria-pressed', String(all.dataset.on === '1')));
+      prCount();
+    }
+  });
+  // 이름을 쓰면 이름표를 자동으로 (직접 고친 뒤에는 그대로)
+  $('#pr-name')?.addEventListener('input', () => {
+    if ($('#pr-tag').dataset.touched) return;
+    // 주소에 한글이 들어가면 길게 깨져 보여서, 영문·숫자만 남기고 없으면 link-1, link-2 …
+    const latin = cleanTag($('#pr-name').value).replace(/[^a-z0-9_-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    const used = new Set((db.settings?.links || []).map((l) => l.tag));
+    let auto = latin;
+    for (let k = 1; !auto || used.has(auto); k++) auto = latin && k === 1 ? latin : `${latin || 'link'}-${k}`;
+    $('#pr-tag').value = $('#pr-name').value.trim() ? auto : '';
+  });
+  $('#pr-tag')?.addEventListener('input', () => ($('#pr-tag').dataset.touched = '1'));
+  $('#pr-tag')?.addEventListener('blur', () => ($('#pr-tag').value = cleanTag($('#pr-tag').value)));
+  $('#pr-reset')?.addEventListener('click', prReset);
+  $('#pr-copy')?.addEventListener('click', () => copyText($('#pr-url').value));
+  $('#pr-create')?.addEventListener('click', async () => {
+    const name = $('#pr-name').value.trim();
+    const tag = cleanTag($('#pr-tag').value || name);
+    if (!name && !tag) return $('#pr-name').focus(), toast('프리셋 이름을 정해 주세요.', true);
+    if (!tag) return $('#pr-tag').focus(), toast('링크 이름표를 정해 주세요.', true);
+    if ((db.settings?.links || []).some((l) => l.tag === tag && l.tag !== prEditing)) return $('#pr-tag').focus(), toast(`이름표 ‘${tag}’는 이미 다른 프리셋이 쓰고 있어요.`, true);
+    const off = (kind) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => b.getAttribute('aria-pressed') !== 'true').map((b) => b.dataset.id);
+    const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') } };
+    const btn = $('#pr-create');
+    btn.disabled = true;
+    const old = prEditing;
+    try {
+      await save(`${old ? '링크 프리셋 수정' : '링크 프리셋 생성'}: ${preset.name}`, (d) => {
+        const list = d.settings.links || [];
+        const i = list.findIndex((x) => x.tag === (old || tag));
+        if (i > -1) list[i] = preset;
+        else list.push(preset);
+        d.settings.links = list;
+      });
+      prEditing = tag;
+      $('#pr-title').textContent = `‘${preset.name}’ 고치기`;
+      btn.textContent = '프리셋 저장';
+      $('#pr-reset').hidden = false;
+      $('#pr-tag').value = tag;
+      $('#pr-url').value = presetUrl(tag);
+      $('#pr-result').hidden = false;
+      $('#pr-result').classList.remove('is-new');
+      void $('#pr-result').offsetWidth;
+      $('#pr-result').classList.add('is-new');
+      toast(old ? '프리셋을 저장했어요. 1~2분 뒤 링크에 반영돼요.' : '프리셋을 만들었어요. 링크를 복사하세요.');
+      prSlots();
+    } catch (err) {
+      toast(err.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  });
 
   /* --- 스킬 차트 편집기 --- */
   const ICONS = window.SKILL_ICONS || {};
@@ -870,7 +968,6 @@
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
     f.forceDesktop.checked = !!s.forceDesktop;
-    presetEditor(s.links || []);
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
     f.skillsHeading.value = s.skillsHeading || 'Skills';
     f.skillsIntro.value = s.skillsIntro || '';
@@ -925,17 +1022,10 @@
     const list = (v) => v.split(',').map((x) => x.trim()).filter(Boolean);
     const focus = {};
     $$('#image-slots input[type=range]').forEach((r) => (focus[r.dataset.slot] = Number(r.value)));
-    let presets;
-    try {
-      presets = readPresets();
-    } catch (err) {
-      return toast(err.message, true);
-    }
     const files = Object.entries(slotFiles).map(([slot, blob]) => ({ slot, path: `uploads/site-${slot}-${uid()}.${extOf(blob)}`, blob }));
     const values = {
       analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
       forceDesktop: f.forceDesktop.checked,
-      links: presets,
       siteTitle: f.siteTitle.value.trim(),
       nameKo: f.nameKo.value.trim(),
       nameEn: f.nameEn.value.trim(),
@@ -976,7 +1066,7 @@
             const nf = files.find((x) => x.slot === slot);
             images[slot] = { src: nf ? nf.path : prev[slot]?.src || null, focusX: focus[slot] ?? prev[slot]?.focusX ?? 0.5 };
           });
-          d.settings = { ...values, images };
+          d.settings = { ...values, links: d.settings?.links || [], images }; // 링크 프리셋은 그 탭에서만 바꿈
         },
         files,
         (r) => (btn.textContent = r < 1 ? `업로드 ${Math.round(r * 100)}%` : '커밋 중…')

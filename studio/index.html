@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611091032" />
+  <link rel="stylesheet" href="admin.css?v=202611091038" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -53,6 +53,7 @@
       <div class="app-brand"><strong>Studio</strong><span id="repo-label"></span></div>
       <nav class="tabs" role="tablist">
         <button class="tab is-active" data-view="board" role="tab">포트폴리오 게시판</button>
+        <button class="tab" data-view="presets" role="tab">링크 프리셋</button>
         <button class="tab" data-view="stats" role="tab">접속 통계</button>
         <button class="tab" data-view="settings" role="tab">사이트 설정</button>
       </nav>
@@ -191,6 +192,52 @@
       </section>
 
       <!-- 접속 통계 -->
+      <section class="view" id="view-presets" hidden>
+        <div class="view-head">
+          <div>
+            <h2>링크 프리셋</h2>
+            <p class="muted">지원처·포지션마다 보여 줄 기획서와 경력을 골라 프리셋으로 만들고, 그 링크를 지원서에 넣으세요. 링크로 들어오면 고른 것만 보이고 접속 통계에도 그 이름표로 남아요. 기본 주소는 언제나 전부 보여요.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="chart-head"><h3>저장된 프리셋</h3><p class="muted sm" id="pr-count"></p></div>
+          <div class="pr-slots" id="pr-slots"></div>
+        </div>
+
+        <div class="card pr-builder" id="pr-builder">
+          <div class="pr-builder-head">
+            <h3 id="pr-title">새 프리셋 만들기</h3>
+            <button type="button" class="linkish" id="pr-reset" hidden>새로 만들기로 돌아가기</button>
+          </div>
+
+          <p class="pr-step"><b>1</b> 보여 줄 기획서와 경력을 누르세요 <span class="muted sm" id="pr-picked"></span></p>
+          <div class="pr-group">
+            <div class="pr-group-head"><b>Works 기획서</b><button type="button" class="linkish" data-all="works" data-on="1">모두 켜기</button><button type="button" class="linkish" data-all="works" data-on="0">모두 끄기</button></div>
+            <div class="pr-tiles" id="pr-works"></div>
+          </div>
+          <div class="pr-group">
+            <div class="pr-group-head"><b>타임라인 경력</b><button type="button" class="linkish" data-all="timeline" data-on="1">모두 켜기</button><button type="button" class="linkish" data-all="timeline" data-on="0">모두 끄기</button></div>
+            <div class="pr-tiles is-list" id="pr-timeline"></div>
+          </div>
+
+          <p class="pr-step"><b>2</b> 프리셋 이름을 정하세요</p>
+          <div class="row-2">
+            <label class="field"><span>이름 <small>나만 보는 이름이에요</small></span><input id="pr-name" maxlength="60" placeholder="예) 넥슨 전투 기획" /></label>
+            <label class="field"><span>링크 이름표 <small>주소에 보여요. 영문·숫자 권장</small></span><input id="pr-tag" maxlength="40" placeholder="예) nexon-combat" spellcheck="false" autocomplete="off" /></label>
+          </div>
+
+          <p class="pr-step"><b>3</b> 프리셋을 만들고 링크를 복사하세요</p>
+          <div class="pr-actions">
+            <button type="button" class="btn primary" id="pr-create">프리셋 생성</button>
+            <div class="pr-result" id="pr-result" hidden>
+              <input id="pr-url" readonly aria-label="프리셋 링크" />
+              <button type="button" class="btn" id="pr-copy">링크 복사</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="view-stats" hidden>
         <div class="view-head">
           <div>
@@ -400,8 +447,7 @@
 
           <div class="card">
             <h3>지원처별 링크</h3>
-            <p class="muted sm">지원하는 곳·포지션마다 링크를 만들고, 그 링크에서 보여 줄 기획서와 경력을 고르세요. 링크로 들어오면 체크한 것만 보이고, 접속 통계에도 그 꼬리표로 남아요. 꼬리표 없는 기본 주소는 언제나 전부 보여요. 새로 올린 기획서·경력은 모든 링크에 켜진 채로 들어가요.</p>
-            <div class="preset-list" id="preset-list"></div>
+            <p class="muted sm">지원처·포지션마다 보여 줄 기획서와 경력을 고른 링크는 위쪽 <button type="button" class="linkish" data-goto="presets">링크 프리셋</button> 탭에서 만들어요.</p>
           </div>
 
           <div class="card">
@@ -442,9 +488,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611091032"></script>
-  <script src="github.js?v=202611091032"></script>
-  <script src="admin.js?v=202611091032"></script>
-  <script src="stats.js?v=202611091032"></script>
+  <script src="../js/icons.js?v=202611091038"></script>
+  <script src="github.js?v=202611091038"></script>
+  <script src="admin.js?v=202611091038"></script>
+  <script src="stats.js?v=202611091038"></script>
 </body>
 </html>
