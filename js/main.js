@@ -1,8 +1,8 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090729';
-import { PdfViewer } from './pdf-viewer.js?v=202611090729';
-import { renderSkillChart } from './skills.js?v=202611090729';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090729';
-import { initAnalytics } from './analytics.js?v=202611090729';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090736';
+import { PdfViewer } from './pdf-viewer.js?v=202611090736';
+import { renderSkillChart } from './skills.js?v=202611090736';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090736';
+import { initAnalytics } from './analytics.js?v=202611090736';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -94,6 +94,15 @@ function render({ settings: s, projects }) {
     tools: () => tools.map((t) => el('li', { textContent: t })),
     links: () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label + ' ↗' }))),
     'links-plain': () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label }))),
+    // 왼쪽 레일: 링크를 로고 아이콘으로
+    'links-icons': () =>
+      links.map((l) => {
+        const a = el('a', { href: l.url, target: '_blank', rel: 'noopener', title: l.label });
+        a.setAttribute('aria-label', l.label);
+        a.innerHTML = window.linkIconSvg ? window.linkIconSvg(l.label, l.url, 18) : '';
+        if (!a.innerHTML) a.textContent = l.label;
+        return el('li', {}, a);
+      }),
     'works-count': (v, node) => [node.tagName === 'SUP' ? `(${pad(projects.length)})` : pad(projects.length)],
     works: (v) => {
       if (!projects.length) return [el('li', { className: 'works-empty small', textContent: '아직 등록된 포트폴리오가 없습니다.' })];
@@ -361,6 +370,21 @@ async function boot() {
   const dots = $$('.dots button');
   const total = $$('.panel').length;
   $('.pager-total').textContent = pad(total);
+  // 왼쪽 레일: 페이지 번호 목록 + 진행 막대 + 지금 페이지 이름
+  const railPages = $('.rail-pages');
+  const railSteps = navLinks.map((a, k) => {
+    const name = a.lastChild?.textContent?.trim() || '';
+    const b = el('button', { type: 'button', className: 'rail-step', title: name, textContent: pad(k + 1) });
+    b.dataset.go = k;
+    b.setAttribute('aria-label', `${pad(k + 1)} ${name}`);
+    b._name = name;
+    return b;
+  });
+  const railName = el('p', { className: 'rail-name' });
+  if (railPages) {
+    railPages.replaceChildren(el('i', { className: 'rail-track' }, el('i', { className: 'rail-fill' })), el('div', { className: 'rail-steps' }, ...railSteps), railName);
+    railPages.style.setProperty('--n', total);
+  }
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;
     document.body.dataset.section = state.section;
@@ -370,6 +394,17 @@ async function boot() {
     dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
     $('#pager-cur').textContent = pad(i + 1);
     $('#pager-fill').style.width = ((i + 1) / total) * 100 + '%';
+    railSteps.forEach((b, k) => {
+      b.classList.toggle('is-active', k === i);
+      b.classList.toggle('is-past', k < i);
+      if (k === i) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    });
+    railPages?.style.setProperty('--p', total > 1 ? i / (total - 1) : 1);
+    railName.textContent = railSteps[i]?._name || '';
+    railName.classList.remove('swap');
+    void railName.offsetWidth; // 이름이 바뀔 때마다 등장 애니메이션 다시
+    railName.classList.add('swap');
     showSection();
   });
   $$('.pager-btn').forEach((b) => b.addEventListener('click', () => deck.go(deck.index + Number(b.dataset.step), { step: true })));

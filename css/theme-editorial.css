@@ -45,12 +45,42 @@ html[data-theme="editorial"] .rail {
   background: rgba(28, 40, 40, .5); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
 html[data-theme="editorial"] .rail-mark { font-family: var(--display); font-weight: 600; font-size: 16px; letter-spacing: 0; }
-html[data-theme="editorial"] .rail-links {
-  margin: auto 0 32px; display: flex; gap: 28px; writing-mode: vertical-rl; transform: rotate(180deg);
-  font-size: 8.5pt; letter-spacing: .04em; text-transform: lowercase;
+/* 레일 가운데: 지금 보는 페이지 (번호 목록 + 왼쪽 진행 막대 + 세로 이름) */
+html[data-theme="editorial"] .rail-pages {
+  --p: 0; position: relative; margin: auto 0; padding-left: 14px;
+  display: flex; flex-direction: column; align-items: center;
 }
-html[data-theme="editorial"] .rail-links a { color: var(--fg-3); transition: color .3s; }
-html[data-theme="editorial"] .rail-links a:hover { color: var(--fg); }
+.rail-steps { position: relative; display: flex; flex-direction: column; }
+/* 막대: 첫 번호 가운데 ~ 마지막 번호 가운데 */
+.rail-track { position: absolute; left: 0; top: 18px; height: calc(var(--n, 6) * 36px - 36px); width: 1px; background: var(--line-2); }
+.rail-fill { position: absolute; left: 0; top: 0; width: 1px; height: calc(var(--p) * 100%); background: var(--fg); transition: height var(--dur) var(--ease); }
+.rail-fill::after {
+  content: ""; position: absolute; left: -3px; bottom: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--fg);
+  box-shadow: 0 0 0 4px rgba(244, 244, 239, .12);
+}
+.rail-step {
+  width: 40px; height: 36px; display: grid; place-items: center; padding: 0;
+  font-family: var(--display); font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: .02em;
+  color: var(--fg-3); background: none; border: 0; cursor: pointer;
+  transition: color .3s, font-size .35s var(--ease-out);
+}
+.rail-step:hover { color: var(--fg); }
+.rail-step.is-past { color: var(--fg-2); }
+.rail-step.is-active { color: var(--fg); font-size: 17px; font-weight: 700; }
+.rail-step:focus-visible { outline: 1px solid var(--line-2); outline-offset: -4px; border-radius: 6px; }
+.rail-name {
+  margin-top: 18px; writing-mode: vertical-rl; transform: rotate(180deg);
+  font-size: 8.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-2); white-space: nowrap;
+}
+.rail-name.swap { animation: rail-name-in .5s var(--ease-out) both; }
+@keyframes rail-name-in { from { opacity: 0; transform: rotate(180deg) translateY(-10px); } to { opacity: 1; transform: rotate(180deg); } }
+
+/* 레일 아래: 링크 아이콘 */
+html[data-theme="editorial"] .rail-links { margin: 0 0 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+html[data-theme="editorial"] .rail-links a { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; color: var(--fg-3); transition: color .3s, background .3s; }
+html[data-theme="editorial"] .rail-links a:hover, html[data-theme="editorial"] .rail-links a:focus-visible { color: var(--fg); background: rgba(244, 244, 239, .08); }
+/* 페이지 위치는 레일이 보여 주므로 위쪽 번호 표시는 숨김 */
+html[data-theme="editorial"] .pager { display: none; }
 
 /* 상단바 */
 html[data-theme="editorial"] .topbar { padding-left: calc(var(--rail) + var(--gutter)); }
@@ -203,7 +233,7 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
 /* ---------- 03 TIMELINE: 가로로 길게 이어지는 연혁 ---------- */
 html[data-theme="editorial"] .panel .timeline-body {
   display: flex; flex-direction: column; overflow: hidden;
-  padding: calc(var(--top) + 100px) 0 40px var(--rail);
+  padding: calc(var(--top) + 40px) 0 32px var(--rail);
 }
 .tl-head {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 32px 64px; flex-wrap: wrap;
@@ -315,6 +345,15 @@ html[data-theme="editorial"] .panel .timeline-body {
   .tl-item.is-focus .tl-title { font-size: 19px; }
   .tl-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .tl-item.is-focus .tl-card { transform: perspective(600px) translateZ(28px); }
+}
+/* 높이가 낮은 PC 화면: 제목을 줄여 펼친 카드 자리를 확보 */
+@media (min-width: 821px) and (max-height: 780px) {
+  .timeline-body .section-title { font-size: clamp(56px, 7vw, 88px); }
+  .tl-intro { display: none; }
+  .tl-hint { margin-top: 0; }
+  .tl { margin-top: 12px; }
+  .tl-track { --ly: 77%; }
+  .tl-year-num { font-size: 48px; top: calc(var(--ly) + 8px); }
 }
 /* 키가 작은 휴대폰(iPhone SE 등): 제목을 줄이고 소개 문구를 빼서 펼친 카드 자리를 확보 */
 @media (max-width: 820px) and (max-height: 740px) {
