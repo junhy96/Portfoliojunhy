@@ -787,6 +787,7 @@
     f.contactMessage.value = s.contact?.message || '';
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
+    f.forceDesktop.checked = !!s.forceDesktop;
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
     f.skillsHeading.value = s.skillsHeading || 'Skills';
     f.skillsIntro.value = s.skillsIntro || '';
@@ -844,6 +845,7 @@
     const files = Object.entries(slotFiles).map(([slot, blob]) => ({ slot, path: `uploads/site-${slot}-${uid()}.${extOf(blob)}`, blob }));
     const values = {
       analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
+      forceDesktop: f.forceDesktop.checked,
       siteTitle: f.siteTitle.value.trim(),
       nameKo: f.nameKo.value.trim(),
       nameEn: f.nameEn.value.trim(),

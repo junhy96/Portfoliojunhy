@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090843';
-import { PdfViewer } from './pdf-viewer.js?v=202611090843';
-import { renderSkillChart } from './skills.js?v=202611090843';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090843';
-import { initWorks } from './works.js?v=202611090843';
-import { initAnalytics } from './analytics.js?v=202611090843';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090853';
+import { PdfViewer } from './pdf-viewer.js?v=202611090853';
+import { renderSkillChart } from './skills.js?v=202611090853';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090853';
+import { initWorks } from './works.js?v=202611090853';
+import { initAnalytics } from './analytics.js?v=202611090853';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -333,6 +333,26 @@ class Deck {
 /* 시작                                                                 */
 /* ------------------------------------------------------------------ */
 
+/** 관리자 설정 '휴대폰에서도 PC 화면으로': 휴대폰(짧은 변 820px 이하)이면 화면을 PC 너비(1280)로 그림 */
+function forceDesktop(on) {
+  try {
+    localStorage.setItem('pf-desktop', on ? '1' : '0');
+  } catch {}
+  const phone = Math.min(screen.width, screen.height) <= 820;
+  const meta = document.querySelector('meta[name=viewport]');
+  if (!meta || !phone) return;
+  const want = on ? 'width=1280, viewport-fit=cover' : 'width=device-width, initial-scale=1, viewport-fit=cover';
+  if (meta.content !== want) meta.content = want;
+  document.documentElement.classList.toggle('is-forced-desktop', on);
+  // 세로로 들고 있으면 잠깐 안내 (한 번 열 때 한 번)
+  if (on && innerHeight > innerWidth * 1.2) {
+    const tip = el('p', { className: 'rotate-tip', textContent: '가로로 돌리면 더 크게 볼 수 있어요' });
+    document.body.append(tip);
+    setTimeout(() => tip.classList.add('is-gone'), 4200);
+    setTimeout(() => tip.remove(), 5000);
+  }
+}
+
 async function boot() {
   let data;
   try {
@@ -342,6 +362,7 @@ async function boot() {
     data = await res.json();
     data.projects = (data.projects || []).filter((p) => p.visible !== false);
     data.projects.forEach((p) => (p._yt = ytId(p.video)));
+    forceDesktop(!!data.settings?.forceDesktop);
   } catch (e) {
     $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';
     $('.loader-bar').hidden = true;

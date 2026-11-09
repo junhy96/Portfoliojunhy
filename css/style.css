@@ -464,3 +464,11 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
   .hint-mouse { display: none; }
   .hint-touch { display: inline; }
 }
+
+/* 휴대폰을 PC 화면으로 볼 때: 세로 방향 안내 (화면 너비 1280 기준이라 vw로 크기) */
+.rotate-tip {
+  position: fixed; left: 50%; bottom: 6vw; z-index: 60; transform: translateX(-50%);
+  padding: 1.6vw 3vw; border-radius: 1vw; background: rgba(14, 22, 22, .88); color: var(--fg);
+  font-size: 3.2vw; white-space: nowrap; pointer-events: none; transition: opacity .6s ease;
+}
+.rotate-tip.is-gone { opacity: 0; }
