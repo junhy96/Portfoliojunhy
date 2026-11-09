@@ -1,10 +1,8 @@
 {
   "settings": {
-    "theme": "mono",
-    "themeSwitcher": true,
     "siteTitle": "이도하 — Game Designer Portfolio",
-    "nameEn": "LEE DOHA",
-    "nameKo": "이도하",
+    "nameKo": "전현영",
+    "nameEn": "Jeon Hyun Young",
     "role": "Game Designer",
     "eyebrow": "Game Designer Portfolio — 2026",
     "intro": "플레이어의 선택이 의미를 갖는 순간을 설계합니다.\n시스템 기획과 레벨 디자인을 중심으로, 숫자와 감정 사이의 균형을 찾는 게임 기획자입니다.",
@@ -167,5 +165,5 @@
       "updatedAt": "2026-08-01T09:00:00.000Z"
     }
   ],
-  "rev": 0
+  "rev": 1794195376443
 }
