@@ -160,15 +160,26 @@ const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export class MorphStage {
+  /**
+   * 모핑을 쓸 수 있는지: 그래픽 카드(내장 그래픽 포함)로 그릴 수 있을 때만.
+   * 그래픽 장치 없이 CPU로만 그리는 환경(원격 PC 등)은 처음부터 가벼운 사진 전환으로.
+   */
   static supported(canvas) {
     try {
-      return !!(canvas.getContext('webgl', { antialias: false }) || canvas.getContext('experimental-webgl'));
+      const gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false, failIfMajorPerformanceCaveat: true });
+      if (!gl) return false;
+      const info = gl.getExtension('WEBGL_debug_renderer_info');
+      const renderer = String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+      return !/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
     } catch {
       return false;
     }
   }
 
-  constructor(canvas) {
+  constructor(canvas, { onSlow } = {}) {
+    this.onSlow = onSlow;
+    this.scale = 1; // 그리는 해상도 배율 (느리면 한 단계 낮춤)
+    this.perf = { last: 0, winStart: 0, winFrames: 0, windows: 0, bad: 0, gaveUp: false };
     this.canvas = canvas;
     const gl = (this.gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false, preserveDrawingBuffer: false }));
     this.cache = new Map();
@@ -222,16 +233,21 @@ export class MorphStage {
 
     this._resize = this._resize.bind(this);
     window.addEventListener('resize', this._resize);
-    if (window.ResizeObserver) new ResizeObserver(this._resize).observe(canvas);
+    if (window.ResizeObserver) (this.ro = new ResizeObserver(this._resize)).observe(canvas);
     this._resize();
 
-    window.addEventListener('pointermove', (e) => {
+    this._onPointer = (e) => {
       this.mouseTarget = [e.clientX / window.innerWidth, 1 - e.clientY / window.innerHeight];
-    });
+    };
+    window.addEventListener('pointermove', this._onPointer);
 
     const loop = (now) => {
       this.raf = requestAnimationFrame(loop);
-      if (document.hidden) return;
+      if (document.hidden) {
+        this.perf.last = 0; // 탭이 가려진 동안은 재지 않음
+        return;
+      }
+      this._measure(now);
       this._tick(now);
     };
     this.raf = requestAnimationFrame(loop);
@@ -266,13 +282,15 @@ export class MorphStage {
   }
 
   _resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5) * (this.scale || 1);
     const w = Math.max(2, Math.round((this.canvas.clientWidth || window.innerWidth) * dpr));
     const h = Math.max(2, Math.round((this.canvas.clientHeight || window.innerHeight) * dpr));
     if (this.canvas.width === w && this.canvas.height === h) return;
     this.canvas.width = w;
     this.canvas.height = h;
     const gl = this.gl;
+    // 크기가 바뀌면 속도를 처음부터 다시 잼 (처음엔 작은 크기로 빨리 그려져서 잘못 판단할 수 있음)
+    if (this.perf && !this.perf.gaveUp) Object.assign(this.perf, { last: 0, winStart: 0, winFrames: 0, bad: 0 });
     // 크기가 바뀌면 스냅샷이 지워지므로, 전환 중이었다면 목표 이미지로 바로 정리
     if (this.from?.snap) {
       this.from = { ...this.to, snap: false };
@@ -285,6 +303,53 @@ export class MorphStage {
       s.w = w;
       s.h = h;
     });
+  }
+
+  /**
+   * 화면이 실제로 얼마나 빨리 그려지는지 2초 단위로 계속 잼
+   * (그래픽 작업은 요청이 먼저 쌓이고 나중에 몰아서 처리돼서, 처음 몇 장만 보면 빠르게 착각함)
+   * - 한 장면이 3초 넘게 멈추거나, 1초에 8장 미만이 4초 연속이면 → 가벼운 사진 전환으로 (onSlow)
+   * - 1초에 22장 미만이면 → 해상도만 한 단계 낮추고 모핑은 유지
+   * - 내장 그래픽(보통 30~60장)은 그대로
+   */
+  _measure(now) {
+    const p = this.perf;
+    if (p.gaveUp) return;
+    if (!p.last) {
+      Object.assign(p, { last: now, winStart: now, winFrames: 0 });
+      return;
+    }
+    const dt = now - p.last;
+    p.last = now;
+    if (dt > 3000) return this._giveUp();
+    p.winFrames++;
+    const elapsed = now - p.winStart;
+    if (elapsed < 2000) return;
+    const fps = (p.winFrames * 1000) / elapsed;
+    p.windows++;
+    if (p.windows > 1) {
+      // 첫 2초는 준비 시간이라 판단하지 않음
+      p.bad = fps < 8 ? p.bad + 1 : 0;
+      if (p.bad >= 2) return this._giveUp();
+      if (fps < 22 && this.scale > 0.6) {
+        this.scale = 0.6;
+        this._resize();
+      }
+    }
+    Object.assign(p, { winStart: now, winFrames: 0 });
+  }
+  _giveUp() {
+    this.perf.gaveUp = true;
+    this.onSlow?.();
+  }
+  /** 모핑을 멈추고 캔버스를 치움 (가벼운 모드로 바꿀 때) */
+  destroy() {
+    cancelAnimationFrame(this.raf);
+    window.removeEventListener('resize', this._resize);
+    window.removeEventListener('pointermove', this._onPointer);
+    this.ro?.disconnect();
+    this.gl.getExtension('WEBGL_lose_context')?.loseContext();
+    this.canvas.remove();
   }
 
   /** 이미지를 텍스처로 로드 (최대 2048px로 축소, 캐시) */
@@ -449,17 +514,19 @@ export class FallbackStage {
     this.el.dataset.mode = mode;
   }
   show(src, focus = 0.5) {
-    if (!src || src === this.current) return;
-    this.current = src;
+    const flip = this.flip ? ' scaleX(-1)' : '';
+    const key = src + flip;
+    if (!src || key === this.current) return;
+    this.current = key;
     const next = this.imgs[this.front ^ 1];
     const prev = this.imgs[this.front];
     next.src = src;
     next.style.objectPosition = `${focus * 100}% 50%`;
-    next.style.transform = 'scale(1.06)';
+    next.style.transform = 'scale(1.06)' + flip;
     next.style.filter = 'grayscale(1) blur(12px)';
     requestAnimationFrame(() => {
       next.style.opacity = 1;
-      next.style.transform = 'scale(1)';
+      next.style.transform = 'scale(1)' + flip;
       next.style.filter = 'grayscale(1) contrast(1.05) brightness(.85)';
       prev.style.opacity = 0;
       prev.style.filter = 'grayscale(1) blur(12px)';

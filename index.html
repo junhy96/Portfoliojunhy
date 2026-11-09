@@ -6,12 +6,15 @@
   <title>Game Designer Portfolio</title>
   <meta name="description" content="게임 기획자 포트폴리오" />
   <meta name="theme-color" content="#0a0a0a" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" />
-  <link rel="stylesheet" href="css/style.css?v=202611090555" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090555" />
+  <!-- 글꼴은 화면을 막지 않게 따로 불러옴 (회사망에서 글꼴 서버가 막혀도 기본 글꼴로 바로 보임) -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
+  <link rel="stylesheet" href="css/style.css?v=202611090606" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090606" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -180,6 +183,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js?v=202611090555"></script>
+  <script type="module" src="js/main.js?v=202611090606"></script>
 </body>
 </html>

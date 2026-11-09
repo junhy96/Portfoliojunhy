@@ -10,7 +10,7 @@
   --line-2: rgba(242, 242, 240, 0.3);
 
   --fs-small: 11pt;              /* 작은 문구 기준 크기 */
-  --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
 
   --gutter: clamp(20px, 4vw, 64px);
   --top: clamp(68px, 9vh, 96px);

@@ -1,6 +1,6 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090555';
-import { PdfViewer } from './pdf-viewer.js?v=202611090555';
-import { initAnalytics } from './analytics.js?v=202611090555';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090606';
+import { PdfViewer } from './pdf-viewer.js?v=202611090606';
+import { initAnalytics } from './analytics.js?v=202611090606';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -270,17 +270,28 @@ async function boot() {
   const images = settings.images || {};
   const state = { section: 'hero' };
 
-  // 모핑 스테이지
+  // 모핑 스테이지 — 화면이 정말 느릴 때만 가벼운 사진 전환으로 바꿈
   const canvas = $('#stage');
+  const lightStage = () => {
+    const box = el('div', { className: 'stage-fallback' });
+    document.body.prepend(box);
+    const fb = new FallbackStage(box);
+    fb.setMode(2);
+    return fb;
+  };
   let stage;
   try {
     if (!MorphStage.supported(canvas)) throw new Error('no webgl');
-    stage = new MorphStage(canvas);
+    stage = new MorphStage(canvas, {
+      onSlow: () => {
+        stage.destroy();
+        stage = lightStage();
+        showSection();
+      },
+    });
   } catch {
     canvas.remove();
-    const box = el('div', { className: 'stage-fallback' });
-    document.body.prepend(box);
-    stage = new FallbackStage(box);
+    stage = lightStage();
   }
   stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf)]);
 

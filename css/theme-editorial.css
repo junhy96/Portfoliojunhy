@@ -12,7 +12,7 @@ html[data-theme="editorial"] {
   --accent: #e3cd7f;
   --glass: rgba(84, 106, 106, .32);
   --rail: 76px;
-  --display: 'Inter Tight', 'Pretendard Variable', Pretendard, sans-serif;
+  --display: 'Inter Tight', 'Pretendard Variable', Pretendard, 'Helvetica Neue', Arial, 'Malgun Gothic', sans-serif;
   --strip: 188px;
 }
 html[data-theme="editorial"] body { background: var(--bg); }
