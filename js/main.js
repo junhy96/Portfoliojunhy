@@ -1,8 +1,8 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090703';
-import { PdfViewer } from './pdf-viewer.js?v=202611090703';
-import { renderSkillChart } from './skills.js?v=202611090703';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090703';
-import { initAnalytics } from './analytics.js?v=202611090703';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090710';
+import { PdfViewer } from './pdf-viewer.js?v=202611090710';
+import { renderSkillChart } from './skills.js?v=202611090710';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090710';
+import { initAnalytics } from './analytics.js?v=202611090710';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -167,7 +167,7 @@ class Deck {
     this.el.style.transform = `translate3d(0, ${-this.index * this.vh}px, 0)`;
     if (!animate) requestAnimationFrame(() => this.el.classList.remove('no-anim'));
   }
-  go(i, { animate = true } = {}) {
+  go(i, { animate = true, step = false } = {}) {
     i = Math.max(0, Math.min(this.panels.length - 1, i));
     if (i === this.index && animate) return;
     const prev = this.index;
@@ -178,7 +178,7 @@ class Deck {
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
       p.classList.toggle('is-active', k === i);
-      p._h?.activate(k === i, i < prev); // 가로 타임라인: 아래 페이지에서 올라오면 끝에서 시작
+      p._h?.activate(k === i, step && i < prev); // 가로 타임라인: 아래 페이지에서 한 칸 올라오면 끝에서, 메뉴로 오면 처음부터
     });
     panel.querySelectorAll('[data-scroll]').forEach((s) => (s.scrollTop = 0));
     history.replaceState(null, '', '#' + panel.id);
@@ -217,10 +217,10 @@ class Deck {
     this.lastWheel = now;
     if (now < this.lockUntil) return;
     if (!strong && now - this.navTime < 1600) return; // 트랙패드 관성 무시
-    // 가로 타임라인: 끝에 닿기 전까지는 휠을 옆으로 이동하는 데 씀
+    // 가로 타임라인: 끝에 닿기 전까지는 휠을 옆으로 이동하는 데 씀. 끝에 닿으면 계속 굴려도 바로 다음 페이지로
     const h = this.panels[this.index]._h;
-    if (h && h.wheel(dy)) {
-      this.innerScrollAt = now;
+    if (h) {
+      if (!h.wheel(dy)) this.go(this.index + dir, { step: true });
       return;
     }
     if (now - this.innerScrollAt < 450) {
@@ -229,7 +229,7 @@ class Deck {
       return;
     }
     if (Math.abs(dy) < 4) return;
-    this.go(this.index + dir);
+    this.go(this.index + dir, { step: true });
   }
   _onKey(e) {
     if (!this.enabled || e.altKey || e.metaKey || e.ctrlKey) return;
@@ -242,11 +242,11 @@ class Deck {
     const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (e.shiftKey ? 0 : dir);
     if (h && hd && performance.now() > this.lockUntil - 400 && h.page(hd)) return e.preventDefault();
     if (!dir) return;
-    if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1);
+    if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1, { step: true });
     if (this._scrollable(document.activeElement, dir) && document.activeElement !== document.body) return;
     e.preventDefault();
     if (performance.now() < this.lockUntil - 400) return;
-    this.go(this.index + dir);
+    this.go(this.index + dir, { step: true });
   }
   _bindTouch() {
     let x0 = 0, y0 = 0, t0 = 0, inner = false, hs = false, target = null;
@@ -276,7 +276,7 @@ class Deck {
         // 타임라인 페이지에서는 위아래로 밀어도 먼저 옆으로 넘기고, 끝이면 다음 페이지
         const h = this.panels[this.index]._h;
         if (h && h.page(Math.sign(dy))) return;
-        this.go(this.index + Math.sign(dy));
+        this.go(this.index + Math.sign(dy), { step: true });
       }
     }, { passive: true });
   }
@@ -372,7 +372,7 @@ async function boot() {
     $('#pager-fill').style.width = ((i + 1) / total) * 100 + '%';
     showSection();
   });
-  $$('.pager-btn').forEach((b) => b.addEventListener('click', () => deck.go(deck.index + Number(b.dataset.step))));
+  $$('.pager-btn').forEach((b) => b.addEventListener('click', () => deck.go(deck.index + Number(b.dataset.step), { step: true })));
   $$('[data-go]').forEach((a) =>
     a.addEventListener('click', (e) => {
       e.preventDefault();

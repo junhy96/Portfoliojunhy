@@ -118,6 +118,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   let raf = 0;
   let focus = -1;
   let snapTimer = 0;
+  let lastDir = 1; // 마지막으로 굴린 방향
   const max = () => Math.max(0, root.scrollWidth - root.clientWidth);
   // 화면 안에서 '지금 보는 자리'. 휴대폰은 카드가 화면 안에 다 들어오게 조금 왼쪽
   const focusX = () => (root.clientWidth < 600 ? Math.min(root.clientWidth * 0.28, root.clientWidth - 270) : root.clientWidth * 0.28);
@@ -140,14 +141,22 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     });
     return best;
   };
-  // 휠·스와이프가 멈추면 가장 가까운 항목을 보는 자리에 맞춤
+  // 휠·스와이프가 멈추면 굴린 방향의 다음 항목에 맞춤 (조금만 굴려도 다음 항목으로 넘어감)
+  const snapIndex = (x, dir) => {
+    if (dir > 0) {
+      const k = nodes.findIndex((_, i) => snapOf(i) >= x - 24);
+      return k < 0 ? nodes.length - 1 : k;
+    }
+    for (let i = nodes.length - 1; i >= 0; i--) if (snapOf(i) <= x + 24) return i;
+    return 0;
+  };
   const snapSoon = () => {
     clearTimeout(snapTimer);
     snapTimer = setTimeout(() => {
       if (!active) return;
-      target = snapOf(nearest(target));
+      target = snapOf(snapIndex(target, lastDir));
       kick();
-    }, 180);
+    }, 140);
   };
 
   const frame = () => {
@@ -173,6 +182,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   // 손가락·트랙패드로 직접 옆으로 밀었을 때
   root.addEventListener('scroll', () => {
     if (Math.abs(root.scrollLeft - cur) > 2) {
+      lastDir = Math.sign(root.scrollLeft - cur) || lastDir;
       cur = target = root.scrollLeft;
       snapSoon();
     }
@@ -197,7 +207,9 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     /** 휠: 옆으로 갈 수 있으면 먹고 true, 끝이면 false (→ 다음/이전 페이지) */
     wheel(dy) {
       const end = hi();
-      if ((dy > 0 && target >= end - 1) || (dy < 0 && target <= 1)) return false;
+      // 끝에 닿았으면: 화면이 아직 따라오는 중일 때만 붙잡고, 다 따라왔으면 false (→ 바로 다음/이전 페이지)
+      if ((dy > 0 && target >= end - 1) || (dy < 0 && target <= 1)) return Math.abs(target - cur) > 40;
+      lastDir = Math.sign(dy);
       target = Math.max(0, Math.min(end, target + dy * 1.1));
       kick();
       snapSoon();
