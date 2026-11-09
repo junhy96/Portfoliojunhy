@@ -170,14 +170,21 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
   html[data-theme="editorial"] .ed-columns { left: calc(var(--rail) + var(--gutter)); top: calc(var(--top) + 88px); gap: 24px; }
 }
 @media (max-width: 820px) {
+  /* 휴대폰: 스크롤되는 내용이 위쪽 이름 표시 뒤로 겹치지 않게 윗부분을 흐리게 */
+  html[data-theme="editorial"] .panel-body[data-scroll] {
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, transparent calc(var(--top) - 8px), #000 calc(var(--top) + 20px));
+            mask-image: linear-gradient(180deg, transparent 0, transparent calc(var(--top) - 8px), #000 calc(var(--top) + 20px));
+  }
   html[data-theme="editorial"] { --rail: 0px; --strip: auto; }
   html[data-theme="editorial"] .rail { display: none; }
   html[data-theme="editorial"] .layout-mono { padding-left: var(--gutter); padding-top: calc(var(--top) + 24px); }
   html[data-theme="editorial"] .shade-side { background: linear-gradient(0deg, rgba(18,28,28,.92) 0%, rgba(18,28,28,.55) 55%, rgba(18,28,28,.1) 100%) !important; opacity: 1 !important; }
   html[data-theme="editorial"] .panel .layout-editorial {
-    display: flex; flex-direction: column; justify-content: flex-end; gap: 28px; overflow-y: auto;
+    display: flex; flex-direction: column; justify-content: flex-start; gap: 28px; overflow-y: auto;
     padding: calc(var(--top) + 60px) 0 0;
   }
+  /* 아래쪽에 붙이되, 화면보다 길면 위에서부터 스크롤되게 (flex-end는 넘친 윗부분이 잘림) */
+  html[data-theme="editorial"] .panel .layout-editorial > :first-child { margin-top: auto; }
   html[data-theme="editorial"] .ed-hero-name, html[data-theme="editorial"] .ed-columns, html[data-theme="editorial"] .ed-bottom, html[data-theme="editorial"] .ed-strip {
     position: static; width: auto; max-width: none; transform: none;
   }
@@ -303,9 +310,29 @@ html[data-theme="editorial"] .panel .timeline-body {
   .tl-track { --ly: 76%; }
   .tl-item { width: 270px; }
   .tl-card { width: 228px; }
-  .tl-year { width: 104px; }
+  .tl-year { width: 80px; }
   .tl-item.is-focus .tl-title { font-size: 19px; }
+  .tl-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   .tl-item.is-focus .tl-card { transform: perspective(600px) translateZ(28px); }
+}
+/* 키가 작은 휴대폰(iPhone SE 등): 제목을 줄이고 소개 문구를 빼서 펼친 카드 자리를 확보 */
+@media (max-width: 820px) and (max-height: 740px) {
+  html[data-theme="editorial"] .panel .layout-editorial { padding-top: calc(var(--top) + 16px); gap: 20px; }
+  html[data-theme="editorial"] .ed-name { font-size: clamp(48px, 15vw, 64px); }
+  html[data-theme="editorial"] .ed-giant { font-size: clamp(52px, 16vw, 72px); }
+  html[data-theme="editorial"] .ed-latest > li:nth-child(n + 2) { display: none; }
+  .skills-body .skill-chart { width: min(100%, calc(var(--vh) - 370px)); min-width: 260px; }
+  .timeline-body .section-title { font-size: 36px; }
+  .tl-intro { display: none; }
+  .tl-desc { -webkit-line-clamp: 2; margin-top: 6px; }
+  .tl-tasks-label { margin-top: 10px; }
+  .tl-tasks { gap: 3px; }
+  .tl-tasks li { font-size: 10pt; }
+  .tl-item.is-focus .tl-title { font-size: 17px; }
+  .tl-hint { margin-top: 0; }
+  .tl { min-height: 0; }
+  .tl-track { --ly: 80%; }
+  .tl-year-num { font-size: 34px; top: calc(var(--ly) + 8px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .tl-tick, .tl-year-num, .tl-dot, .tl-stem, .tl-card, .tl-title, .tl-more, .tl-tasks li { transition: none; }

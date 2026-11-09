@@ -123,7 +123,8 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   // 화면 안에서 '지금 보는 자리'. 휴대폰은 카드가 화면 안에 다 들어오게 조금 왼쪽
   const focusX = () => (root.clientWidth < 600 ? Math.min(root.clientWidth * 0.28, root.clientWidth - 270) : root.clientWidth * 0.28);
   const posOf = (n) => n.offsetLeft + list.offsetLeft; // 트랙 기준 x
-  const snapOf = (i) => Math.max(0, Math.min(max(), posOf(nodes[i]) - focusX()));
+  // 첫 항목은 맨 처음(0)에 맞춤 — 들어올 때 위치와 같아야 처음에서 뒤로 밀면 바로 이전 페이지로 감
+  const snapOf = (i) => (i === 0 ? 0 : Math.max(0, Math.min(max(), posOf(nodes[i]) - focusX())));
   const hi = () => snapOf(nodes.length - 1); // 마지막 항목이 보는 자리에 오면 끝
 
   const setFocus = (i) => {
@@ -217,13 +218,15 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     },
     /** 방향키·스와이프: 한 항목씩 */
     page(dir) {
+      const end = hi();
+      // 첫/마지막 항목이면 false (→ 이전/다음 페이지)
+      if ((dir > 0 && target >= end - 1) || (dir < 0 && target <= 1)) return Math.abs(target - cur) > 40;
       const next = Math.max(0, Math.min(nodes.length - 1, nearest(target) + dir));
-      const to = snapOf(next);
-      if (Math.abs(to - target) < 1) {
-        // 이미 첫/마지막 항목: 남은 길이 있으면 마저, 없으면 다음 페이지
-        if ((dir > 0 && target >= hi() - 1) || (dir < 0 && target <= 1)) return false;
-        target = dir > 0 ? hi() : 0;
-      } else target = to;
+      let to = snapOf(next);
+      // 가는 방향으로 한 칸도 못 가면 끝까지
+      if (dir > 0 ? to <= target + 1 : to >= target - 1) to = dir > 0 ? end : 0;
+      target = to;
+      lastDir = dir;
       kick();
       return true;
     },
