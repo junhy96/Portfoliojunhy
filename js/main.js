@@ -69,8 +69,16 @@ function render({ settings: s, projects }) {
   const tools = s.about?.tools || [];
   const exp = s.about?.experience || [];
   const lists = {
-    meta: () =>
+    meta: (v) =>
       (s.meta || []).map((m, i) => {
+        if (v === 'pixel') {
+          // Pixel 정보 바: 항목마다 픽셀 아이콘 하나
+          const icon = ['star', 'wrench', 'pin', 'flag'][i % 4];
+          const i_ = el('i', { className: 'px-icon' });
+          i_.dataset.icon = icon;
+          i_.setAttribute('aria-hidden', 'true');
+          return el('div', { className: 'px-meta' }, i_, el('dt', { textContent: m.label }), el('dd', { textContent: m.value }));
+        }
         const d = el('div', {}, el('dt', { textContent: m.label }), el('dd', { textContent: m.value }));
         d.style.setProperty('--d', i);
         return d;
@@ -80,7 +88,7 @@ function render({ settings: s, projects }) {
       v === 'inline'
         ? [tools.join(' · ')]
         : v === 'inventory'
-          ? [...tools, ...Array(Math.max(0, 8 - tools.length)).fill('')].map((t) => el('li', { className: t ? '' : 'is-empty', textContent: t }))
+          ? tools.map((t) => el('li', { textContent: t }))
           : tools.map((t) => el('li', { textContent: t })),
     experience: (v) =>
       v === 'short'
