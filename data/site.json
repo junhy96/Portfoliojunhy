@@ -4,7 +4,7 @@
       "url": "https://cyfzjuhebdatahltvdza.supabase.co",
       "key": "sb_publishable_kkojQbJumy-YLuj16fvD5w_hCW0LKz9"
     },
-    "theme": "mono",
+    "theme": "editorial",
     "themeSwitcher": true,
     "siteTitle": "전현영 — Game Designer Portfolio",
     "nameKo": "전현영",
@@ -171,5 +171,5 @@
       "updatedAt": "2026-08-01T09:00:00.000Z"
     }
   ],
-  "rev": 1794201427170
+  "rev": 1794201436985
 }
