@@ -424,3 +424,7 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
   .tracking-in-expand { animation: none; }
   body.is-ready .panel.is-active :is(.ed-name, .section-title, .ed-giant) { animation: none; }
 }
+
+/* 예전 페이지(HTML)가 브라우저에 남아 있어도 지운 스타일의 조각이 보이지 않게 */
+.layout-pixel, .layout[data-themes="mono"], .px-panel, .theme-switch, .theme-veil,
+.brand-sprite, .nav-icon { display: none !important; }
