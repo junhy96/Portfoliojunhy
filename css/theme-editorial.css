@@ -29,7 +29,7 @@ html[data-theme="editorial"] body[data-section="works"] .shade-side { background
 html[data-theme="editorial"] body[data-section="works"] .shade-full { opacity: .45; }
 html[data-theme="editorial"] body[data-section="works"].is-previewing .shade-full { opacity: .7; }
 html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .25; }
-html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .55; }
+html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .8; }
 html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity: .3; }
 
 /* 왼쪽 세로 레일 */
@@ -190,28 +190,29 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
 
 /* ---------- 03 SKILLS: 둥근 조각 차트 ---------- */
 html[data-theme="editorial"] .panel .skills-body {
-  display: grid; grid-template-columns: minmax(260px, .75fr) minmax(0, 1.25fr); gap: 48px; align-items: center;
-  padding-left: calc(var(--rail) + var(--gutter)); padding-top: calc(var(--top) + 72px); padding-bottom: 48px;
+  display: grid; grid-template-columns: minmax(240px, 380px) auto; justify-content: center; column-gap: clamp(40px, 6vw, 112px); align-items: center;
+  padding-left: calc(var(--rail) + var(--gutter)); padding-top: calc(var(--top) + 48px); padding-bottom: 48px;
 }
 .skills-intro { margin-top: 24px; color: var(--fg-2); max-width: 28em; white-space: pre-line; }
 .skills-hint { margin-top: 16px; color: var(--fg-3); }
 .skill-chart {
   position: relative; justify-self: center; aspect-ratio: 1;
-  width: min(100%, calc(var(--vh) - var(--top) - 140px), 640px);
+  width: min(calc(100vw - var(--rail) - var(--gutter) * 2 - 380px - 112px), calc(var(--vh) - var(--top) - 120px), 620px);
 }
 .skill-chart > svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .skill-wedge { cursor: pointer; outline: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
-.skill-wedge .track { fill: rgba(244, 244, 239, .10); stroke: rgba(244, 244, 239, .10); stroke-width: 12; stroke-linejoin: round; transition: fill .16s, stroke .16s; }
-.skill-wedge .fill { fill: url(#skill-fill); stroke: url(#skill-fill); stroke-width: 12; stroke-linejoin: round; transform-box: view-box; transform-origin: 50% 50%; }
+.skill-wedge .track { fill: #1c2828; stroke: #1c2828; stroke-width: 12; stroke-linejoin: round; opacity: .92; transition: fill .16s, stroke .16s; }
+.skill-wedge .fill { fill: url(#skill-fill); stroke: url(#skill-fill); stroke-width: 12; stroke-linejoin: round; transform-box: view-box; transform-origin: 50% 50%; transition: filter .16s; }
 .skill-wedge:hover, .skill-wedge.is-on, .skill-wedge:focus-visible { transform: scale(1.06); }
-.skill-wedge:hover .track, .skill-wedge.is-on .track { fill: rgba(244, 244, 239, .16); stroke: rgba(244, 244, 239, .16); }
-.skill-wedge:focus-visible .track { stroke: rgba(244, 244, 239, .5); }
+.skill-wedge:hover .track, .skill-wedge.is-on .track { fill: #243333; stroke: #243333; }
+.skill-wedge:hover .fill, .skill-wedge.is-on .fill { filter: brightness(1.28); }
+.skill-wedge:focus-visible .track { stroke: rgba(244, 244, 239, .35); }
 .skill-label-wrap { pointer-events: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
 .skill-label-wrap.is-on { transform: scale(1.06); }
-.skill-label { color: var(--fg); fill: var(--fg); }
+.skill-label { color: var(--fg-2); fill: var(--fg-2); }
 .skill-label text { font-family: var(--display); font-weight: 600; letter-spacing: 0; }
 .skill-label .skill-icon { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.skill-label.on-fill { color: #1b2424; fill: #1b2424; }
+.skill-label.on-fill, .skill-label-wrap.is-on .skill-label { color: var(--fg); fill: var(--fg); }
 /* 섹션에 들어올 때 밝은 부분이 가운데서부터 차오름 */
 .panel.is-active .skill-wedge .fill { animation: wedge-grow .7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(150ms + var(--i, 0) * 50ms); }
 @keyframes wedge-grow { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -240,7 +241,7 @@ html[data-theme="editorial"] .panel .skills-body {
 .tip-desc { margin-top: 12px; color: var(--fg-2); line-height: 1.6; font-size: 10.5pt; }
 
 @media (max-width: 820px) {
-  html[data-theme="editorial"] .panel .skills-body { grid-template-columns: 1fr; gap: 24px; padding: calc(var(--top) + 24px) var(--gutter) 48px; align-items: start; }
+  html[data-theme="editorial"] .panel .skills-body { grid-template-columns: 1fr; justify-content: stretch; gap: 24px; padding: calc(var(--top) + 24px) var(--gutter) 48px; align-items: start; }
   .skill-chart { width: min(100%, 420px); }
   .skill-label text { font-size: 6.4px; }
   .skill-tip { width: min(240px, 70vw); }

@@ -608,7 +608,8 @@
     const row = (it = { name: '', level: 70, icon: 'idea', desc: '' }) => {
       const r = h('div', { className: 'skill-row' });
       const preview = h('span', { className: 'skill-icon-preview' });
-      const icon = h('select', { className: 'skill-icon-select', title: '아이콘' }, ...Object.entries(ICONS).map(([k, v]) => h('option', { value: k, textContent: v.label, selected: k === it.icon })));
+      const opts = (logo) => Object.entries(ICONS).filter(([, v]) => !!v.logo === logo).map(([k, v]) => h('option', { value: k, textContent: v.label, selected: k === it.icon }));
+      const icon = h('select', { className: 'skill-icon-select', title: '아이콘' }, h('optgroup', { label: '툴 로고' }, ...opts(true)), h('optgroup', { label: '아이콘' }, ...opts(false)));
       const setPreview = () => (preview.innerHTML = window.skillIconSvg ? window.skillIconSvg(icon.value, 18) : '');
       icon.addEventListener('change', () => { setPreview(); dirty = true; });
       setPreview();

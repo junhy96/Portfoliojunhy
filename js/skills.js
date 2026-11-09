@@ -1,6 +1,6 @@
 /**
  * 스킬 차트 — 둥근 조각(rose chart)
- * - 조각 하나 = 스킬 하나. 바깥 회색 칸은 100, 안쪽 밝은 부분이 숙련도만큼 차오름
+ * - 조각 하나 = 스킬 하나. 바깥 어두운 칸은 100, 안쪽 회청색 부분이 숙련도만큼 차오름
  * - 조각마다 아이콘 + 이름. 마우스를 올리면(휴대폰은 탭) 조각이 살짝 커지고 옆에 말풍선
  */
 const NS = 'http://www.w3.org/2000/svg';
@@ -65,7 +65,7 @@ export function renderSkillChart(root, skills) {
   const chart = svg('svg', { viewBox: '-112 -112 224 224', role: 'list', 'aria-label': '스킬 숙련도 차트' });
   const defs = svg('defs');
   const grad = svg('linearGradient', { id: 'skill-fill', x1: '-100', y1: '-100', x2: '100', y2: '100', gradientUnits: 'userSpaceOnUse' });
-  grad.append(svg('stop', { offset: '0', 'stop-color': '#f6f6f1' }), svg('stop', { offset: '1', 'stop-color': '#d9e6e2' }));
+  grad.append(svg('stop', { offset: '0', 'stop-color': '#55625f' }), svg('stop', { offset: '1', 'stop-color': '#323e3d' }));
   defs.append(grad);
   chart.append(defs);
 
@@ -95,9 +95,12 @@ export function renderSkillChart(root, skills) {
     const label = svg('g', { class: 'skill-label' + (onFill ? ' on-fill' : ''), transform: `translate(${lx.toFixed(2)} ${ly.toFixed(2)})` });
     wrap.append(label);
     const top = -blockH / 2;
-    const icon = svg('g', { transform: `translate(${-iconSize / 2} ${top}) scale(${iconSize / 24})` });
-    icon.innerHTML = (window.SKILL_ICONS?.[s.icon] || window.SKILL_ICONS?.idea || { body: '' }).body;
-    icon.setAttribute('class', 'skill-icon');
+    const ic = window.SKILL_ICONS?.[s.icon] || window.SKILL_ICONS?.idea || { body: '' };
+    // 로고는 24칸을 꽉 채워 그려져 있어서 선 아이콘과 크기가 맞게 조금 줄임
+    const k = ic.logo ? 0.84 : 1;
+    const icon = svg('g', { transform: `translate(${-iconSize / 2 + (iconSize * (1 - k)) / 2} ${top + (iconSize * (1 - k)) / 2}) scale(${(iconSize / 24) * k})` });
+    icon.innerHTML = ic.body;
+    icon.setAttribute('class', 'skill-icon' + (ic.logo ? ' is-logo' : ''));
     label.append(icon);
     lines.forEach((line, k) => {
       const t = svg('text', { y: (top + iconSize + 1.5 + (nameSize + 0.6) * (k + 1) - 1).toFixed(2), 'font-size': nameSize, 'text-anchor': 'middle' });
