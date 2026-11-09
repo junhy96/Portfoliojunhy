@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090834';
-import { PdfViewer } from './pdf-viewer.js?v=202611090834';
-import { renderSkillChart } from './skills.js?v=202611090834';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090834';
-import { initWorks } from './works.js?v=202611090834';
-import { initAnalytics } from './analytics.js?v=202611090834';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090843';
+import { PdfViewer } from './pdf-viewer.js?v=202611090843';
+import { renderSkillChart } from './skills.js?v=202611090843';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090843';
+import { initWorks } from './works.js?v=202611090843';
+import { initAnalytics } from './analytics.js?v=202611090843';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -104,6 +104,7 @@ function render({ settings: s, projects }) {
   const tl = timelineItems(s);
   const years = tl.map((x) => Math.floor(x._k / 100)).filter(Boolean);
   if (years.length) binds.timelineRange = years[0] === years[years.length - 1] ? String(years[0]) : `${years[0]} — ${years[years.length - 1]}`;
+  if (matchMedia('(hover: none)').matches) binds.worksIntro = String(binds.worksIntro || '').replace(/클릭하면/g, '누르면').replace(/클릭해/g, '눌러');
   $$('[data-bind]').forEach((n) => (n.textContent = binds[n.dataset.bind] ?? ''));
   $$('[data-bind-href="mailto"]').forEach((n) => {
     n.href = s.contact?.email ? `mailto:${s.contact.email}` : '#';
@@ -408,6 +409,7 @@ async function boot() {
   const dots = $$('.dots button');
   const total = $$('.panel').length;
   $('.pager-total').textContent = pad(total);
+  $('.m-total') && ($('.m-total').textContent = '/ ' + pad(total));
   // 왼쪽 레일: 페이지 번호 목록 + 진행 막대 + 지금 페이지 이름
   const railPages = $('.rail-pages');
   const railSteps = navLinks.map((a, k) => {
@@ -419,6 +421,27 @@ async function boot() {
     return b;
   });
   const railName = el('p', { className: 'rail-name' });
+  // 휴대폰 메뉴: 상단바의 페이지 표시를 누르면 열림
+  const mBtn = $('.m-pages');
+  const mMenu = $('#m-menu');
+  const mItems = navLinks.map((a, k) => {
+    const b = el('button', { type: 'button', className: 'm-menu-item' }, el('span', { className: 'm-menu-no', textContent: pad(k + 1) }), el('span', { textContent: a.lastChild?.textContent?.trim() || '' }));
+    b.dataset.go = k;
+    return el('li', {}, b);
+  });
+  $('#m-menu-list')?.replaceChildren(...mItems);
+  const mOpen = (open) => {
+    if (!mMenu || !mBtn) return;
+    mMenu.hidden = !open;
+    mBtn.setAttribute('aria-expanded', String(open));
+    document.body.classList.toggle('m-menu-open', open);
+    if (deck) deck.enabled = !open;
+  };
+  mBtn?.addEventListener('click', () => mOpen(mMenu.hidden));
+  mMenu?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-go]') || e.target === mMenu) mOpen(false);
+  });
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && !mMenu?.hidden && mOpen(false));
   if (railPages) {
     railPages.replaceChildren(el('i', { className: 'rail-track' }, el('i', { className: 'rail-fill' })), el('div', { className: 'rail-steps' }, ...railSteps), railName);
     railPages.style.setProperty('--n', total);
@@ -440,6 +463,10 @@ async function boot() {
     });
     railPages?.style.setProperty('--p', total > 1 ? i / (total - 1) : 1);
     railName.textContent = railSteps[i]?._name || '';
+    $('#m-num') && ($('#m-num').textContent = pad(i + 1));
+    $('#m-name') && ($('#m-name').textContent = railSteps[i]?._name || '');
+    $('#m-fill') && ($('#m-fill').style.width = ((i + 1) / total) * 100 + '%');
+    mItems.forEach((li, k) => li.firstChild.toggleAttribute('aria-current', k === i));
     railName.classList.remove('swap');
     void railName.offsetWidth; // 이름이 바뀔 때마다 등장 애니메이션 다시
     railName.classList.add('swap');

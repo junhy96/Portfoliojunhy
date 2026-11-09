@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611090834" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090834" />
+  <link rel="stylesheet" href="css/style.css?v=202611090843" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090843" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -49,7 +49,16 @@
       <a href="#contact" data-go="5"><span>06</span>Contact</a>
     </nav>
     <a class="topbar-mail small" data-bind-href="mailto" data-bind="email"></a>
+    <!-- 휴대폰: PC 왼쪽 레일의 페이지 표시를 상단바로. 누르면 페이지 목록 -->
+    <button class="m-pages" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="m-menu">
+      <span class="m-num" id="m-num">01</span><span class="m-total">/ 06</span><span class="m-name" id="m-name">Home</span>
+      <i class="m-bar"><i id="m-fill"></i></i>
+    </button>
   </header>
+  <nav class="m-menu" id="m-menu" aria-label="페이지" hidden>
+    <ol class="m-menu-list" id="m-menu-list"></ol>
+    <ul class="m-menu-links" data-list="links-icons"></ul>
+  </nav>
 
   <main class="deck" id="deck">
     <!-- ============================== 01 HOME ============================== -->
@@ -64,7 +73,7 @@
         <div class="ed-strip reveal" style="--d:3">
           <p class="ed-strip-label">Works</p>
           <ul class="ed-latest" data-list="works" data-variant="latest"></ul>
-          <button class="ed-more" data-go="4">View more</button>
+          <button class="ed-more" data-go="4">View more <span aria-hidden="true">→</span></button>
         </div>
       </div>
     </section>
@@ -148,7 +157,7 @@
       <div class="panel-body layout layout-editorial" data-scroll>
         <div class="ed-columns reveal">
           <div><h3>Email</h3><p class="small"><a data-bind-href="mailto" data-bind="email"></a></p></div>
-          <div><h3>Links</h3><ul class="small ed-linklist" data-list="links-plain"></ul></div>
+          <div><h3>Links</h3><ul class="small ed-linklist" data-list="links-plain"></ul><ul class="ed-linkicons" data-list="links-icons"></ul></div>
           <div><h3 data-bind="nameKo"></h3><p class="small" data-bind="contactMessage"></p></div>
         </div>
         <div class="ed-bottom">
@@ -221,7 +230,7 @@
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611090834"></script>
-  <script type="module" src="js/main.js?v=202611090834"></script>
+  <script src="js/icons.js?v=202611090843"></script>
+  <script type="module" src="js/main.js?v=202611090843"></script>
 </body>
 </html>
