@@ -1,8 +1,8 @@
 {
   "settings": {
     "analytics": {
-      "url": "",
-      "key": ""
+      "url": "https://cyfzjuhebdatahltvdza.supabase.co",
+      "key": "sb_publishable_kkojQbJumy-YLuj16fvD5w_hCW0LKz9"
     },
     "theme": "mono",
     "themeSwitcher": true,
@@ -171,5 +171,5 @@
       "updatedAt": "2026-08-01T09:00:00.000Z"
     }
   ],
-  "rev": 1794200159522
+  "rev": 1794201427170
 }
