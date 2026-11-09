@@ -4,6 +4,7 @@
       "url": "https://cyfzjuhebdatahltvdza.supabase.co",
       "key": "sb_publishable_kkojQbJumy-YLuj16fvD5w_hCW0LKz9"
     },
+    "forceDesktop": true,
     "siteTitle": "전현영 — Game Designer Portfolio",
     "nameKo": "전현영",
     "nameEn": "Jeon Hyun Young",
@@ -49,47 +50,78 @@
       ]
     },
     "worksIntro": "직접 기획하고 문서화한 프로젝트들입니다.\n항목을 클릭하면 기획서 PDF를 바로 볼 수 있습니다.",
-    "contact": {
-      "heading": "Thank You",
-      "message": "함께 재미를 만들 팀을 찾고 있습니다.\n편하게 연락 주세요.",
-      "email": "hello@example.com",
-      "links": [
-        {
-          "label": "Notion",
-          "url": "https://www.notion.so"
-        },
-        {
-          "label": "GitHub",
-          "url": "https://github.com"
-        },
-        {
-          "label": "LinkedIn",
-          "url": "https://www.linkedin.com"
-        }
-      ]
-    },
-    "images": {
-      "hero": {
-        "src": "uploads/preview/photo-hero.jpg",
-        "focusX": 0.62
+    "docTypes": [
+      "시스템 기획서",
+      "콘텐츠 기획서",
+      "레벨 디자인",
+      "밸런싱·데이터",
+      "UI·UX 기획서",
+      "역기획서",
+      "기타"
+    ],
+    "timelineHeading": "Timeline",
+    "timelineIntro": "교육과 인턴십, 프로젝트로 이어 온 길이에요.",
+    "timeline": [
+      {
+        "type": "교육",
+        "period": "2019.03 — 2023.02",
+        "title": "○○대학교 게임콘텐츠학과 졸업",
+        "org": "학사",
+        "desc": "게임 기획·레벨 디자인 전공 과목 이수, 졸업 작품으로 퍼즐 게임 기획",
+        "tasks": [
+          "게임 기획론·레벨 디자인 전공 과목 이수",
+          "졸업 작품 퍼즐 게임 기획·레벨 12종 제작",
+          "학과 게임잼 운영진"
+        ]
       },
-      "about": {
-        "src": "uploads/preview/photo-about.jpg",
-        "focusX": 0.66
+      {
+        "type": "인턴십",
+        "period": "2023.07 — 2023.12",
+        "title": "○○게임즈 기획 인턴",
+        "org": "라이브 서비스팀",
+        "desc": "이벤트 기획서 작성과 보상 테이블 정리, 패치 노트 검수를 맡았어요",
+        "tasks": [
+          "주간 이벤트 기획서 작성 (8건)",
+          "보상 테이블 정리와 수치 검수",
+          "패치 노트 작성·QA 체크리스트 관리"
+        ]
       },
-      "works": {
-        "src": "uploads/seed/photo-works.jpg",
-        "focusX": 0.6
+      {
+        "type": "프로젝트",
+        "period": "2026",
+        "title": "인디 팀 ‘Ashen Tide’ 전투 기획",
+        "org": "",
+        "desc": "전투 시스템 · 무기 밸런스 설계",
+        "tasks": [
+          "패링·스태미나 전투 규칙 설계",
+          "무기 12종 특성과 수치 밸런싱",
+          "전투 플레이테스트 피드백 정리"
+        ]
       },
-      "contact": {
-        "src": "uploads/preview/photo-contact.jpg",
-        "focusX": 0.5
+      {
+        "type": "수상",
+        "period": "2025",
+        "title": "게임잼 우수상",
+        "org": "",
+        "desc": "퍼즐 게임 ‘Lumen Trail’ 레벨 디자인",
+        "tasks": [
+          "48시간 팀 게임잼 기획 담당",
+          "퍼즐 레벨 8종 설계와 난이도 곡선 조정"
+        ]
       },
-      "skills": {
-        "src": null,
-        "focusX": 0.5
+      {
+        "type": "교육",
+        "period": "2024",
+        "title": "게임 기획 아카데미 수료",
+        "org": "",
+        "desc": "시스템 기획 과정",
+        "tasks": [
+          "시스템 기획서 작성 실습",
+          "Excel 밸런스 시뮬레이션 시트 제작",
+          "팀 프로젝트 기획 리드"
+        ]
       }
-    },
+    ],
     "skillsHeading": "Skills",
     "skillsIntro": "숫자가 클수록 자신 있는 분야예요.\n100은 혼자서 처음부터 끝까지 맡을 수 있는 수준입니다.",
     "skillChart": [
@@ -142,78 +174,51 @@
         "desc": "Figma로 화면 흐름과 와이어프레임을 그려 팀과 공유할 수 있어요."
       }
     ],
-    "timelineHeading": "Timeline",
-    "timelineIntro": "교육과 인턴십, 프로젝트로 이어 온 길이에요.",
-    "timeline": [
-      {
-        "period": "2019.03 — 2023.02",
-        "type": "교육",
-        "title": "○○대학교 게임콘텐츠학과 졸업",
-        "org": "학사",
-        "desc": "게임 기획·레벨 디자인 전공 과목 이수, 졸업 작품으로 퍼즐 게임 기획",
-        "tasks": [
-          "게임 기획론·레벨 디자인 전공 과목 이수",
-          "졸업 작품 퍼즐 게임 기획·레벨 12종 제작",
-          "학과 게임잼 운영진"
-        ]
+    "contact": {
+      "heading": "Thank You",
+      "message": "함께 재미를 만들 팀을 찾고 있습니다.\n편하게 연락 주세요.",
+      "email": "hello@example.com",
+      "links": [
+        {
+          "label": "Notion",
+          "url": "https://www.notion.so"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com"
+        },
+        {
+          "label": "LinkedIn",
+          "url": "https://www.linkedin.com"
+        }
+      ]
+    },
+    "images": {
+      "hero": {
+        "src": "uploads/preview/photo-hero.jpg",
+        "focusX": 0.62
       },
-      {
-        "period": "2023.07 — 2023.12",
-        "type": "인턴십",
-        "title": "○○게임즈 기획 인턴",
-        "org": "라이브 서비스팀",
-        "desc": "이벤트 기획서 작성과 보상 테이블 정리, 패치 노트 검수를 맡았어요",
-        "tasks": [
-          "주간 이벤트 기획서 작성 (8건)",
-          "보상 테이블 정리와 수치 검수",
-          "패치 노트 작성·QA 체크리스트 관리"
-        ]
+      "about": {
+        "src": "uploads/preview/photo-about.jpg",
+        "focusX": 0.66
       },
-      {
-        "period": "2026",
-        "type": "프로젝트",
-        "title": "인디 팀 ‘Ashen Tide’ 전투 기획",
-        "org": "",
-        "desc": "전투 시스템 · 무기 밸런스 설계",
-        "tasks": [
-          "패링·스태미나 전투 규칙 설계",
-          "무기 12종 특성과 수치 밸런싱",
-          "전투 플레이테스트 피드백 정리"
-        ]
+      "timeline": {
+        "src": null,
+        "focusX": 0.5
       },
-      {
-        "period": "2025",
-        "type": "수상",
-        "title": "게임잼 우수상",
-        "org": "",
-        "desc": "퍼즐 게임 ‘Lumen Trail’ 레벨 디자인",
-        "tasks": [
-          "48시간 팀 게임잼 기획 담당",
-          "퍼즐 레벨 8종 설계와 난이도 곡선 조정"
-        ]
+      "skills": {
+        "src": null,
+        "focusX": 0.5
       },
-      {
-        "period": "2024",
-        "type": "교육",
-        "title": "게임 기획 아카데미 수료",
-        "org": "",
-        "desc": "시스템 기획 과정",
-        "tasks": [
-          "시스템 기획서 작성 실습",
-          "Excel 밸런스 시뮬레이션 시트 제작",
-          "팀 프로젝트 기획 리드"
-        ]
+      "works": {
+        "src": "uploads/seed/photo-works.jpg",
+        "focusX": 0.6
+      },
+      "contact": {
+        "src": "uploads/preview/photo-contact.jpg",
+        "focusX": 0.5
       }
-    ],
-    "docTypes": [
-      "시스템 기획서",
-      "콘텐츠 기획서",
-      "레벨 디자인",
-      "밸런싱·데이터",
-      "UI·UX 기획서",
-      "역기획서",
-      "기타"
-    ]
+    }
   },
   "projects": [
     {
@@ -409,5 +414,5 @@
       "updatedAt": "2026-07-01T09:00:00.000Z"
     }
   ],
-  "rev": 1794201436985
+  "rev": 1794214697682
 }
