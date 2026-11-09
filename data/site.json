@@ -1,0 +1,169 @@
+{
+  "settings": {
+    "siteTitle": "이도하 — Game Designer Portfolio",
+    "nameEn": "LEE DOHA",
+    "nameKo": "이도하",
+    "role": "Game Designer",
+    "eyebrow": "Game Designer Portfolio — 2026",
+    "intro": "플레이어의 선택이 의미를 갖는 순간을 설계합니다.\n시스템 기획과 레벨 디자인을 중심으로, 숫자와 감정 사이의 균형을 찾는 게임 기획자입니다.",
+    "meta": [
+      {
+        "label": "Focus",
+        "value": "System · Level Design"
+      },
+      {
+        "label": "Tools",
+        "value": "Unity · Unreal · Excel"
+      },
+      {
+        "label": "Based in",
+        "value": "Seoul, KR"
+      },
+      {
+        "label": "Status",
+        "value": "Open to work"
+      }
+    ],
+    "about": {
+      "heading": "About Me",
+      "bio": "플레이 데이터와 플레이어의 감정을 함께 읽는 기획자가 되고 싶습니다.\n전투·경제 시스템 설계와 밸런싱, 퍼즐 레벨 디자인 프로젝트를 진행했고, 문서와 프로토타입으로 아이디어를 빠르게 검증하는 방식을 좋아합니다.",
+      "skills": [
+        "시스템 기획",
+        "레벨 디자인",
+        "밸런싱 · 데이터 테이블",
+        "전투 설계",
+        "UX 플로우",
+        "기획서 작성"
+      ],
+      "tools": [
+        "Unity",
+        "Unreal Engine",
+        "Excel",
+        "Notion",
+        "Figma",
+        "Jira"
+      ],
+      "experience": [
+        {
+          "period": "2026",
+          "title": "인디 팀 ‘Ashen Tide’ 전투 기획",
+          "desc": "전투 시스템 · 무기 밸런스 설계"
+        },
+        {
+          "period": "2025",
+          "title": "게임잼 우수상",
+          "desc": "퍼즐 게임 ‘Lumen Trail’ 레벨 디자인"
+        },
+        {
+          "period": "2024",
+          "title": "게임 기획 아카데미 수료",
+          "desc": "시스템 기획 과정"
+        }
+      ]
+    },
+    "worksIntro": "직접 기획하고 문서화한 프로젝트들입니다.\n항목을 클릭하면 기획서 PDF를 바로 볼 수 있습니다.",
+    "contact": {
+      "heading": "Thank You",
+      "message": "함께 재미를 만들 팀을 찾고 있습니다.\n편하게 연락 주세요.",
+      "email": "hello@example.com",
+      "links": [
+        {
+          "label": "Notion",
+          "url": "https://www.notion.so"
+        },
+        {
+          "label": "GitHub",
+          "url": "https://github.com"
+        },
+        {
+          "label": "LinkedIn",
+          "url": "https://www.linkedin.com"
+        }
+      ]
+    },
+    "images": {
+      "hero": {
+        "src": "uploads/seed/photo-hero.jpg",
+        "focusX": 0.7
+      },
+      "about": {
+        "src": "uploads/seed/photo-about.jpg",
+        "focusX": 0.72
+      },
+      "works": {
+        "src": "uploads/seed/photo-works.jpg",
+        "focusX": 0.6
+      },
+      "contact": {
+        "src": "uploads/seed/photo-contact.jpg",
+        "focusX": 0.5
+      }
+    }
+  },
+  "projects": [
+    {
+      "id": "seed-ashen",
+      "title": "Ashen Tide",
+      "subtitle": "전투 시스템 기획",
+      "category": "Action RPG",
+      "year": "2026",
+      "tags": [
+        "전투",
+        "밸런싱",
+        "패링"
+      ],
+      "summary": "패링과 스태미나 리스크를 중심으로 한 액션 RPG 전투 시스템 설계",
+      "description": "짧고 리드미컬한 공방 속에서 ‘읽고 반응하는’ 재미를 목표로 했습니다.\n무기별 DPS·스태미나·패링 윈도우를 테이블로 설계하고, 3회차 플레이테스트로 패링 성공률을 21%에서 47%까지 끌어올렸습니다.",
+      "thumb": "uploads/seed/cover-ashen.jpg",
+      "pdf": "uploads/seed/sample-ashen-tide.pdf",
+      "pdfName": "sample-ashen-tide.pdf",
+      "pdfSize": 252174,
+      "visible": true,
+      "createdAt": "2026-10-01T09:00:00.000Z",
+      "updatedAt": "2026-10-01T09:00:00.000Z"
+    },
+    {
+      "id": "seed-hollow",
+      "title": "Hollow Market",
+      "subtitle": "경제 시스템 · 밸런싱",
+      "category": "Simulation",
+      "year": "2025",
+      "tags": [
+        "경제",
+        "시뮬레이션",
+        "데이터"
+      ],
+      "summary": "수요·공급과 이벤트로 가격이 변하는 상점 운영 게임의 경제 설계",
+      "description": "가격 결정 공식을 설계하고 30일 플레이 구간의 골드 유입·유출을 시뮬레이션해 인플레이션을 억제했습니다.",
+      "thumb": "uploads/seed/cover-hollow.jpg",
+      "pdf": "uploads/seed/sample-hollow-market.pdf",
+      "pdfName": "sample-hollow-market.pdf",
+      "pdfSize": 227357,
+      "visible": true,
+      "createdAt": "2026-09-01T09:00:00.000Z",
+      "updatedAt": "2026-09-01T09:00:00.000Z"
+    },
+    {
+      "id": "seed-lumen",
+      "title": "Lumen Trail",
+      "subtitle": "퍼즐 레벨 디자인",
+      "category": "Puzzle Adventure",
+      "year": "2025",
+      "tags": [
+        "레벨 디자인",
+        "퍼즐",
+        "게임잼"
+      ],
+      "summary": "‘가르치고 → 확인하고 → 비틀기’ 구조의 퍼즐 레벨 디자인",
+      "description": "챕터마다 새 규칙 하나만 소개하도록 레벨 흐름을 설계하고, 클리어 시간과 힌트 사용률 데이터로 난이도 곡선을 조정했습니다.",
+      "thumb": "uploads/seed/cover-lumen.jpg",
+      "pdf": "uploads/seed/sample-lumen-trail.pdf",
+      "pdfName": "sample-lumen-trail.pdf",
+      "pdfSize": 262715,
+      "visible": true,
+      "createdAt": "2026-08-01T09:00:00.000Z",
+      "updatedAt": "2026-08-01T09:00:00.000Z"
+    }
+  ],
+  "rev": 0
+}

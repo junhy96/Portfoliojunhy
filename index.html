@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Game Designer Portfolio</title>
+  <meta name="description" content="게임 기획자 포트폴리오" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-section="hero">
+  <!-- 모핑 배경 -->
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div class="shade" aria-hidden="true"><i class="shade-side"></i><i class="shade-full"></i><i class="shade-bottom"></i></div>
+
+  <div class="loader" id="loader" aria-hidden="true">
+    <span class="loader-name" data-bind="nameKo"></span>
+    <span class="loader-bar"><i></i></span>
+  </div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" data-go="0">
+      <strong data-bind="nameKo"></strong>
+      <span class="small" data-bind="role"></span>
+    </a>
+    <nav class="nav" aria-label="섹션">
+      <a href="#home" data-go="0"><span>01</span>Home</a>
+      <a href="#about" data-go="1"><span>02</span>About</a>
+      <a href="#works" data-go="2"><span>03</span>Works</a>
+      <a href="#contact" data-go="3"><span>04</span>Contact</a>
+    </nav>
+    <a class="topbar-mail small" data-bind-href="mailto" data-bind="email"></a>
+  </header>
+
+  <main class="deck" id="deck">
+    <!-- 01 HERO -->
+    <section class="panel panel-hero" id="home" data-key="hero" aria-label="소개">
+      <div class="panel-body" data-scroll>
+        <div class="hero-main">
+          <p class="eyebrow small reveal" data-bind="eyebrow"></p>
+          <h1 class="name reveal" style="--d:1"><span data-bind="nameKo"></span></h1>
+          <p class="name-en small reveal" style="--d:2"><span data-bind="nameEn"></span><i></i><span data-bind="role"></span></p>
+          <p class="intro small reveal" style="--d:3" data-bind="intro"></p>
+          <button class="cta small reveal" style="--d:4" data-go="2">
+            <span>View Works</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg>
+          </button>
+        </div>
+        <dl class="hero-meta small" id="hero-meta"></dl>
+      </div>
+    </section>
+
+    <!-- 02 ABOUT -->
+    <section class="panel panel-about" id="about" data-key="about" aria-label="자기소개">
+      <div class="panel-body" data-scroll>
+        <div class="about-wrap">
+          <p class="section-no small reveal">02 — About</p>
+          <h2 class="section-title reveal" style="--d:1" data-bind="aboutHeading"></h2>
+          <p class="about-bio small reveal" style="--d:2" data-bind="bio"></p>
+          <div class="about-grid">
+            <div class="reveal" style="--d:3">
+              <h3 class="label small">Skills</h3>
+              <ul class="skill-list small" id="skills"></ul>
+            </div>
+            <div class="reveal" style="--d:4">
+              <h3 class="label small">Tools</h3>
+              <ul class="chip-list small" id="tools"></ul>
+            </div>
+            <div class="reveal about-exp" style="--d:5">
+              <h3 class="label small">Experience</h3>
+              <ol class="exp-list small" id="experience"></ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 WORKS -->
+    <section class="panel panel-works" id="works" data-key="works" aria-label="포트폴리오">
+      <div class="panel-body works-body">
+        <div class="works-head">
+          <div>
+            <p class="section-no small reveal">03 — Works</p>
+            <h2 class="section-title reveal" style="--d:1">Works <sup id="works-count"></sup></h2>
+          </div>
+          <div class="works-aside reveal" style="--d:2">
+            <p class="works-intro small" data-bind="worksIntro"></p>
+            <p class="works-preview small" id="works-preview-text" aria-hidden="true"></p>
+          </div>
+        </div>
+        <ol class="works-grid" id="works-list" data-scroll></ol>
+      </div>
+    </section>
+
+    <!-- 04 CONTACT -->
+    <section class="panel panel-contact" id="contact" data-key="contact" aria-label="연락처">
+      <div class="panel-body" data-scroll>
+        <div class="contact-wrap">
+          <p class="section-no small reveal">04 — Contact</p>
+          <h2 class="contact-title reveal" style="--d:1" data-bind="contactHeading"></h2>
+          <p class="contact-msg small reveal" style="--d:2" data-bind="contactMessage"></p>
+          <a class="contact-mail reveal" style="--d:3" data-bind-href="mailto" data-bind="email"></a>
+          <ul class="contact-links small reveal" style="--d:4" id="links"></ul>
+        </div>
+        <footer class="footer small">
+          <span>© <span id="year"></span> <span data-bind="nameEn"></span></span>
+          <button class="to-top" data-go="0">Back to top ↑</button>
+        </footer>
+      </div>
+    </section>
+  </main>
+
+  <div class="pager small" aria-hidden="true">
+    <span class="pager-cur" id="pager-cur">01</span>
+    <span class="pager-line"><i id="pager-fill"></i></span>
+    <span class="pager-total">04</span>
+  </div>
+  <div class="scroll-hint small" aria-hidden="true"><i></i>Scroll</div>
+  <nav class="dots" aria-label="섹션 이동">
+    <button data-go="0" aria-label="Home"></button>
+    <button data-go="1" aria-label="About"></button>
+    <button data-go="2" aria-label="Works"></button>
+    <button data-go="3" aria-label="Contact"></button>
+  </nav>
+
+  <!-- PDF 전체화면 뷰어 -->
+  <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-title" hidden>
+    <div class="viewer-bar">
+      <div class="viewer-info">
+        <p class="viewer-kicker small" id="viewer-kicker"></p>
+        <h2 class="viewer-title" id="viewer-title"></h2>
+        <p class="viewer-summary small" id="viewer-summary"></p>
+      </div>
+      <div class="viewer-tools small">
+        <button class="vbtn" data-act="desc" aria-expanded="false">설명</button>
+        <span class="viewer-page" id="viewer-page">– / –</span>
+        <span class="vgroup">
+          <button class="vbtn icon" data-act="zoom-out" aria-label="축소">−</button>
+          <span class="viewer-zoom" id="viewer-zoom">100%</span>
+          <button class="vbtn icon" data-act="zoom-in" aria-label="확대">+</button>
+        </span>
+        <button class="vbtn" data-act="fit">맞춤</button>
+        <a class="vbtn" data-act="download" id="viewer-download" download>다운로드</a>
+        <button class="vbtn close" data-act="close" aria-label="닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="viewer-desc" id="viewer-desc" hidden>
+      <div class="viewer-desc-inner">
+        <p class="small" id="viewer-description"></p>
+        <ul class="chip-list small" id="viewer-tags"></ul>
+      </div>
+    </div>
+    <div class="viewer-scroll" id="viewer-scroll" tabindex="0">
+      <div class="viewer-pages" id="viewer-pages"></div>
+      <p class="viewer-status small" id="viewer-status"></p>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
