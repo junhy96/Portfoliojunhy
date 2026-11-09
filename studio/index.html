@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="admin.css?v=202611090550" />
+  <link rel="stylesheet" href="admin.css?v=202611090555" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -192,6 +192,20 @@
           </div>
         </div>
 
+        <!-- 지원처별 링크 만들기 (로그인 없이 사용) -->
+        <div class="card linkmaker">
+          <div class="chart-head"><h3>지원처별 링크 만들기</h3><p class="muted sm">지원하는 곳마다 다른 링크를 주면, 이메일·PDF·카톡으로 열어도 어디서 봤는지 알 수 있어요</p></div>
+          <div class="linkmaker-row">
+            <label class="field"><span>지원처 이름 <small>영문·숫자 권장 (예: nexon, ncsoft, resume)</small></span><input id="tag-name" placeholder="nexon" autocomplete="off" spellcheck="false" maxlength="40" /></label>
+            <div class="linkmaker-out">
+              <input id="tag-link" readonly aria-label="만들어진 링크" />
+              <button type="button" class="btn primary" id="tag-copy" disabled>복사</button>
+            </div>
+          </div>
+          <p class="muted sm">꼬리표는 주소에 그대로 보여요. 회사 이름이 보이는 게 싫으면 a1, a2처럼 정하고 아래 메모에 적어두세요.</p>
+          <label class="field"><span>메모 <small>이 브라우저에만 저장</small></span><textarea id="tag-memo" rows="2" placeholder="a1 = 넥슨 시스템 기획 (11/9 지원)"></textarea></label>
+        </div>
+
         <!-- 처음 설정 안내 -->
         <div class="card stats-setup" id="stats-setup" hidden>
           <h3>처음 한 번만 설정하면 됩니다</h3>
@@ -219,6 +233,16 @@
         <!-- 대시보드 -->
         <div class="stats" id="stats-body" hidden>
           <div class="tiles" id="stats-tiles"></div>
+
+          <div class="card chart-card">
+            <div class="chart-head"><h3>지원처별 방문</h3><p class="muted sm">?from= 꼬리표 링크로 들어온 방문</p></div>
+            <div class="table-wrap">
+              <table class="visits sources">
+                <thead><tr><th>지원처</th><th class="num">방문자</th><th class="num">방문</th><th class="num">PDF 열람</th><th>연 PDF</th><th>마지막 방문</th></tr></thead>
+                <tbody id="table-sources"></tbody>
+              </table>
+            </div>
+          </div>
 
           <div class="stats-row wide">
             <div class="card chart-card">
@@ -275,7 +299,7 @@
             <div class="chart-head"><h3>최근 방문</h3><p class="muted sm">최근 30건</p></div>
             <div class="table-wrap">
               <table class="visits">
-                <thead><tr><th>시간</th><th>기기</th><th>유입</th><th>본 섹션</th><th>연 PDF</th><th class="num">클릭</th></tr></thead>
+                <thead><tr><th>시간</th><th>지원처</th><th>기기</th><th>유입</th><th>본 섹션</th><th>연 PDF</th><th class="num">클릭</th></tr></thead>
                 <tbody id="table-visits"></tbody>
               </table>
             </div>
@@ -373,8 +397,8 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="github.js?v=202611090550"></script>
-  <script src="admin.js?v=202611090550"></script>
-  <script src="stats.js?v=202611090550"></script>
+  <script src="github.js?v=202611090555"></script>
+  <script src="admin.js?v=202611090555"></script>
+  <script src="stats.js?v=202611090555"></script>
 </body>
 </html>

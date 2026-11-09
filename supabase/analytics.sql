@@ -15,7 +15,7 @@ create table if not exists public.events (
   theme      text check (char_length(theme) <= 20),
   x          real check (x between 0 and 1),                      -- 클릭 위치 (화면 비율)
   y          real check (y between 0 and 1),
-  target     text check (char_length(target) <= 120),             -- 누른 버튼·카드 이름, 연 PDF 제목
+  target     text check (char_length(target) <= 120),             -- 누른 버튼·카드 이름, 연 PDF 제목, 방문의 지원처 꼬리표(?from=)
   device     text check (device in ('desktop', 'tablet', 'mobile')),
   vw         int check (vw between 0 and 10000),
   vh         int check (vh between 0 and 10000),

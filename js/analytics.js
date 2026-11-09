@@ -6,6 +6,30 @@
  */
 const COLUMNS = ['visitor', 'session', 'type', 'section', 'theme', 'x', 'y', 'target', 'device', 'vw', 'vh', 'referrer', 'lang', 'tz'];
 const MAX_CLICKS = 300;
+const TAG_KEY = 'pf-from';
+
+/**
+ * 지원처 꼬리표: 주소의 ?from=nexon (또는 utm_source)
+ * 한 번 꼬리표 링크로 들어온 브라우저는 나중에 그냥 들어와도 같은 지원처로 집계
+ */
+export function cleanTag(raw) {
+  return String(raw || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}_-]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 40);
+}
+function sourceTag() {
+  const q = new URLSearchParams(location.search);
+  const now = cleanTag(q.get('from') || q.get('utm_source'));
+  try {
+    if (now) localStorage.setItem(TAG_KEY, now);
+    return now || localStorage.getItem(TAG_KEY) || null;
+  } catch {
+    return now || null;
+  }
+}
 
 function randomId() {
   return crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -72,7 +96,8 @@ export function initAnalytics(cfg) {
     const r = document.referrer && new URL(document.referrer);
     if (r && r.host !== location.host) referrer = r.host.replace(/^www\./, '');
   } catch {}
-  push({ type: 'view', referrer, lang: navigator.language || null, tz: Intl.DateTimeFormat().resolvedOptions().timeZone || null });
+  // 방문 기록의 target 칸에 지원처 꼬리표를 담음 (방문 기록에서는 비어 있던 칸)
+  push({ type: 'view', referrer, target: sourceTag(), lang: navigator.language || null, tz: Intl.DateTimeFormat().resolvedOptions().timeZone || null });
 
   // 본 섹션 (세션마다 섹션당 한 번)
   const seen = new Set();

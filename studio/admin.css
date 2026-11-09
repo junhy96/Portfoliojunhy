@@ -306,3 +306,11 @@ table.visits th.num { text-align: right; }
 .rank, .legend { padding: 0; }
 .stats-setup .steps { list-style: decimal; }
 .stats-row.wide { align-items: start; }
+
+/* 지원처별 링크 */
+.linkmaker { margin-bottom: 16px; }
+.linkmaker-row { display: grid; grid-template-columns: minmax(200px, 1fr) 2fr; gap: 16px; align-items: end; }
+.linkmaker-out { display: flex; gap: 8px; }
+.linkmaker-out input { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--fg-2); }
+table.visits td.tag { color: var(--fg); font-weight: 600; }
+@media (max-width: 900px) { .linkmaker-row { grid-template-columns: 1fr; } }

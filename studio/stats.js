@@ -214,6 +214,7 @@
     renderSections(cur);
     renderPdfs(cur);
     renderHeat();
+    renderSources(cur);
     renderVisits(cur);
   }
 
@@ -399,16 +400,16 @@
   function renderVisits(cur) {
     const bySession = new Map();
     cur.forEach((e) => {
-      if (!bySession.has(e.session)) bySession.set(e.session, { t: e.t, device: null, ref: null, sections: [], pdfs: [], clicks: 0 });
+      if (!bySession.has(e.session)) bySession.set(e.session, { t: e.t, device: null, ref: null, tag: null, sections: [], pdfs: [], clicks: 0 });
       const s = bySession.get(e.session);
-      if (e.type === 'view') Object.assign(s, { t: e.t, device: e.device, ref: e.referrer });
+      if (e.type === 'view') Object.assign(s, { t: e.t, device: e.device, ref: e.referrer, tag: e.target });
       if (e.type === 'section' && !s.sections.includes(e.section)) s.sections.push(e.section);
       if (e.type === 'pdf' && e.target && !s.pdfs.includes(e.target)) s.pdfs.push(e.target);
       if (e.type === 'click') s.clicks++;
     });
     const rows = [...bySession.values()].sort((a, b) => b.t - a.t).slice(0, 30);
     const tbody = $('#table-visits');
-    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 6, className: 'muted', textContent: '아직 기록이 없어요' })));
+    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 7, className: 'muted', textContent: '아직 기록이 없어요' })));
     const label = Object.fromEntries(SECTIONS.map(([k, l]) => [k, l]));
     const dev = Object.fromEntries(DEVICES);
     tbody.replaceChildren(
@@ -416,6 +417,7 @@
         h(
           'tr', {},
           h('td', { className: 'num', textContent: `${s.t.getMonth() + 1}.${s.t.getDate()} ${pad(s.t.getHours())}:${pad(s.t.getMinutes())}` }),
+          h('td', { className: s.tag ? 'tag' : '', textContent: s.tag || '—' }),
           h('td', { textContent: dev[s.device] || '—' }),
           h('td', { textContent: s.ref || '직접 방문' }),
           h('td', { textContent: s.sections.map((k) => label[k] || k).join(' → ') || '—' }),
@@ -425,6 +427,80 @@
       )
     );
   }
+
+  function renderSources(cur) {
+    // 방문(세션)마다 꼬리표를 붙이고, 같은 방문에서 연 PDF를 모음
+    const tagOf = new Map();
+    cur.filter((e) => e.type === 'view' && e.target).forEach((e) => tagOf.set(e.session, e.target));
+    const groups = new Map();
+    tagOf.forEach((tag, session) => {
+      if (!groups.has(tag)) groups.set(tag, { visitors: new Set(), sessions: new Set(), pdf: 0, pdfs: new Set(), last: null });
+      groups.get(tag).sessions.add(session);
+    });
+    cur.forEach((e) => {
+      const tag = tagOf.get(e.session);
+      if (!tag) return;
+      const g = groups.get(tag);
+      if (e.type === 'view') {
+        g.visitors.add(e.visitor);
+        if (!g.last || e.t > g.last) g.last = e.t;
+      }
+      if (e.type === 'pdf') {
+        g.pdf++;
+        if (e.target) g.pdfs.add(e.target);
+      }
+    });
+    const rows = [...groups.entries()].sort((a, b) => b[1].last - a[1].last);
+    const tbody = $('#table-sources');
+    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 6, className: 'muted', textContent: '아직 꼬리표 링크로 들어온 방문이 없어요. 위 ‘지원처별 링크 만들기’로 링크를 만들어 지원서에 넣어보세요' })));
+    tbody.replaceChildren(
+      ...rows.map(([tag, g]) =>
+        h(
+          'tr', {},
+          h('td', { className: 'tag', textContent: tag }),
+          h('td', { className: 'num', textContent: fmt(g.visitors.size) }),
+          h('td', { className: 'num', textContent: fmt(g.sessions.size) }),
+          h('td', { className: 'num', textContent: fmt(g.pdf) }),
+          h('td', { textContent: [...g.pdfs].join(', ') || '—' }),
+          h('td', { className: 'num', textContent: `${g.last.getMonth() + 1}.${g.last.getDate()} ${pad(g.last.getHours())}:${pad(g.last.getMinutes())}` })
+        )
+      )
+    );
+  }
+
+  /* ---------------- 지원처별 링크 만들기 ---------------- */
+  const SITE_URL = new URL('../', location.href).href;
+  const cleanTag = (raw) => String(raw || '').trim().toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  const tagName = $('#tag-name');
+  const tagLink = $('#tag-link');
+  const tagCopy = $('#tag-copy');
+  const updateLink = () => {
+    const tag = cleanTag(tagName.value);
+    tagLink.value = tag ? `${SITE_URL}?from=${encodeURIComponent(tag)}` : '';
+    tagLink.placeholder = `${SITE_URL}?from=…`;
+    tagCopy.disabled = !tag;
+  };
+  tagName.addEventListener('input', updateLink);
+  updateLink();
+  tagCopy.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(tagLink.value);
+    } catch {
+      tagLink.select();
+      document.execCommand('copy');
+    }
+    tagCopy.textContent = '복사됨';
+    setTimeout(() => (tagCopy.textContent = '복사'), 1500);
+  });
+  const memo = $('#tag-memo');
+  try {
+    memo.value = localStorage.getItem('studio-tag-memo') || '';
+  } catch {}
+  memo.addEventListener('input', () => {
+    try {
+      localStorage.setItem('studio-tag-memo', memo.value);
+    } catch {}
+  });
 
   /* ---------------- 클릭 히트맵 ---------------- */
   const REF = { desktop: [1440, 900], mobile: [390, 844] };
