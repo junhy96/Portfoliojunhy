@@ -1,6 +1,6 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090546';
-import { PdfViewer } from './pdf-viewer.js?v=202611090546';
-import { initAnalytics } from './analytics.js?v=202611090546';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090550';
+import { PdfViewer } from './pdf-viewer.js?v=202611090550';
+import { initAnalytics } from './analytics.js?v=202611090550';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -351,7 +351,10 @@ async function boot() {
   });
 
   // 첫 화면
-  const start = Math.max(0, $$('.panel').findIndex((p) => '#' + p.id === location.hash));
+  // 새로 들어오면 항상 첫 페이지부터 (주소에 #about 등이 남아 있어도 무시).
+  // 관리자 클릭 히트맵 미리보기(?embed)만 주소의 섹션으로 바로 감
+  const start = EMBED ? Math.max(0, $$('.panel').findIndex((p) => '#' + p.id === location.hash)) : 0;
+  if (!EMBED && location.hash) history.replaceState(null, '', location.pathname + location.search);
   state.section = $$('.panel')[start].dataset.key;
   await Promise.race([stage.load ? stage.load(sectionImage(state.section).src) : Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
   initAnalytics(settings.analytics);
