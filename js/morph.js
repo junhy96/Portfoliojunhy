@@ -36,7 +36,8 @@ uniform float uMode0;
 uniform float uMode1;
 uniform float uModeT;
 uniform float uPixel;
-uniform float uFlip;
+uniform float uFlip0;
+uniform float uFlip1;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -82,8 +83,8 @@ vec3 composite(vec2 uv) {
   ub = (ub - 0.5) * (1.0 + 0.06 * (1.0 - p)) + 0.5;
 
   float z = 1.0 - 0.02 * uMotion;
-  vec2 fa = uFlip > 0.5 ? vec2(1.0 - ua.x, ua.y) : ua;
-  vec2 fb = uFlip > 0.5 ? vec2(1.0 - ub.x, ub.y) : ub;
+  vec2 fa = uFlip0 > 0.5 ? vec2(1.0 - ua.x, ua.y) : ua;
+  vec2 fb = uFlip1 > 0.5 ? vec2(1.0 - ub.x, ub.y) : ub;
   vec2 ta = uSnap0 > 0.5 ? ua : cover((fa - 0.5) * z + 0.5 + par, uSize0, uFocus0);
   vec2 tb = cover((fb - 0.5) * z + 0.5 + par, uSize1, uFocus1);
 
@@ -200,7 +201,7 @@ export class MorphStage {
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.u = {};
-    ['uTex0', 'uTex1', 'uRes', 'uSize0', 'uSize1', 'uFocus0', 'uFocus1', 'uSnap0', 'uProgress', 'uTime', 'uMouse', 'uGrade', 'uMotion', 'uStrength', 'uMode0', 'uMode1', 'uModeT', 'uPixel', 'uFlip'].forEach(
+    ['uTex0', 'uTex1', 'uRes', 'uSize0', 'uSize1', 'uFocus0', 'uFocus1', 'uSnap0', 'uProgress', 'uTime', 'uMouse', 'uGrade', 'uMotion', 'uStrength', 'uMode0', 'uMode1', 'uModeT', 'uPixel', 'uFlip0', 'uFlip1'].forEach(
       (n) => (this.u[n] = gl.getUniformLocation(prog, n))
     );
     gl.uniform1i(this.u.uTex0, 0);
@@ -317,7 +318,8 @@ export class MorphStage {
 
   /** src 이미지로 모핑 전환 */
   async show(src, focus = 0.5, { duration = 1500, strength = 0.32, instant = false } = {}) {
-    const key = src + '|' + focus;
+    const flip = !!this.flip;
+    const key = src + '|' + focus + '|' + flip;
     this.requested = key;
     const t = await this.load(src);
     if (this.requested !== key) return; // 더 최신 요청이 있음
@@ -325,15 +327,15 @@ export class MorphStage {
     this.currentSrc = key;
 
     if (instant || (!this.anim && this.from.tex === this.blank.tex)) {
-      this.from = { ...t, focus, snap: false };
-      this.to = { ...t, focus };
+      this.from = { ...t, focus, flip, snap: false };
+      this.to = { ...t, focus, flip };
       this.progress = 0;
       this.anim = null;
       return;
     }
     if (this.anim) this._snapshot(); // 전환 중이면 현재 화면을 시작점으로
 
-    this.to = { ...t, focus };
+    this.to = { ...t, focus, flip };
     this.strength = strength;
     this.anim = { start: performance.now(), duration: reduceMotion ? 500 : duration };
     this.progress = 0;
@@ -374,7 +376,8 @@ export class MorphStage {
     gl.uniform1f(u.uGrade, grade ? 1 : 0);
     gl.uniform1f(u.uMotion, this.motion);
     gl.uniform1f(u.uStrength, this.strength || 0.32);
-    gl.uniform1f(u.uFlip, this.flip ? 1 : 0);
+    gl.uniform1f(u.uFlip0, this.from.flip && !this.from.snap ? 1 : 0);
+    gl.uniform1f(u.uFlip1, this.to.flip ? 1 : 0);
     gl.uniform1f(u.uMode0, this.modeFrom);
     gl.uniform1f(u.uMode1, this.modeTo);
     gl.uniform1f(u.uModeT, this.modeT);

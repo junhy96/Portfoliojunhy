@@ -32,9 +32,6 @@ function workItem(p, i, variant) {
       el('span', { className: 'ed-post-text', textContent: p.summary || p.subtitle || '' }),
       el('span', { className: 'ed-post-tags', textContent: (p.tags || []).slice(0, 3).map((t) => '#' + t.replace(/\s+/g, '')).join(' ') })
     );
-  } else if (variant === 'reel') {
-    // Editorial Works 유리 띠
-    btn = el('button', { className: 'work-card ed-reel-item', type: 'button' }, pic('ed-reel-img'), el('span', { className: 'ed-reel-no', textContent: pad(i + 1) }), el('b', { textContent: p.title }), el('small', { textContent: p.category || '' }));
   } else {
     // Mono: 썸네일 그리드 카드
     btn = el(
@@ -83,17 +80,9 @@ function render({ settings: s, projects }) {
         d.style.setProperty('--d', i);
         return d;
       }),
-    skills: (v) => (v === 'inline' ? [skills.join(' · ')] : skills.map((t) => el('li', { textContent: t }))),
-    tools: (v) =>
-      v === 'inline'
-        ? [tools.join(' · ')]
-        : v === 'inventory'
-          ? tools.map((t) => el('li', { textContent: t }))
-          : tools.map((t) => el('li', { textContent: t })),
-    experience: (v) =>
-      v === 'short'
-        ? exp.slice(0, 3).map((x) => el('li', {}, el('b', { textContent: x.period }), ' ', x.title))
-        : exp.map((x) => el('li', {}, el('time', { textContent: x.period }), el('div', {}, el('strong', { textContent: x.title }), el('span', { textContent: x.desc })))),
+    skills: () => skills.map((t) => el('li', { textContent: t })),
+    tools: () => tools.map((t) => el('li', { textContent: t })),
+    experience: () => exp.map((x) => el('li', {}, el('time', { textContent: x.period }), el('div', {}, el('strong', { textContent: x.title }), el('span', { textContent: x.desc })))),
     links: () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label + ' ↗' }))),
     'links-plain': () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label }))),
     'works-count': (v, node) => [node.tagName === 'SUP' ? `(${pad(projects.length)})` : pad(projects.length)],
@@ -299,12 +288,13 @@ async function boot() {
 
   // 섹션마다 보여줄 이미지. Pixel·Editorial의 Works는 선택된 작업의 썸네일
   const sectionImage = (key) => {
-    if (key === 'works' && state.theme !== 'mono' && projects.length) {
+    if (key === 'works' && state.theme === 'pixel' && projects.length) {
       return { src: thumbOf(projects[state.active]) || images.works?.src, focusX: 0.5 };
     }
     return images[key] || {};
   };
   const showSection = (opts) => {
+    stage.flip = state.theme === 'editorial' && state.section === 'hero';
     const im = sectionImage(state.section);
     stage.show(im.src, im.focusX ?? 0.5, opts);
   };
@@ -329,7 +319,7 @@ async function boot() {
     $$('[data-work]').forEach((n) => (n.textContent = fields[n.dataset.work] ?? ''));
     $$('.work-card[data-index]').forEach((c) => c.classList.toggle('is-current', Number(c.dataset.index) === i));
     $$('img.slot-img[data-img="active-work"]').forEach((img) => thumbOf(p) && (img.src = thumbOf(p)));
-    if (morph && state.section === 'works' && state.theme !== 'mono') showSection({ duration: 1100 });
+    if (morph && state.section === 'works' && state.theme === 'pixel') showSection({ duration: 1100 });
   };
   setActive(0, { morph: false });
 
@@ -344,7 +334,6 @@ async function boot() {
   const applyTheme = (theme, animate) => {
     state.theme = theme;
     root.dataset.theme = theme;
-    stage.flip = theme === 'editorial';
     stage.setMode(THEMES[theme], { instant: !animate });
     $$('button', switcher).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === theme)));
     hostCanvas();
@@ -401,12 +390,12 @@ async function boot() {
   const hover = (i) => {
     clearTimeout(hoverTimer);
     hoverTimer = setTimeout(() => {
-      if (state.section !== 'works' && state.theme === 'mono') return;
-      if (state.theme !== 'mono') {
+      if (state.section !== 'works' && state.theme !== 'pixel') return;
+      if (state.theme === 'pixel') {
         if (i != null && i !== state.active) setActive(i);
         return;
       }
-      // Mono: 배경 전체가 커버로 모핑되고, 목록에서 벗어나면 원래 사진으로
+      // Mono·Editorial: 배경 전체가 커버로 모핑되고, 목록에서 벗어나면 원래 사진으로
       const p = projects[i];
       document.body.classList.toggle('is-previewing', !!p);
       if (p) stage.show(thumbOf(p) || images.works?.src, 0.5, { duration: 1200 });
@@ -426,12 +415,6 @@ async function boot() {
   document.addEventListener('click', (e) => {
     const b = e.target.closest('.work-card[data-index]');
     if (b) {
-      // Editorial 첫 화면의 최근 작업은 Works로 이동하며 선택
-      if (b.closest('.panel-hero')) {
-        setActive(Number(b.dataset.index), { morph: false });
-        deck.go(2);
-        return;
-      }
       return viewer.open(projects[b.dataset.index], b);
     }
     const open = e.target.closest('[data-open-active]');

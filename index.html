@@ -63,7 +63,7 @@
     <!-- ============================== 01 HOME ============================== -->
     <section class="panel panel-hero" id="home" data-key="hero" aria-label="소개">
       <!-- Mono -->
-      <div class="panel-body layout layout-mono" data-scroll>
+      <div class="panel-body layout layout-mono" data-themes="mono" data-scroll>
         <div class="hero-main">
           <p class="eyebrow small reveal" data-bind="eyebrow"></p>
           <h1 class="name reveal" style="--d:1"><span data-bind="nameKo"></span></h1>
@@ -77,7 +77,7 @@
       </div>
 
       <!-- Pixel: 큰 도트 제목 → 이미지 박스(소개글·버튼) → 아이콘 바 -->
-      <div class="panel-body layout layout-pixel" data-scroll>
+      <div class="panel-body layout layout-pixel" data-themes="pixel" data-scroll>
         <h1 class="px-title reveal"><span class="px-title-ko" data-bind="nameKo"></span> <span class="px-title-en">Portfolio</span></h1>
         <div class="px-feature reveal" style="--d:1">
           <div class="morph-slot"><img class="slot-img" data-img="hero" alt="" /></div>
@@ -94,7 +94,7 @@
       </div>
 
       <!-- Editorial: 카운터 · 오른쪽 초대형 이름 · 하단 유리 띠(최근 작업) -->
-      <div class="panel-body layout layout-editorial" data-scroll>
+      <div class="panel-body layout layout-editorial" data-themes="editorial" data-scroll>
         <div class="ed-hero-name reveal" style="--d:1">
           <p class="ed-kicker small"><span data-bind="nameKo"></span> · <span data-bind="role"></span></p>
           <h1 class="ed-name" data-bind="nameEnLines"></h1>
@@ -110,8 +110,8 @@
 
     <!-- ============================== 02 ABOUT ============================== -->
     <section class="panel panel-about" id="about" data-key="about" aria-label="자기소개">
-      <!-- Mono -->
-      <div class="panel-body layout layout-mono" data-scroll>
+      <!-- Mono · Editorial (Mono 구성을 Editorial 색·글꼴로) -->
+      <div class="panel-body layout layout-mono" data-themes="mono editorial" data-scroll>
         <div class="about-wrap">
           <p class="section-no small reveal">02 — About</p>
           <h2 class="section-title reveal" style="--d:1" data-bind="aboutHeading"></h2>
@@ -134,7 +134,7 @@
       </div>
 
       <!-- Pixel: 프로필 카드 + 상태창(소개 · 인벤토리 · 퀘스트 로그) -->
-      <div class="panel-body layout layout-pixel" data-scroll>
+      <div class="panel-body layout layout-pixel" data-themes="pixel" data-scroll>
         <p class="px-tab reveal">about me</p>
         <div class="px-about">
           <div class="px-card reveal" style="--d:1">
@@ -165,27 +165,12 @@
         </div>
       </div>
 
-      <!-- Editorial: 상단 칼럼 3개 · 하단 초대형 제목 + 소개 -->
-      <div class="panel-body layout layout-editorial" data-scroll>
-        <div class="ed-columns reveal">
-          <div><h3>Skills</h3><p class="small" data-list="skills" data-variant="inline"></p></div>
-          <div><h3>Tools</h3><p class="small" data-list="tools" data-variant="inline"></p></div>
-          <div><h3>Experience</h3><ul class="small ed-exp" data-list="experience" data-variant="short"></ul></div>
-        </div>
-        <div class="ed-bottom">
-          <h2 class="ed-giant reveal" style="--d:1" data-bind="aboutHeading"></h2>
-          <div class="ed-aside reveal" style="--d:2">
-            <p class="ed-kicker small"><span data-bind="nameKo"></span> · <span data-bind="role"></span></p>
-            <p class="small" data-bind="bio"></p>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ============================== 03 WORKS ============================== -->
     <section class="panel panel-works" id="works" data-key="works" aria-label="포트폴리오">
-      <!-- Mono -->
-      <div class="panel-body layout layout-mono works-body">
+      <!-- Mono · Editorial (Mono 구성을 Editorial 색·글꼴로) -->
+      <div class="panel-body layout layout-mono works-body" data-themes="mono editorial">
         <div class="works-head">
           <div>
             <p class="section-no small reveal">03 — Works</p>
@@ -200,7 +185,7 @@
       </div>
 
       <!-- Pixel: 큰 카드(선택된 작업) + 썸네일 그리드 -->
-      <div class="panel-body layout layout-pixel" data-scroll>
+      <div class="panel-body layout layout-pixel" data-themes="pixel" data-scroll>
         <div class="px-tabrow reveal">
           <p class="px-tab">best works</p>
           <p class="px-count small"><span data-list="works-count"></span> works</p>
@@ -219,25 +204,12 @@
         <p class="px-summary small reveal" style="--d:3" data-work="summary"></p>
       </div>
 
-      <!-- Editorial: 선택된 작업 대형 타이틀 · 하단 유리 띠(전체 작업) -->
-      <div class="panel-body layout layout-editorial" data-scroll>
-        <div class="ed-work reveal">
-          <p class="ed-kicker small"><span data-work="no"></span> — <span data-work="meta"></span></p>
-          <h2 class="ed-giant ed-work-title" data-work="title"></h2>
-          <p class="ed-intro small" data-work="summary"></p>
-          <button class="ed-link small" data-open-active>read the pdf →</button>
-        </div>
-        <div class="ed-strip ed-strip-works reveal" style="--d:2">
-          <p class="ed-strip-label">All works <span data-list="works-count"></span></p>
-          <ol class="ed-reel" data-list="works" data-variant="reel"></ol>
-        </div>
-      </div>
     </section>
 
     <!-- ============================== 04 CONTACT ============================== -->
     <section class="panel panel-contact" id="contact" data-key="contact" aria-label="연락처">
       <!-- Mono -->
-      <div class="panel-body layout layout-mono" data-scroll>
+      <div class="panel-body layout layout-mono" data-themes="mono" data-scroll>
         <div class="contact-wrap">
           <p class="section-no small reveal">04 — Contact</p>
           <h2 class="contact-title reveal" style="--d:1" data-bind="contactHeading"></h2>
@@ -252,7 +224,7 @@
       </div>
 
       <!-- Pixel: 큰 도트 제목 + 이미지 박스 + 말풍선 -->
-      <div class="panel-body layout layout-pixel" data-scroll>
+      <div class="panel-body layout layout-pixel" data-themes="pixel" data-scroll>
         <h2 class="px-title px-title-sm reveal" data-bind="contactHeading"></h2>
         <div class="px-contact">
           <div class="px-card reveal" style="--d:1">
@@ -271,7 +243,7 @@
       </div>
 
       <!-- Editorial: 상단 칼럼 · 하단 초대형 제목 -->
-      <div class="panel-body layout layout-editorial" data-scroll>
+      <div class="panel-body layout layout-editorial" data-themes="editorial" data-scroll>
         <div class="ed-columns reveal">
           <div><h3>Email</h3><p class="small"><a data-bind-href="mailto" data-bind="email"></a></p></div>
           <div><h3>Links</h3><ul class="small ed-linklist" data-list="links-plain"></ul></div>

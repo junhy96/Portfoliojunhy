@@ -384,9 +384,9 @@ body.viewer-open .topbar, body.viewer-open .pager, body.viewer-open .scroll-hint
    스타일(테마) 공통 — 기본은 Mono
    ========================================================= */
 /* 현재 스타일의 레이아웃만 보임 */
-html:not([data-theme="mono"]) .layout-mono,
-html:not([data-theme="pixel"]) .layout-pixel,
-html:not([data-theme="editorial"]) .layout-editorial { display: none !important; }
+html[data-theme="mono"] .layout:not([data-themes~="mono"]),
+html[data-theme="pixel"] .layout:not([data-themes~="pixel"]),
+html[data-theme="editorial"] .layout:not([data-themes~="editorial"]) { display: none !important; }
 .px-panel, .rail, .pager-btn { display: none; }
 html:not([data-theme="pixel"]) .brand-sprite,
 html:not([data-theme="pixel"]) .nav-icon { display: none !important; }
