@@ -194,7 +194,7 @@ body.is-ready .loader { opacity: 0; visibility: hidden; }
 .panel-about .layout-mono { display: flex; align-items: center; }
 .about-wrap { width: min(760px, 62vw); }
 .about-bio { margin-top: 28px; color: var(--fg-2); max-width: 40em; white-space: pre-line; }
-.about-grid { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 36px; }
+.about-grid { margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 760px; }
 .skill-list li { padding: 4px 0; color: var(--fg); }
 .skill-list li::before { content: "—"; color: var(--fg-3); margin-right: 12px; }
 .chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -341,8 +341,6 @@ body.viewer-open .topbar, body.viewer-open .pager, body.viewer-open .scroll-hint
 /* ---------- 반응형 ---------- */
 @media (max-width: 1080px) {
   .about-wrap { width: 100%; }
-  .about-grid { grid-template-columns: 1fr 1fr; }
-  .about-exp { grid-column: 1 / -1; }
   .shade-side { background: linear-gradient(90deg, rgba(8,8,8,.9) 0%, rgba(8,8,8,.55) 55%, rgba(8,8,8,.15) 100%); }
 }
 @media (max-width: 820px) {
@@ -428,3 +426,10 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
 /* 예전 페이지(HTML)가 브라우저에 남아 있어도 지운 스타일의 조각이 보이지 않게 */
 .layout-pixel, .layout[data-themes="mono"], .px-panel, .theme-switch, .theme-veil,
 .brand-sprite, .nav-icon { display: none !important; }
+
+/* 안내 문구: 마우스 / 터치 화면에 맞는 것만 */
+.hint-touch { display: none; }
+@media (hover: none) {
+  .hint-mouse { display: none; }
+  .hint-touch { display: inline; }
+}

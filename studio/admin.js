@@ -567,9 +567,10 @@
   const SLOTS = [
     ['hero', '01 Home'],
     ['about', '02 About'],
-    ['skills', '03 Skills'],
-    ['works', '04 Works'],
-    ['contact', '05 Contact'],
+    ['timeline', '03 Timeline'],
+    ['skills', '04 Skills'],
+    ['works', '05 Works'],
+    ['contact', '06 Contact'],
   ];
   sForm.addEventListener('input', () => (dirty = true));
 
@@ -600,6 +601,38 @@
     $$('.rep-row', el)
       .map((r) => Object.fromEntries($$('input', r).map((i) => [i.dataset.key, i.value.trim()])))
       .filter((o) => Object.values(o).some(Boolean));
+
+  /* --- 타임라인(연혁) 편집기 --- */
+  const TL_TYPES = ['교육', '인턴십', '경력', '프로젝트', '수상', '자격증', '활동', '기타'];
+  function tlEditor(items) {
+    const box = $('#tl-editor');
+    const row = (it = {}) => {
+      const r = h('div', { className: 'tl-row' });
+      const type = h('select', { title: '구분' }, ...TL_TYPES.map((t) => h('option', { value: t, textContent: t, selected: t === (it.type || '교육') })));
+      const period = h('input', { value: it.period || '', placeholder: '기간 (예: 2023.07 — 2023.12)', maxLength: 40 });
+      const title = h('input', { value: it.title || '', placeholder: '제목 (예: ○○게임즈 기획 인턴)', maxLength: 60 });
+      const org = h('input', { value: it.org || '', placeholder: '기관 · 소속 (선택)', maxLength: 60 });
+      const desc = h('textarea', { value: it.desc || '', placeholder: '한두 줄 설명 (선택)', maxLength: 200, rows: 2 });
+      const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
+      del.onclick = () => { r.remove(); dirty = true; };
+      [type, period, title, org, desc].forEach((n, k) => (n.dataset.key = ['type', 'period', 'title', 'org', 'desc'][k]));
+      type.addEventListener('change', () => (dirty = true));
+      r.append(type, period, title, org, desc, del);
+      return r;
+    };
+    const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 연혁 추가' });
+    add.onclick = () => {
+      if ($$('.tl-row', box).length >= 30) return toast('연혁은 30개까지 넣을 수 있어요.', true);
+      box.insertBefore(row(), add);
+      dirty = true;
+    };
+    box.replaceChildren(...items.map(row), add);
+  }
+  function readTimeline() {
+    return $$('#tl-editor .tl-row')
+      .map((r) => Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()])))
+      .filter((x) => x.title || x.period);
+  }
 
   /* --- 스킬 차트 편집기 --- */
   const ICONS = window.SKILL_ICONS || {};
@@ -670,7 +703,9 @@
     f.skillsHeading.value = s.skillsHeading || 'Skills';
     f.skillsIntro.value = s.skillsIntro || '';
     skillEditor(s.skillChart || []);
-    repeater($('#rep-exp'), s.about?.experience || [], [['period', '연도'], ['title', '제목'], ['desc', '설명']], 'exp', '경력 추가');
+    f.timelineHeading.value = s.timelineHeading || 'Timeline';
+    f.timelineIntro.value = s.timelineIntro || '';
+    tlEditor(Array.isArray(s.timeline) ? s.timeline : s.about?.experience || []);
     repeater($('#rep-links'), s.contact?.links || [], [['label', '이름 (예: Notion)'], ['url', 'https://']], 'links', '링크 추가');
 
     Object.keys(slotFiles).forEach((k) => delete slotFiles[k]);
@@ -733,9 +768,11 @@
         bio: f.bio.value.trim(),
         skills: list(f.skills.value),
         tools: list(f.tools.value),
-        experience: readRepeater($('#rep-exp')),
       },
       worksIntro: f.worksIntro.value.trim(),
+      timelineHeading: f.timelineHeading.value.trim() || 'Timeline',
+      timelineIntro: f.timelineIntro.value.trim(),
+      timeline: readTimeline(),
       skillsHeading: f.skillsHeading.value.trim() || 'Skills',
       skillsIntro: f.skillsIntro.value.trim(),
       skillChart: readSkills(),

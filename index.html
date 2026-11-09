@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611090633" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090633" />
+  <link rel="stylesheet" href="css/style.css?v=202611090648" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090648" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -42,9 +42,10 @@
     <nav class="nav" aria-label="섹션">
       <a href="#home" data-go="0"><span>01</span>Home</a>
       <a href="#about" data-go="1"><span>02</span>About</a>
-      <a href="#skills" data-go="2"><span>03</span>Skills</a>
-      <a href="#works" data-go="3"><span>04</span>Works</a>
-      <a href="#contact" data-go="4"><span>05</span>Contact</a>
+      <a href="#timeline" data-go="2"><span>03</span>Timeline</a>
+      <a href="#skills" data-go="3"><span>04</span>Skills</a>
+      <a href="#works" data-go="4"><span>05</span>Works</a>
+      <a href="#contact" data-go="5"><span>06</span>Contact</a>
     </nav>
     <a class="topbar-mail small" data-bind-href="mailto" data-bind="email"></a>
   </header>
@@ -62,7 +63,7 @@
         <div class="ed-strip reveal" style="--d:3">
           <p class="ed-strip-label">Works</p>
           <ul class="ed-latest" data-list="works" data-variant="latest"></ul>
-          <button class="ed-more" data-go="3">View more</button>
+          <button class="ed-more" data-go="4">View more</button>
         </div>
       </div>
     </section>
@@ -84,36 +85,49 @@
               <h3 class="label small">Tools</h3>
               <ul class="chip-list small" data-list="tools"></ul>
             </div>
-            <div class="reveal about-exp" style="--d:5">
-              <h3 class="label small">Experience</h3>
-              <ol class="exp-list small" data-list="experience"></ol>
-            </div>
           </div>
         </div>
       </div>
 
     </section>
 
-    <!-- ============================== 03 SKILLS ============================== -->
+    <!-- ============================== 03 TIMELINE ============================== -->
+    <section class="panel panel-timeline" id="timeline" data-key="timeline" aria-label="연혁">
+      <div class="panel-body layout timeline-body">
+        <div class="tl-head">
+          <div>
+            <p class="section-no small reveal">03 — Timeline</p>
+            <h2 class="section-title reveal" style="--d:1" data-bind="timelineHeading"></h2>
+          </div>
+          <div class="tl-head-side">
+            <p class="tl-intro small reveal" style="--d:2" data-bind="timelineIntro"></p>
+            <p class="tl-hint small reveal" style="--d:3"><span data-bind="timelineRange"></span><span class="hint-mouse">휠을 내리면 옆으로 이어져요</span><span class="hint-touch">위로 밀거나 옆으로 넘겨 보세요</span></p>
+          </div>
+        </div>
+        <div class="tl" id="timeline-track" data-hscroll tabindex="0" aria-label="연혁. 방향키로 옆으로 넘겨 볼 수 있어요"></div>
+      </div>
+    </section>
+
+    <!-- ============================== 04 SKILLS ============================== -->
     <section class="panel panel-skills" id="skills" data-key="skills" aria-label="스킬">
       <div class="panel-body layout skills-body" data-scroll>
         <div class="skills-head">
-          <p class="section-no small reveal">03 — Skills</p>
+          <p class="section-no small reveal">04 — Skills</p>
           <h2 class="section-title reveal" style="--d:1" data-bind="skillsHeading"></h2>
           <p class="skills-intro small reveal" style="--d:2" data-bind="skillsIntro"></p>
-          <p class="skills-hint small reveal" style="--d:3">조각에 마우스를 올리면 어느 정도 다룰 수 있는지 볼 수 있어요</p>
+          <p class="skills-hint small reveal" style="--d:3"><span class="hint-mouse">조각에 마우스를 올리면 어느 정도 다룰 수 있는지 볼 수 있어요</span><span class="hint-touch">조각을 누르면 어느 정도 다룰 수 있는지 볼 수 있어요</span></p>
         </div>
         <div class="skill-chart reveal" style="--d:2" id="skill-chart"></div>
       </div>
     </section>
 
-    <!-- ============================== 04 WORKS ============================== -->
+    <!-- ============================== 05 WORKS ============================== -->
     <section class="panel panel-works" id="works" data-key="works" aria-label="포트폴리오">
       <!-- About·Works: 간결한 구성 (Editorial 색·글꼴) -->
       <div class="panel-body layout layout-mono works-body">
         <div class="works-head">
           <div>
-            <p class="section-no small reveal">04 — Works</p>
+            <p class="section-no small reveal">05 — Works</p>
             <h2 class="section-title reveal" style="--d:1">Works <sup data-list="works-count"></sup></h2>
           </div>
           <div class="works-aside reveal" style="--d:2">
@@ -126,7 +140,7 @@
 
     </section>
 
-    <!-- ============================== 05 CONTACT ============================== -->
+    <!-- ============================== 06 CONTACT ============================== -->
     <section class="panel panel-contact" id="contact" data-key="contact" aria-label="연락처">
       <!-- Editorial: 상단 칼럼 · 하단 초대형 제목 -->
       <div class="panel-body layout layout-editorial" data-scroll>
@@ -149,7 +163,7 @@
   <div class="pager small">
     <span class="pager-cur" id="pager-cur">01</span>
     <span class="pager-line"><i id="pager-fill"></i></span>
-    <span class="pager-total">05</span>
+    <span class="pager-total">06</span>
     <button class="pager-btn" data-step="-1" aria-label="이전 섹션">‹</button>
     <button class="pager-btn" data-step="1" aria-label="다음 섹션">›</button>
   </div>
@@ -157,9 +171,10 @@
   <nav class="dots" aria-label="섹션 이동">
     <button data-go="0" aria-label="Home"></button>
     <button data-go="1" aria-label="About"></button>
-    <button data-go="2" aria-label="Skills"></button>
-    <button data-go="3" aria-label="Works"></button>
-    <button data-go="4" aria-label="Contact"></button>
+    <button data-go="2" aria-label="Timeline"></button>
+    <button data-go="3" aria-label="Skills"></button>
+    <button data-go="4" aria-label="Works"></button>
+    <button data-go="5" aria-label="Contact"></button>
   </nav>
 
 
@@ -198,7 +213,7 @@
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611090633"></script>
-  <script type="module" src="js/main.js?v=202611090633"></script>
+  <script src="js/icons.js?v=202611090648"></script>
+  <script type="module" src="js/main.js?v=202611090648"></script>
 </body>
 </html>

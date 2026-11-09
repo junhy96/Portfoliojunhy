@@ -6,7 +6,7 @@
   const AUTH_KEY = 'studio-supabase';
   const DAY = 864e5;
   const WEEK = ['월', '화', '수', '목', '금', '토', '일'];
-  const SECTIONS = [['hero', 'Home', 'home'], ['about', 'About', 'about'], ['skills', 'Skills', 'skills'], ['works', 'Works', 'works'], ['contact', 'Contact', 'contact']];
+  const SECTIONS = [['hero', 'Home', 'home'], ['about', 'About', 'about'], ['timeline', 'Timeline', 'timeline'], ['skills', 'Skills', 'skills'], ['works', 'Works', 'works'], ['contact', 'Contact', 'contact']];
   const DEVICES = [['desktop', 'PC'], ['tablet', '태블릿'], ['mobile', '모바일']];
   // 차트 색: 크기 = 파랑 한 가지, 기기 비율만 구분용 3색 (어두운 배경용 단계)
   const C = { bar: '#3987e5', grid: 'rgba(240,240,238,.08)', axis: '#85858b', cat: ['#3987e5', '#d95926', '#199e70'], zero: '#1c1c1c', lo: [24, 79, 149], hi: [134, 182, 239] };

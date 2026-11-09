@@ -1,7 +1,8 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090633';
-import { PdfViewer } from './pdf-viewer.js?v=202611090633';
-import { renderSkillChart } from './skills.js?v=202611090633';
-import { initAnalytics } from './analytics.js?v=202611090633';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090648';
+import { PdfViewer } from './pdf-viewer.js?v=202611090648';
+import { renderSkillChart } from './skills.js?v=202611090648';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090648';
+import { initAnalytics } from './analytics.js?v=202611090648';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -65,7 +66,13 @@ function render({ settings: s, projects }) {
     year: new Date().getFullYear(),
     skillsHeading: s.skillsHeading || 'Skills',
     skillsIntro: s.skillsIntro || '',
+    timelineHeading: s.timelineHeading || 'Timeline',
+    timelineIntro: s.timelineIntro || '',
+    timelineRange: '',
   };
+  const tl = timelineItems(s);
+  const years = tl.map((x) => Math.floor(x._k / 100)).filter(Boolean);
+  if (years.length) binds.timelineRange = years[0] === years[years.length - 1] ? String(years[0]) : `${years[0]} — ${years[years.length - 1]}`;
   $$('[data-bind]').forEach((n) => (n.textContent = binds[n.dataset.bind] ?? ''));
   $$('[data-bind-href="mailto"]').forEach((n) => {
     n.href = s.contact?.email ? `mailto:${s.contact.email}` : '#';
@@ -75,7 +82,6 @@ function render({ settings: s, projects }) {
   const links = (s.contact?.links || []).filter((l) => /^https?:\/\//i.test(l.url));
   const skills = s.about?.skills || [];
   const tools = s.about?.tools || [];
-  const exp = s.about?.experience || [];
   const lists = {
     meta: () =>
       (s.meta || []).map((m, i) => {
@@ -85,7 +91,6 @@ function render({ settings: s, projects }) {
       }),
     skills: () => skills.map((t) => el('li', { textContent: t })),
     tools: () => tools.map((t) => el('li', { textContent: t })),
-    experience: () => exp.map((x) => el('li', {}, el('time', { textContent: x.period }), el('div', {}, el('strong', { textContent: x.title }), el('span', { textContent: x.desc })))),
     links: () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label + ' ↗' }))),
     'links-plain': () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label }))),
     'works-count': (v, node) => [node.tagName === 'SUP' ? `(${pad(projects.length)})` : pad(projects.length)],
@@ -100,6 +105,7 @@ function render({ settings: s, projects }) {
   });
 
   renderSkillChart($('#skill-chart'), s.skillChart);
+  renderTimeline($('#timeline-track'), tl);
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
   $$('img.slot-img[data-img]').forEach((img) => {
@@ -163,12 +169,16 @@ class Deck {
   go(i, { animate = true } = {}) {
     i = Math.max(0, Math.min(this.panels.length - 1, i));
     if (i === this.index && animate) return;
+    const prev = this.index;
     this.index = i;
     this.navTime = performance.now();
     this.lockUntil = this.navTime + 1000;
     this._apply(animate);
     const panel = this.panels[i];
-    this.panels.forEach((p, k) => p.classList.toggle('is-active', k === i));
+    this.panels.forEach((p, k) => {
+      p.classList.toggle('is-active', k === i);
+      p._h?.activate(k === i, i < prev); // 가로 타임라인: 아래 페이지에서 올라오면 끝에서 시작
+    });
     panel.querySelectorAll('[data-scroll]').forEach((s) => (s.scrollTop = 0));
     history.replaceState(null, '', '#' + panel.id);
     this.onChange?.(i, panel);
@@ -204,13 +214,19 @@ class Deck {
     const strong = Math.abs(dy) > this.lastDelta * 1.25 || now - this.lastWheel > 180;
     this.lastDelta = Math.abs(dy);
     this.lastWheel = now;
+    if (now < this.lockUntil) return;
+    if (!strong && now - this.navTime < 1600) return; // 트랙패드 관성 무시
+    // 가로 타임라인: 끝에 닿기 전까지는 휠을 옆으로 이동하는 데 씀
+    const h = this.panels[this.index]._h;
+    if (h && h.wheel(dy)) {
+      this.innerScrollAt = now;
+      return;
+    }
     if (now - this.innerScrollAt < 450) {
       // 목록 끝에 닿은 뒤에도 계속 굴리는 중이면 넘어가지 않음 → 잠깐 멈췄다가 다시 굴리면 다음 섹션
       this.innerScrollAt = now;
       return;
     }
-    if (now < this.lockUntil) return;
-    if (!strong && now - this.navTime < 1600) return; // 트랙패드 관성 무시
     if (Math.abs(dy) < 4) return;
     this.go(this.index + dir);
   }
@@ -221,6 +237,9 @@ class Deck {
     if (e.key === 'Home') return e.preventDefault(), this.go(0);
     if (e.key === 'End') return e.preventDefault(), this.go(this.panels.length - 1);
     const dir = map[e.key];
+    const h = this.panels[this.index]._h;
+    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (e.shiftKey ? 0 : dir);
+    if (h && hd && performance.now() > this.lockUntil - 400 && h.page(hd)) return e.preventDefault();
     if (!dir) return;
     if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1);
     if (this._scrollable(document.activeElement, dir) && document.activeElement !== document.body) return;
@@ -229,26 +248,35 @@ class Deck {
     this.go(this.index + dir);
   }
   _bindTouch() {
-    let y0 = 0, t0 = 0, inner = false, target = null;
+    let x0 = 0, y0 = 0, t0 = 0, inner = false, hs = false, target = null;
     window.addEventListener('touchstart', (e) => {
       if (!this.enabled) return;
+      x0 = e.touches[0].clientX;
       y0 = e.touches[0].clientY;
       t0 = performance.now();
       target = e.target;
       inner = false;
+      hs = !!target.closest?.('[data-hscroll]'); // 가로 타임라인 위: 옆으로 미는 건 브라우저에 맡김
     }, { passive: true });
     window.addEventListener('touchmove', (e) => {
       if (!this.enabled) return;
       const dy = y0 - e.touches[0].clientY;
       const dir = Math.sign(dy);
       if (!inner && dir && this._scrollable(target, dir)) inner = true;
-      if (!inner && e.cancelable) e.preventDefault();
+      if (!inner && !hs && e.cancelable) e.preventDefault();
     }, { passive: false });
     window.addEventListener('touchend', (e) => {
       if (!this.enabled || inner) return;
       const dy = y0 - e.changedTouches[0].clientY;
+      const dx = x0 - e.changedTouches[0].clientX;
+      if (hs && Math.abs(dx) > Math.abs(dy)) return;
       const fast = performance.now() - t0 < 400;
-      if (Math.abs(dy) > (fast ? 30 : 70) && performance.now() > this.lockUntil - 300) this.go(this.index + Math.sign(dy));
+      if (Math.abs(dy) > (fast ? 30 : 70) && performance.now() > this.lockUntil - 300) {
+        // 타임라인 페이지에서는 위아래로 밀어도 먼저 옆으로 넘기고, 끝이면 다음 페이지
+        const h = this.panels[this.index]._h;
+        if (h && h.page(Math.sign(dy))) return;
+        this.go(this.index + Math.sign(dy));
+      }
     }, { passive: true });
   }
 }
@@ -302,8 +330,8 @@ async function boot() {
 
   stage.setMode(2, { instant: true }); // Editorial 색보정 (청록 회색)
 
-  // Skills 사진이 없으면 About 사진을 씀
-  const sectionImage = (key) => (images[key]?.src ? images[key] : key === 'skills' ? images.about || {} : images[key] || {});
+  // Timeline·Skills 사진이 없으면 About 사진을 씀
+  const sectionImage = (key) => (images[key]?.src ? images[key] : key === 'skills' || key === 'timeline' ? images.about || {} : images[key] || {});
   const showSection = (opts) => {
     // 첫 화면은 이름이 오른쪽에 오도록 사진을 좌우 반전
     stage.flip = state.section === 'hero';
