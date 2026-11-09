@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611090748" />
+  <link rel="stylesheet" href="admin.css?v=202611090805" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -83,7 +83,7 @@
                 <th class="c-no">No.</th>
                 <th class="c-thumb">썸네일</th>
                 <th>제목</th>
-                <th class="c-cat">카테고리</th>
+                <th class="c-cat">문서 종류</th>
                 <th class="c-pdf">PDF</th>
                 <th class="c-vis">공개</th>
                 <th class="c-date">수정일</th>
@@ -138,6 +138,10 @@
                   <input name="year" maxlength="40" placeholder="예) 2026" />
                 </label>
               </div>
+              <label class="field">
+                <span>문서 종류 <small>사이트 Works의 필터 버튼으로 쓰여요. 목록은 사이트 설정 → Works에서 바꿀 수 있어요</small></span>
+                <select name="docType" class="doc-type-select"></select>
+              </label>
               <label class="field">
                 <span>태그 <small>쉼표(,)로 구분</small></span>
                 <input name="tags" placeholder="예) 전투, 밸런싱, 패링" />
@@ -372,6 +376,7 @@
           <div class="card">
             <h3>05 · Works</h3>
             <label class="field"><span>섹션 소개 문구</span><textarea name="worksIntro" rows="2" maxlength="600"></textarea></label>
+            <label class="field"><span>문서 종류 목록 <small>쉼표(,)로 구분. 이 순서대로 필터 버튼이 나와요</small></span><input name="docTypes" maxlength="400" placeholder="시스템 기획서, 콘텐츠 기획서, 레벨 디자인, …" /></label>
           </div>
 
           <div class="card">
@@ -416,9 +421,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611090748"></script>
-  <script src="github.js?v=202611090748"></script>
-  <script src="admin.js?v=202611090748"></script>
-  <script src="stats.js?v=202611090748"></script>
+  <script src="../js/icons.js?v=202611090805"></script>
+  <script src="github.js?v=202611090805"></script>
+  <script src="admin.js?v=202611090805"></script>
+  <script src="stats.js?v=202611090805"></script>
 </body>
 </html>

@@ -204,6 +204,15 @@
           "팀 프로젝트 기획 리드"
         ]
       }
+    ],
+    "docTypes": [
+      "시스템 기획서",
+      "콘텐츠 기획서",
+      "레벨 디자인",
+      "밸런싱·데이터",
+      "UI·UX 기획서",
+      "역기획서",
+      "기타"
     ]
   },
   "projects": [
@@ -226,7 +235,8 @@
       "pdfSize": 252174,
       "visible": true,
       "createdAt": "2026-10-01T09:00:00.000Z",
-      "updatedAt": "2026-10-01T09:00:00.000Z"
+      "updatedAt": "2026-10-01T09:00:00.000Z",
+      "docType": "시스템 기획서"
     },
     {
       "id": "seed-hollow",
@@ -247,7 +257,8 @@
       "pdfSize": 227357,
       "visible": true,
       "createdAt": "2026-09-01T09:00:00.000Z",
-      "updatedAt": "2026-09-01T09:00:00.000Z"
+      "updatedAt": "2026-09-01T09:00:00.000Z",
+      "docType": "밸런싱·데이터"
     },
     {
       "id": "seed-lumen",
@@ -268,7 +279,134 @@
       "pdfSize": 262715,
       "visible": true,
       "createdAt": "2026-08-01T09:00:00.000Z",
-      "updatedAt": "2026-08-01T09:00:00.000Z"
+      "updatedAt": "2026-08-01T09:00:00.000Z",
+      "docType": "레벨 디자인"
+    },
+    {
+      "id": "sample-reverse",
+      "title": "던전 입장 UX 역기획",
+      "subtitle": "",
+      "category": "MMORPG",
+      "year": "2026",
+      "tags": [
+        "역기획",
+        "UX",
+        "동선"
+      ],
+      "summary": "파티 매칭부터 던전 입장까지 7단계를 3단계로 줄이는 개선안",
+      "description": "라이브 MMORPG의 던전 입장 흐름을 분석해 이탈 지점을 찾고, 단계별 클릭 수와 대기 시간을 줄이는 개선안을 정리했습니다.",
+      "thumb": "uploads/seed/cover-sample-reverse.jpg",
+      "pdf": null,
+      "docType": "역기획서",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "sample-raid",
+      "title": "Starfall 레이드 보스",
+      "subtitle": "",
+      "category": "MMORPG",
+      "year": "2026",
+      "tags": [
+        "레이드",
+        "보스 패턴",
+        "협동"
+      ],
+      "summary": "역할 분담이 필요한 4페이즈 레이드 보스 패턴 설계",
+      "description": "탱커·딜러·힐러가 각자 읽어야 하는 신호를 나눠 페이즈마다 협동 포인트를 만들고, 실패 원인이 화면에 보이도록 설계했습니다.",
+      "thumb": "uploads/seed/cover-sample-raid.jpg",
+      "pdf": null,
+      "docType": "콘텐츠 기획서",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "sample-guild",
+      "title": "길드 시즌 보상 구조",
+      "subtitle": "",
+      "category": "MMORPG",
+      "year": "2025",
+      "tags": [
+        "길드",
+        "시즌",
+        "보상"
+      ],
+      "summary": "참여도에 따라 보상이 계단식으로 오르는 8주 길드 시즌",
+      "description": "상위 길드 독식을 막기 위해 개인 기여 보상과 길드 단계 보상을 나누고, 주차별 목표 곡선을 설계했습니다.",
+      "thumb": "uploads/seed/cover-sample-guild.jpg",
+      "pdf": null,
+      "docType": "시스템 기획서",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "sample-ux",
+      "title": "인벤토리 정리 UX",
+      "subtitle": "",
+      "category": "모바일 RPG",
+      "year": "2025",
+      "tags": [
+        "UI",
+        "UX",
+        "인벤토리"
+      ],
+      "summary": "200칸 인벤토리를 3번의 터치로 정리하는 화면 흐름",
+      "description": "자동 정렬·일괄 판매·잠금 기능의 화면 흐름과 예외 상황을 와이어프레임으로 정리했습니다.",
+      "thumb": "uploads/seed/cover-sample-ux.jpg",
+      "pdf": null,
+      "docType": "UI·UX 기획서",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "sample-gacha",
+      "title": "뽑기 확률표 설계",
+      "subtitle": "",
+      "category": "수집형 RPG",
+      "year": "2024",
+      "tags": [
+        "확률",
+        "BM",
+        "데이터"
+      ],
+      "summary": "천장과 확률 공개 기준을 맞춘 뽑기 확률표",
+      "description": "등급별 확률과 천장 구간을 시뮬레이션해 평균 획득 비용을 계산하고, 확률 공개 문구까지 정리했습니다.",
+      "thumb": "uploads/seed/cover-sample-gacha.jpg",
+      "pdf": null,
+      "docType": "밸런싱·데이터",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
+    },
+    {
+      "id": "sample-tower",
+      "title": "Tower Rush 스테이지",
+      "subtitle": "",
+      "category": "모바일 디펜스",
+      "year": "2024",
+      "tags": [
+        "타워 디펜스",
+        "스테이지",
+        "난이도"
+      ],
+      "summary": "30개 스테이지의 경로와 웨이브 난이도 곡선",
+      "description": "경로 길이·분기 수·웨이브 체력을 지표로 30개 스테이지의 난이도를 단계적으로 올렸습니다.",
+      "thumb": "uploads/seed/cover-sample-tower.jpg",
+      "pdf": null,
+      "docType": "레벨 디자인",
+      "sample": true,
+      "visible": true,
+      "createdAt": "2026-07-01T09:00:00.000Z",
+      "updatedAt": "2026-07-01T09:00:00.000Z"
     }
   ],
   "rev": 1794201436985

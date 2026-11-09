@@ -1,8 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090748';
-import { PdfViewer } from './pdf-viewer.js?v=202611090748';
-import { renderSkillChart } from './skills.js?v=202611090748';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090748';
-import { initAnalytics } from './analytics.js?v=202611090748';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090805';
+import { PdfViewer } from './pdf-viewer.js?v=202611090805';
+import { renderSkillChart } from './skills.js?v=202611090805';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090805';
+import { initWorks, scatter } from './works.js?v=202611090805';
+import { initAnalytics } from './analytics.js?v=202611090805';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -44,11 +45,16 @@ function workItem(p, i, variant) {
       el('span', { className: 'ed-post-tags', textContent: (p.tags || []).slice(0, 3).map((t) => '#' + t.replace(/\s+/g, '')).join(' ') })
     );
   } else {
-    // Mono: 썸네일 그리드 카드
+    // 썸네일 카드: 문서 종류 · 제목 · 한 줄 소개 · 장르·연도 (예시 작업물은 '예시' 표시)
     btn = el(
       'button', { className: 'work-card', type: 'button' },
-      el('span', { className: 'card-media' }, pic('card-img'), el('span', { className: 'card-no', textContent: pad(i + 1) }), el('span', { className: 'card-open', textContent: p.pdf ? 'PDF 보기 ↗' : '자세히 보기 ↗' })),
-      el('span', { className: 'card-meta' }, el('span', { className: 'card-title', textContent: p.title }), el('span', { className: 'card-info small', textContent: metaOf(p) }), el('span', { className: 'card-sub small', textContent: p.subtitle || '' }))
+      el(
+        'span', { className: 'card-media' }, pic('card-img'),
+        el('span', { className: 'card-no', textContent: pad(i + 1) }),
+        p.docType || p.sample ? el('span', { className: 'card-doc' }, p.docType || '', p.sample ? el('em', { className: 'card-sample', textContent: '예시' }) : null) : null,
+        el('span', { className: 'card-open', textContent: p.pdf ? 'PDF 보기 ↗' : '자세히 보기 ↗' })
+      ),
+      el('span', { className: 'card-meta' }, el('span', { className: 'card-title', textContent: p.title }), el('span', { className: 'card-info small', textContent: metaOf(p) }), el('span', { className: 'card-sub small', textContent: p.subtitle || p.summary || '' }))
     );
   }
   btn.dataset.index = i;
@@ -115,6 +121,7 @@ function render({ settings: s, projects }) {
   });
 
   renderSkillChart($('#skill-chart'), s.skillChart);
+  initWorks($('#works'), projects, s.docTypes || []);
   renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
@@ -388,6 +395,8 @@ async function boot() {
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;
     document.body.dataset.section = state.section;
+    // 이번에 들어온 섹션의 내용마다 날아올 방향·시간차를 새로 뽑음
+    panel.querySelectorAll('.reveal').forEach(scatter);
     document.body.classList.remove('is-previewing', 'tl-photo');
     tlShown = null;
     navLinks.forEach((a, k) => a.classList.toggle('is-active', k === i));

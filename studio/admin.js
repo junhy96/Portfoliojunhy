@@ -228,7 +228,7 @@
     const total = db.projects.length;
     const rows = db.projects
       .map((p, i) => ({ p, i }))
-      .filter(({ p }) => !q || [p.title, p.category, p.subtitle, ...(p.tags || [])].join(' ').toLowerCase().includes(q));
+      .filter(({ p }) => !q || [p.title, p.category, p.docType, p.subtitle, ...(p.tags || [])].join(' ').toLowerCase().includes(q));
     $('#board-body').replaceChildren(
       ...rows.map(({ p, i }) => {
         const thumb = p.thumb || p.cover;
@@ -261,7 +261,7 @@
           h('td', { className: 'c-no', textContent: String(total - i) }),
           h('td', {}, thumb ? img(thumb, { className: 'thumb' }) : h('span', { className: 'thumb empty', textContent: '없음' })),
           h('td', {}, title, h('div', { className: 'post-sub', textContent: [p.subtitle, p.year].filter(Boolean).join(' · ') })),
-          h('td', {}, p.category ? h('span', { className: 'badge', textContent: p.category }) : null),
+          h('td', {}, p.docType ? h('span', { className: 'badge', textContent: p.docType }) : null, p.sample ? h('span', { className: 'badge muted-badge', textContent: '예시' }) : null, p.category ? h('div', { className: 'post-sub', textContent: p.category }) : null),
           h('td', {}, p.pdf ? h('a', { className: 'pdf-link', href: assetUrl(p.pdf), target: '_blank', rel: 'noopener', textContent: `PDF ${fmtSize(p.pdfSize)}` }) : h('span', { className: 'muted', textContent: '—' })),
           h('td', {}, h('label', { className: 'switch' }, vis, h('i'))),
           h('td', { className: 'c-date', textContent: fmtDate(p.updatedAt) }),
@@ -327,6 +327,16 @@
   $('#cancel-edit').addEventListener('click', () => switchView('board'));
   form.addEventListener('input', () => (dirty = true));
 
+  const DEFAULT_DOC_TYPES = ['시스템 기획서', '콘텐츠 기획서', '레벨 디자인', '밸런싱·데이터', 'UI·UX 기획서', '역기획서', '기타'];
+  const docTypeList = () => (db.settings?.docTypes?.length ? db.settings.docTypes : DEFAULT_DOC_TYPES);
+  function fillDocTypes(cur = '') {
+    const list = docTypeList();
+    const opts = [h('option', { value: '', textContent: '선택 안 함' }), ...list.map((t) => h('option', { value: t, textContent: t }))];
+    if (cur && !list.includes(cur)) opts.push(h('option', { value: cur, textContent: cur + ' (목록에 없음)' }));
+    form.docType.replaceChildren(...opts);
+    form.docType.value = cur;
+  }
+
   async function openEditor(p) {
     if (!(await switchView('editor'))) return;
     editing = p;
@@ -334,10 +344,12 @@
     Object.assign(state, { pdfFile: null, removePdf: false, options: [], selected: null, loadingPages: false });
     $('#editor-title').textContent = p ? '포트폴리오 수정' : '새 포트폴리오 등록';
     $('#save-post').textContent = p ? '수정 완료' : '게시하기';
+    fillDocTypes('');
     if (p) {
       ['title', 'subtitle', 'category', 'year', 'summary', 'description'].forEach((k) => (form[k].value = p[k] || ''));
       form.tags.value = (p.tags || []).join(', ');
       form.visible.checked = p.visible !== false;
+      fillDocTypes(p.docType || '');
       const cur = p.thumb || p.cover;
       if (cur) {
         state.options.push({ key: 'current', kind: 'current', url: cur, label: '현재 썸네일' });
@@ -502,6 +514,8 @@
       title: form.title.value.trim(),
       subtitle: form.subtitle.value.trim(),
       category: form.category.value.trim(),
+      docType: form.docType.value,
+      sample: undefined, // 직접 수정해 저장하면 더 이상 '예시'가 아님
       year: form.year.value.trim(),
       tags: form.tags.value.split(',').map((t) => t.trim()).filter(Boolean),
       summary: form.summary.value.trim(),
@@ -735,6 +749,7 @@
     f.skills.value = (s.about?.skills || []).join(', ');
     f.tools.value = (s.about?.tools || []).join(', ');
     f.worksIntro.value = s.worksIntro || '';
+    f.docTypes.value = docTypeList().join(', ');
     f.contactHeading.value = s.contact?.heading || '';
     f.email.value = s.contact?.email || '';
     f.contactMessage.value = s.contact?.message || '';
@@ -811,6 +826,7 @@
         tools: list(f.tools.value),
       },
       worksIntro: f.worksIntro.value.trim(),
+      docTypes: list(f.docTypes.value),
       timelineHeading: f.timelineHeading.value.trim() || 'Timeline',
       timelineIntro: f.timelineIntro.value.trim(),
       timeline: readTimeline(files),

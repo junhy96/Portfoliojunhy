@@ -75,7 +75,7 @@ export class PdfViewer {
   async open(project, opener) {
     this.opener = opener || document.activeElement;
     const session = ++this.session;
-    $('viewer-kicker').textContent = [project.category, project.year].filter(Boolean).join(' · ');
+    $('viewer-kicker').textContent = [project.docType, project.category, project.year].filter(Boolean).join(' · ');
     $('viewer-title').textContent = project.title;
     $('viewer-summary').textContent = project.summary || project.subtitle || '';
     $('viewer-description').textContent = project.description || project.summary || '';
