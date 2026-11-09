@@ -666,6 +666,7 @@
       tasks.dataset.tasks = '1';
       type.addEventListener('change', () => (dirty = true));
       // 배경 사진: 사이트에서 이 항목을 보고 있을 때 뒷배경이 이 사진으로 바뀜
+      r._id = it.id || 't' + uid(); // 지원처별 링크에서 이 경력을 켜고 끌 때 쓰는 고정 ID
       r._image = it.image || '';
       r._focusX = it.focusX ?? 0.5;
       const drop = h(
@@ -709,6 +710,7 @@
     return $$('#tl-editor .tl-row')
       .map((r) => {
         const x = Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()]));
+        x.id = r._id;
         x.tasks = $('[data-tasks]', r).value.split('\n').map((t) => t.trim()).filter(Boolean);
         if (r._blob) {
           const path = `uploads/timeline-${uid()}.${extOf(r._blob)}`;
@@ -719,6 +721,86 @@
         return x;
       })
       .filter((x) => x.title || x.period);
+  }
+
+  /* --- 지원처별 링크 (꼬리표마다 보여 줄 기획서·경력) --- */
+  const SITE_ROOT = new URL('../', location.href).href;
+  const cleanTag = (raw) =>
+    String(raw || '').trim().toLowerCase().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  function presetEditor(list) {
+    const box = $('#preset-list');
+    const works = db.projects || [];
+    const timeline = Array.isArray(db.settings?.timeline) ? db.settings.timeline : [];
+    const card = (pr = { name: '', tag: '', hide: {} }) => {
+      const c = h('div', { className: 'preset' });
+      const name = h('input', { value: pr.name || '', placeholder: '이름 (예: 넥슨 전투 기획)', maxLength: 60 });
+      const tag = h('input', { value: pr.tag || '', placeholder: '꼬리표 (예: nexon-combat)', maxLength: 40, spellcheck: false, autocomplete: 'off' });
+      const url = h('input', { readOnly: true, className: 'preset-url', 'aria-label': '링크' });
+      const copy = h('button', { type: 'button', className: 'btn sm', textContent: '복사' });
+      const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '이 링크 삭제' });
+      const setUrl = () => {
+        const t = cleanTag(tag.value);
+        url.value = t ? `${SITE_ROOT}?from=${encodeURIComponent(t)}` : '';
+        copy.disabled = !t;
+      };
+      tag.addEventListener('input', setUrl);
+      tag.addEventListener('blur', () => { tag.value = cleanTag(tag.value); setUrl(); });
+      copy.onclick = async () => {
+        try { await navigator.clipboard.writeText(url.value); toast('링크를 복사했어요.'); } catch { url.select(); }
+      };
+      del.onclick = () => { c.remove(); dirty = true; };
+      const hideW = new Set(pr.hide?.works || []);
+      const hideT = new Set(pr.hide?.timeline || []);
+      const check = (kind, id, label, sub, on) => {
+        const i = h('input', { type: 'checkbox', checked: on });
+        i.dataset.kind = kind;
+        i.dataset.id = id;
+        i.addEventListener('change', () => { dirty = true; count(); });
+        return h('label', { className: 'preset-check' }, i, h('span', { textContent: label }), sub ? h('small', { className: 'muted', textContent: sub }) : null);
+      };
+      const wList = works.map((p) => check('works', p.id, p.title, [p.docType, p.visible === false ? '비공개' : ''].filter(Boolean).join(' · '), !hideW.has(p.id)));
+      const tList = timeline.filter((x) => x.id).map((x) => check('timeline', x.id, x.title || x.period, x.period, !hideT.has(x.id)));
+      const sum = h('summary');
+      const count = () => {
+        const on = (kind) => $$(`input[data-kind="${kind}"]`, c).filter((i) => i.checked).length;
+        sum.textContent = `보여 줄 항목 — 기획서 ${on('works')}/${wList.length} · 경력 ${on('timeline')}/${tList.length}`;
+      };
+      const all = (kind, v) => h('button', { type: 'button', className: 'linkish', textContent: v ? '모두 켜기' : '모두 끄기', onclick: () => { $$(`input[data-kind="${kind}"]`, c).forEach((i) => (i.checked = v)); dirty = true; count(); } });
+      const details = h(
+        'details', { className: 'preset-items' }, sum,
+        h('div', { className: 'preset-cols' },
+          h('div', {}, h('p', { className: 'preset-head' }, h('b', { textContent: 'Works 기획서' }), all('works', true), all('works', false)), ...wList),
+          h('div', {}, h('p', { className: 'preset-head' }, h('b', { textContent: '타임라인 경력' }), all('timeline', true), all('timeline', false)), ...(tList.length ? tList : [h('p', { className: 'muted sm', textContent: '경력을 저장하면 여기에 나와요.' })]))
+        )
+      );
+      [name, tag].forEach((n) => n.addEventListener('input', () => (dirty = true)));
+      c.append(h('div', { className: 'preset-top' }, name, tag, del), h('div', { className: 'preset-link' }, url, copy), details);
+      setUrl();
+      count();
+      return c;
+    };
+    const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 링크 추가' });
+    add.onclick = () => {
+      const c = card();
+      box.insertBefore(c, add);
+      $('details', c).open = true;
+      $('input', c).focus();
+      dirty = true;
+    };
+    box.replaceChildren(...list.map(card), add);
+  }
+  function readPresets() {
+    const out = [];
+    for (const c of $$('#preset-list .preset')) {
+      const [name, tag] = $$('.preset-top input', c);
+      const t = cleanTag(tag.value);
+      if (!t && !name.value.trim()) continue;
+      if (!t) throw new Error('지원처별 링크의 꼬리표를 입력해 주세요.');
+      if (out.some((x) => x.tag === t)) throw new Error(`꼬리표 '${t}'가 두 번 쓰였어요. 링크마다 다르게 정해 주세요.`);
+      const off = (kind) => $$(`input[data-kind="${kind}"]`, c).filter((i) => !i.checked).map((i) => i.dataset.id);
+      out.push({ name: name.value.trim(), tag: t, hide: { works: off('works'), timeline: off('timeline') } });
+    }
+    return out;
   }
 
   /* --- 스킬 차트 편집기 --- */
@@ -788,6 +870,7 @@
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
     f.forceDesktop.checked = !!s.forceDesktop;
+    presetEditor(s.links || []);
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
     f.skillsHeading.value = s.skillsHeading || 'Skills';
     f.skillsIntro.value = s.skillsIntro || '';
@@ -842,10 +925,17 @@
     const list = (v) => v.split(',').map((x) => x.trim()).filter(Boolean);
     const focus = {};
     $$('#image-slots input[type=range]').forEach((r) => (focus[r.dataset.slot] = Number(r.value)));
+    let presets;
+    try {
+      presets = readPresets();
+    } catch (err) {
+      return toast(err.message, true);
+    }
     const files = Object.entries(slotFiles).map(([slot, blob]) => ({ slot, path: `uploads/site-${slot}-${uid()}.${extOf(blob)}`, blob }));
     const values = {
       analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
       forceDesktop: f.forceDesktop.checked,
+      links: presets,
       siteTitle: f.siteTitle.value.trim(),
       nameKo: f.nameKo.value.trim(),
       nameEn: f.nameEn.value.trim(),

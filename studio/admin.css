@@ -363,3 +363,23 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 .yt-preview a { color: var(--fg-2); }
 .yt-preview .warn { color: #e8a3a3; }
 .pdf-link.yt { display: block; margin-top: 2px; }
+
+/* 지원처별 링크 */
+.preset-list { display: grid; gap: 12px; }
+.preset { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line-2); border-radius: 12px; }
+.preset-top { display: grid; grid-template-columns: 1fr 220px 30px; gap: 8px; }
+.preset-link { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.preset-url { color: var(--fg-2); }
+.preset-items summary { cursor: pointer; color: var(--fg-2); font-size: 13px; padding: 4px 0; }
+.preset-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.preset-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; font-size: 13px; }
+.preset-check { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 13px; }
+.preset-check small { margin-left: auto; }
+.linkish { background: none; border: 0; padding: 0; color: var(--fg-3); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.linkish:hover { color: var(--fg); }
+.preset-list .rep-add { justify-self: start; }
+@media (max-width: 900px) {
+  .preset-top { grid-template-columns: 1fr 30px; }
+  .preset-top input:nth-child(2) { grid-column: 1; grid-row: 2; }
+  .preset-cols { grid-template-columns: 1fr; }
+}

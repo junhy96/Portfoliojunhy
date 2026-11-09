@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090914';
-import { PdfViewer } from './pdf-viewer.js?v=202611090914';
-import { renderSkillChart } from './skills.js?v=202611090914';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090914';
-import { initWorks } from './works.js?v=202611090914';
-import { initAnalytics } from './analytics.js?v=202611090914';
+import { MorphStage, FallbackStage } from './morph.js?v=202611091032';
+import { PdfViewer } from './pdf-viewer.js?v=202611091032';
+import { renderSkillChart } from './skills.js?v=202611091032';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611091032';
+import { initWorks } from './works.js?v=202611091032';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611091032';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -343,6 +343,21 @@ class Deck {
 /* 시작                                                                 */
 /* ------------------------------------------------------------------ */
 
+/**
+ * 지원처별 링크: 주소의 ?from=꼬리표가 관리자에서 만든 링크와 같으면, 그 링크에서 끈 기획서·경력을 빼고 보여 줌
+ * (꼬리표가 없거나 모르는 꼬리표면 전부 보여 줌. 통계 꼬리표는 analytics.js가 따로 남김)
+ */
+function applyLinkPreset(data) {
+  const tag = cleanTag(new URLSearchParams(location.search).get('from'));
+  const preset = tag && (data.settings?.links || []).find((l) => cleanTag(l.tag) === tag);
+  if (!preset) return;
+  const hideW = new Set(preset.hide?.works || []);
+  const hideT = new Set(preset.hide?.timeline || []);
+  data.projects = data.projects.filter((p) => !hideW.has(p.id));
+  if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
+  document.documentElement.dataset.link = tag;
+}
+
 /** 관리자 설정 '휴대폰에서도 PC 화면으로': 휴대폰(짧은 변 820px 이하)이면 화면을 PC 너비(1280)로 그림 */
 function forceDesktop(on) {
   try {
@@ -372,6 +387,7 @@ async function boot() {
     data = await res.json();
     data.projects = (data.projects || []).filter((p) => p.visible !== false);
     data.projects.forEach((p) => (p._yt = ytId(p.video)));
+    applyLinkPreset(data);
     forceDesktop(!!data.settings?.forceDesktop);
   } catch (e) {
     $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';

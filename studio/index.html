@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611090914" />
+  <link rel="stylesheet" href="admin.css?v=202611091032" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -215,7 +215,7 @@
               <button type="button" class="btn primary" id="tag-copy" disabled>복사</button>
             </div>
           </div>
-          <p class="muted sm">꼬리표는 주소에 그대로 보여요. 회사 이름이 보이는 게 싫으면 a1, a2처럼 정하고 아래 메모에 적어두세요.</p>
+          <p class="muted sm">꼬리표는 주소에 그대로 보여요. 회사 이름이 보이는 게 싫으면 a1, a2처럼 정하고 아래 메모에 적어두세요. 링크마다 보여 줄 기획서·경력까지 고르려면 <b>사이트 설정 → 지원처별 링크</b>에서 만드세요.</p>
           <label class="field"><span>메모 <small>이 브라우저에만 저장</small></span><textarea id="tag-memo" rows="2" placeholder="a1 = 넥슨 시스템 기획 (11/9 지원)"></textarea></label>
         </div>
 
@@ -399,6 +399,12 @@
           </div>
 
           <div class="card">
+            <h3>지원처별 링크</h3>
+            <p class="muted sm">지원하는 곳·포지션마다 링크를 만들고, 그 링크에서 보여 줄 기획서와 경력을 고르세요. 링크로 들어오면 체크한 것만 보이고, 접속 통계에도 그 꼬리표로 남아요. 꼬리표 없는 기본 주소는 언제나 전부 보여요. 새로 올린 기획서·경력은 모든 링크에 켜진 채로 들어가요.</p>
+            <div class="preset-list" id="preset-list"></div>
+          </div>
+
+          <div class="card">
             <h3>보기 설정</h3>
             <label class="switch"><input type="checkbox" name="forceDesktop" /><i></i><span>휴대폰에서도 PC 화면으로 보이기</span></label>
             <p class="muted sm">켜면 면접관이 휴대폰으로 열어도 PC와 같은 화면(왼쪽 레일·가로 Works)이 나와요. 글씨가 작아지니, 가로로 돌려 보면 더 잘 보여요. 저장하고 1~2분 뒤 반영돼요.</p>
@@ -436,9 +442,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611090914"></script>
-  <script src="github.js?v=202611090914"></script>
-  <script src="admin.js?v=202611090914"></script>
-  <script src="stats.js?v=202611090914"></script>
+  <script src="../js/icons.js?v=202611091032"></script>
+  <script src="github.js?v=202611091032"></script>
+  <script src="admin.js?v=202611091032"></script>
+  <script src="stats.js?v=202611091032"></script>
 </body>
 </html>
