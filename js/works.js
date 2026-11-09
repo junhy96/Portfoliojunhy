@@ -236,6 +236,7 @@ export function initWorks(panel, projects, docTypes = []) {
 
   // Deck 연결: 휠·방향키를 옆으로 미는 데 씀. 끝에 닿았고 화면도 다 따라왔으면 false → 이전/다음 페이지
   panel._h = {
+    debug: () => ({ cur: Math.round(cur), target: Math.round(target), max: Math.round(max()), real: grid.scrollWidth - grid.clientWidth, left: grid.scrollLeft }),
     wheel(dy) {
       if (mobile()) return false;
       const m = max();

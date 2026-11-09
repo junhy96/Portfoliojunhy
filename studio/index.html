@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611090820" />
+  <link rel="stylesheet" href="admin.css?v=202611090834" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -84,7 +84,7 @@
                 <th class="c-thumb">썸네일</th>
                 <th>제목</th>
                 <th class="c-cat">문서 종류</th>
-                <th class="c-pdf">PDF</th>
+                <th class="c-pdf">PDF · 영상</th>
                 <th class="c-vis">공개</th>
                 <th class="c-date">수정일</th>
                 <th class="c-act">관리</th>
@@ -115,6 +115,15 @@
                 <span class="drop-file" hidden></span>
               </label>
               <button type="button" class="btn ghost sm" id="remove-pdf" hidden>PDF 삭제</button>
+            </div>
+
+            <div class="card">
+              <h3>유튜브 영상 <small class="muted">선택</small></h3>
+              <label class="field">
+                <span>유튜브 링크 <small>PDF와 같이 넣으면 사이트 팝업에서 ‘기획서 / 영상’ 탭으로 오가요. 썸네일을 따로 안 고르면 유튜브 섬네일을 써요</small></span>
+                <input name="video" type="url" maxlength="300" placeholder="https://www.youtube.com/watch?v=… 또는 https://youtu.be/…" />
+              </label>
+              <div class="yt-preview" id="yt-preview" hidden></div>
             </div>
 
             <div class="card">
@@ -421,9 +430,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611090820"></script>
-  <script src="github.js?v=202611090820"></script>
-  <script src="admin.js?v=202611090820"></script>
-  <script src="stats.js?v=202611090820"></script>
+  <script src="../js/icons.js?v=202611090834"></script>
+  <script src="github.js?v=202611090834"></script>
+  <script src="admin.js?v=202611090834"></script>
+  <script src="stats.js?v=202611090834"></script>
 </body>
 </html>

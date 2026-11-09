@@ -355,3 +355,11 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 /* 문서 종류 */
 .doc-type-select { height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
 .muted-badge { margin-left: 4px; opacity: .6; }
+
+/* 유튜브 */
+.yt-preview { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.yt-preview img { width: 160px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line-2); }
+.yt-preview div { display: grid; gap: 4px; font-size: 13px; }
+.yt-preview a { color: var(--fg-2); }
+.yt-preview .warn { color: #e8a3a3; }
+.pdf-link.yt { display: block; margin-top: 2px; }

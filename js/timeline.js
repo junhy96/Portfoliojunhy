@@ -205,6 +205,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   );
 
   const ctl = {
+    debug: () => ({ cur: Math.round(cur), target: Math.round(target), hi: Math.round(hi()), real: root.scrollWidth - root.clientWidth, left: root.scrollLeft }),
     /** 휠: 옆으로 갈 수 있으면 먹고 true, 끝이면 false (→ 다음/이전 페이지) */
     wheel(dy) {
       const end = hi();

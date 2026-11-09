@@ -192,6 +192,10 @@ html[data-theme="editorial"] .layout-mono {
   padding-left: calc(var(--rail) + var(--gutter));
   padding-top: calc(var(--top) + 96px);
 }
+/* 높이가 낮은 화면: 위쪽 여백을 줄여 About이 한 화면에 들어오게 */
+@media (min-width: 821px) and (max-height: 820px) {
+  html[data-theme="editorial"] .layout-mono { padding-top: calc(var(--top) + 40px); }
+}
 html[data-theme="editorial"] .section-no { color: var(--fg-2); }
 html[data-theme="editorial"] .section-title {
   font-family: var(--display); font-weight: 900; letter-spacing: -.045em; line-height: .86;
@@ -248,22 +252,30 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
 html[data-theme="editorial"] .panel .works-body { gap: 14px; padding-top: calc(var(--top) + 32px); padding-bottom: 24px; }
 html[data-theme="editorial"] .panel-works .section-title { font-size: clamp(48px, 5.4vw, 92px); }
 .works-filter { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.works-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.works-chips { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 28px; }
+/* 문서 종류 필터: 메뉴처럼 글자 + 밑줄 (개수는 위첨자) */
 .works-chip {
-  display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px; border-radius: 999px;
-  border: 1px solid var(--line-2); background: rgba(18, 28, 28, .35); color: var(--fg-2); font-size: 9.5pt; cursor: pointer;
-  transition: background .2s, color .2s, border-color .2s;
+  position: relative; display: inline-flex; align-items: baseline; gap: 4px; padding: 6px 0; background: none; border: 0;
+  color: var(--fg-3); font-size: 10pt; letter-spacing: .01em; cursor: pointer; transition: color .2s;
 }
-.works-chip em { font-style: normal; font-size: 8.5pt; color: var(--fg-3); font-variant-numeric: tabular-nums; }
-.works-chip:hover { color: var(--fg); border-color: rgba(244, 244, 239, .4); }
-.works-chip[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: #142020; }
-.works-chip[aria-pressed="true"] em { color: rgba(20, 32, 32, .6); }
-.works-pager { display: flex; align-items: center; gap: 8px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.works-chip em { font-style: normal; font-size: 7.5pt; font-variant-numeric: tabular-nums; transform: translateY(-.55em); color: var(--fg-3); }
+.works-chip::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--fg);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease-out);
+}
+.works-chip:hover { color: var(--fg-2); }
+.works-chip[aria-pressed="true"] { color: var(--fg); }
+.works-chip[aria-pressed="true"]::after { transform: scaleX(1); }
+.works-chip:focus-visible { outline: 1px dashed var(--line-2); outline-offset: 4px; }
+.works-pager { display: flex; align-items: center; gap: 4px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
 .works-pager[hidden] { display: none; }
 .works-pager-label { margin-right: 4px; }
-.works-pager-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line-2); color: var(--fg); background: none; cursor: pointer; font-size: 16px; line-height: 1; }
-.works-pager-btn:hover:not(:disabled) { background: rgba(244, 244, 239, .12); }
-.works-pager-btn:disabled { opacity: .3; cursor: default; }
+/* 좌우 이동: 테두리 없는 화살표 */
+.works-pager-btn { width: 28px; height: 28px; border: 0; background: none; color: var(--fg-2); cursor: pointer; font-size: 18px; line-height: 1; transition: color .2s, transform .2s; }
+.works-pager-btn:hover:not(:disabled) { color: var(--fg); }
+.works-pager-btn:first-of-type:hover:not(:disabled) { transform: translateX(-2px); }
+.works-pager-btn:last-of-type:hover:not(:disabled) { transform: translateX(2px); }
+.works-pager-btn:disabled { opacity: .25; cursor: default; }
 
 /* 카드는 초안 비율 그대로(그림 16:10 + 아래 제목줄). 열이 옆으로 이어지고 휠·끌기로 가로 이동 (열 너비·줄 수는 works.js가 정함) */
 html[data-theme="editorial"] .works-grid {
@@ -285,11 +297,11 @@ html[data-theme="editorial"] .works-grid.fade-l.fade-r { -webkit-mask-image: lin
 /* 카드도 무작위 방향에서 시간차를 두고 날아옴 (slide-in-bck, 키프레임은 style.css) */
 html[data-theme="editorial"] .works-grid > li.is-show { animation: slide-in-bck .7s cubic-bezier(.25, .46, .45, .94) both; animation-delay: calc(120ms + var(--k, 0) * 55ms + var(--j, 0ms)); }
 .card-doc {
-  position: absolute; right: 10px; top: 10px; display: inline-flex; align-items: center; gap: 6px;
-  padding: 3px 9px; border-radius: 999px; font-size: 8pt; letter-spacing: .02em; color: var(--fg);
-  background: rgba(14, 22, 22, .62); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  position: absolute; left: 40px; top: 12px; display: inline-flex; align-items: baseline; gap: 6px;
+  font-size: 8.5pt; letter-spacing: .02em; color: var(--fg); mix-blend-mode: difference;
 }
-.card-sample { font-style: normal; font-size: 7.5pt; color: var(--fg-3); }
+.card-sample { font-style: normal; font-size: 7.5pt; opacity: .6; }
+.card-sample::before { content: "· "; }
 html[data-theme="editorial"] .works-grid .card-title { font-size: clamp(16px, 1.35vw, 21px); grid-column: 1 / -1; grid-row: 1; }
 /* 카드가 좁아서 제목 · 한 줄 소개 · 장르·연도를 한 줄씩 */
 html[data-theme="editorial"] .works-grid .card-sub { grid-column: 1 / -1; grid-row: 2; }

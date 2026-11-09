@@ -359,7 +359,9 @@ export class MorphStage {
     const p = new Promise((resolve) => {
       const img = new Image();
       img.decoding = 'async';
+      if (/^https?:/i.test(src) && !src.startsWith(location.origin)) img.crossOrigin = 'anonymous';
       img.onload = () => {
+        try {
         const max = 2048;
         const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
         const w = Math.max(1, Math.round(img.naturalWidth * k));
@@ -369,6 +371,9 @@ export class MorphStage {
         c.height = h;
         c.getContext('2d').drawImage(img, 0, 0, w, h);
         resolve({ tex: this._makeTex(c, w, h), w, h });
+        } catch {
+          resolve(this.blank);
+        }
       };
       img.onerror = () => resolve(this.blank);
       img.src = src;

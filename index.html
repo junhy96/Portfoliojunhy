@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611090820" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090820" />
+  <link rel="stylesheet" href="css/style.css?v=202611090834" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611090834" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -189,6 +189,10 @@
         <p class="viewer-summary small" id="viewer-summary"></p>
       </div>
       <div class="viewer-tools small">
+        <span class="vtabs" id="viewer-tabs" role="tablist" hidden>
+          <button class="vtab" role="tab" data-act="tab-pdf">기획서</button>
+          <button class="vtab" role="tab" data-act="tab-video">영상</button>
+        </span>
         <button class="vbtn" data-act="desc" aria-expanded="false">설명</button>
         <span class="viewer-page" id="viewer-page">– / –</span>
         <span class="vgroup">
@@ -198,6 +202,7 @@
         </span>
         <button class="vbtn" data-act="fit">맞춤</button>
         <a class="vbtn" data-act="download" id="viewer-download" download>다운로드</a>
+        <a class="vbtn yt-link" id="viewer-yt" target="_blank" rel="noopener" hidden>YouTube에서 보기 ↗</a>
         <button class="vbtn close" data-act="close" aria-label="닫기">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
@@ -209,13 +214,14 @@
         <ul class="chip-list small" id="viewer-tags"></ul>
       </div>
     </div>
+    <div class="viewer-video" id="viewer-video" hidden><div class="video-frame" id="viewer-frame"></div></div>
     <div class="viewer-scroll" id="viewer-scroll" tabindex="0">
       <div class="viewer-pages" id="viewer-pages"></div>
       <p class="viewer-status small" id="viewer-status"></p>
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611090820"></script>
-  <script type="module" src="js/main.js?v=202611090820"></script>
+  <script src="js/icons.js?v=202611090834"></script>
+  <script type="module" src="js/main.js?v=202611090834"></script>
 </body>
 </html>

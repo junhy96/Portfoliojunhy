@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090820';
-import { PdfViewer } from './pdf-viewer.js?v=202611090820';
-import { renderSkillChart } from './skills.js?v=202611090820';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090820';
-import { initWorks } from './works.js?v=202611090820';
-import { initAnalytics } from './analytics.js?v=202611090820';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090834';
+import { PdfViewer } from './pdf-viewer.js?v=202611090834';
+import { renderSkillChart } from './skills.js?v=202611090834';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090834';
+import { initWorks } from './works.js?v=202611090834';
+import { initAnalytics } from './analytics.js?v=202611090834';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -25,7 +25,14 @@ const el = (tag, props = {}, ...children) => {
   return n;
 };
 const pad = (n) => String(n).padStart(2, '0');
-const thumbOf = (p) => p?.thumb || p?.cover || null;
+// 유튜브 링크 → 영상 ID (watch?v= · youtu.be/ · shorts/ · embed/ · live/)
+const ytId = (url) => {
+  const m = String(url || '').match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : '';
+};
+const ytThumb = (id, size = 'hqdefault') => (id ? `https://i.ytimg.com/vi/${id}/${size}.jpg` : null);
+// 썸네일이 없으면 유튜브 섬네일을 씀
+const thumbOf = (p) => p?.thumb || p?.cover || ytThumb(p?._yt) || null;
 const metaOf = (p) => [p?.category, p?.year].filter(Boolean).join(' · ');
 
 /* ------------------------------------------------------------------ */
@@ -34,7 +41,23 @@ const metaOf = (p) => [p?.category, p?.year].filter(Boolean).join(' · ');
 /* ------------------------------------------------------------------ */
 function workItem(p, i, variant) {
   const img = thumbOf(p);
-  const pic = (cls) => (img ? el('img', { className: cls, src: img, alt: '', loading: 'lazy', decoding: 'async' }) : el('span', { className: cls + ' is-empty', textContent: p.title }));
+  const ytOnly = !p.thumb && !p.cover && p._yt;
+  const pic = (cls) => {
+    if (!img) return el('span', { className: cls + ' is-empty', textContent: p.title });
+    // 유튜브 섬네일: 고화질(maxres)을 먼저 쓰고 없으면 기본 화질로
+    const im = el('img', { className: cls, src: ytOnly ? ytThumb(p._yt, 'maxresdefault') : img, alt: '', loading: 'lazy', decoding: 'async' });
+    if (ytOnly) im.addEventListener('error', () => (im.src = img), { once: true });
+    return im;
+  };
+  // 유튜브 표시: 가운데 재생 버튼 + 왼쪽 아래 YouTube 로고
+  const ytBadges = () =>
+    p._yt
+      ? [
+          el('span', { className: 'card-play', ariaHidden: 'true' }),
+          Object.assign(el('span', { className: 'card-yt' }), { innerHTML: (window.linkIconSvg ? window.linkIconSvg('YouTube', '', 14) : '') + '<span>YouTube</span>' }),
+        ]
+      : [];
+  const openLabel = p.pdf && p._yt ? 'PDF · 영상 ↗' : p._yt ? '영상 보기 ↗' : p.pdf ? 'PDF 보기 ↗' : '자세히 보기 ↗';
   let btn;
   if (variant === 'latest') {
     // Editorial 첫 화면 유리 띠: 최근 작업 글
@@ -52,13 +75,14 @@ function workItem(p, i, variant) {
         'span', { className: 'card-media' }, pic('card-img'),
         el('span', { className: 'card-no', textContent: pad(i + 1) }),
         p.docType || p.sample ? el('span', { className: 'card-doc' }, p.docType || '', p.sample ? el('em', { className: 'card-sample', textContent: '예시' }) : null) : null,
-        el('span', { className: 'card-open', textContent: p.pdf ? 'PDF 보기 ↗' : '자세히 보기 ↗' })
+        ...ytBadges(),
+        el('span', { className: 'card-open', textContent: openLabel })
       ),
       el('span', { className: 'card-meta' }, el('span', { className: 'card-title', textContent: p.title }), el('span', { className: 'card-info small', textContent: metaOf(p) }), el('span', { className: 'card-sub small', textContent: p.subtitle || p.summary || '' }))
     );
   }
   btn.dataset.index = i;
-  btn.setAttribute('aria-label', `${p.title} 기획서 보기`);
+  btn.setAttribute('aria-label', `${p.title} ${p.pdf ? '기획서' : p._yt ? '영상' : ''} 보기`.replace('  ', ' '));
   return el('li', {}, btn);
 }
 
@@ -188,6 +212,7 @@ class Deck {
     if (i === this.index && animate) return;
     const prev = this.index;
     this.index = i;
+    this.navDir = Math.sign(i - prev); // 마지막으로 넘어간 방향
     this.navTime = performance.now();
     this.lockUntil = this.navTime + 1000;
     this._apply(animate);
@@ -212,7 +237,8 @@ class Deck {
       const max = n.scrollHeight - n.clientHeight;
       const oy = getComputedStyle(n).overflowY;
       const canScroll = (oy === 'auto' || oy === 'scroll') && n.offsetParent !== null;
-      if (canScroll && max > 2 && (dir > 0 ? n.scrollTop < max - 2 : n.scrollTop > 2)) return n;
+      // 몇십 px만 넘치는 건 안쪽 스크롤로 치지 않음 (그만큼 내리고 '멈췄다 다시 굴리기'를 기다리느라 걸린 것처럼 느껴짐)
+      if (canScroll && max > 40 && (dir > 0 ? n.scrollTop < max - 2 : n.scrollTop > 2)) return n;
       n = n.parentElement?.closest('[data-scroll]');
     }
     return null;
@@ -228,10 +254,14 @@ class Deck {
       return;
     }
     e.preventDefault();
-    const strong = Math.abs(dy) > this.lastDelta * 1.25 || now - this.lastWheel > 180;
+    // 새로 굴리기 시작한 휠인지(관성 꼬리가 아닌지): 잠깐 멈췄다 굴렸거나, 더 세게 굴렸거나, 방향을 바꿨으면 새 동작
+    const strong = Math.abs(dy) > this.lastDelta * 1.25 || now - this.lastWheel > 180 || dir !== this.lastDir;
     this.lastDelta = Math.abs(dy);
     this.lastWheel = now;
-    if (now < this.lockUntil) return;
+    this.lastDir = dir;
+    // 넘어가는 중(1초)에는 휠을 막되, 반대 방향으로 새로 굴리면 바로 되돌아감 (내리다가 마음 바꿔 올릴 때 걸리지 않게)
+    const reverse = strong && this.navDir && dir !== this.navDir;
+    if (now < this.lockUntil && !reverse) return;
     if (!strong && now - this.navTime < 1600) return; // 트랙패드 관성 무시
     // 가로 타임라인: 끝에 닿기 전까지는 휠을 옆으로 이동하는 데 씀. 끝에 닿으면 계속 굴려도 바로 다음 페이지로
     const h = this.panels[this.index]._h;
@@ -310,6 +340,7 @@ async function boot() {
     if (!res.ok) throw new Error(res.status);
     data = await res.json();
     data.projects = (data.projects || []).filter((p) => p.visible !== false);
+    data.projects.forEach((p) => (p._yt = ytId(p.video)));
   } catch (e) {
     $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';
     $('.loader-bar').hidden = true;

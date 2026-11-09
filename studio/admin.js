@@ -262,7 +262,12 @@
           h('td', {}, thumb ? img(thumb, { className: 'thumb' }) : h('span', { className: 'thumb empty', textContent: '없음' })),
           h('td', {}, title, h('div', { className: 'post-sub', textContent: [p.subtitle, p.year].filter(Boolean).join(' · ') })),
           h('td', {}, p.docType ? h('span', { className: 'badge', textContent: p.docType }) : null, p.sample ? h('span', { className: 'badge muted-badge', textContent: '예시' }) : null, p.category ? h('div', { className: 'post-sub', textContent: p.category }) : null),
-          h('td', {}, p.pdf ? h('a', { className: 'pdf-link', href: assetUrl(p.pdf), target: '_blank', rel: 'noopener', textContent: `PDF ${fmtSize(p.pdfSize)}` }) : h('span', { className: 'muted', textContent: '—' })),
+          h(
+            'td', {},
+            p.pdf ? h('a', { className: 'pdf-link', href: assetUrl(p.pdf), target: '_blank', rel: 'noopener', textContent: `PDF ${fmtSize(p.pdfSize)}` }) : null,
+            ytId(p.video) ? h('a', { className: 'pdf-link yt', href: p.video, target: '_blank', rel: 'noopener', textContent: '▶ 영상' }) : null,
+            !p.pdf && !ytId(p.video) ? h('span', { className: 'muted', textContent: '—' }) : null
+          ),
           h('td', {}, h('label', { className: 'switch' }, vis, h('i'))),
           h('td', { className: 'c-date', textContent: fmtDate(p.updatedAt) }),
           h('td', {}, h('div', { className: 'acts' }, up, down, edit, del))
@@ -327,6 +332,25 @@
   $('#cancel-edit').addEventListener('click', () => switchView('board'));
   form.addEventListener('input', () => (dirty = true));
 
+  // 유튜브 링크 → 영상 ID (사이트 main.js와 같은 규칙)
+  const ytId = (url) => {
+    const m = String(url || '').match(/(?:youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([\w-]{11})/);
+    return m ? m[1] : '';
+  };
+  function ytPreview() {
+    const box = $('#yt-preview');
+    const v = form.video.value.trim();
+    const id = ytId(v);
+    box.hidden = !v;
+    if (!v) return box.replaceChildren();
+    if (!id) return box.replaceChildren(h('p', { className: 'muted sm warn', textContent: '유튜브 영상 주소가 아닌 것 같아요. 영상 페이지 주소를 그대로 붙여 넣어 주세요.' }));
+    box.replaceChildren(
+      h('img', { src: `https://i.ytimg.com/vi/${id}/mqdefault.jpg`, alt: '' }),
+      h('div', {}, h('b', { textContent: '연결된 영상' }), h('a', { href: `https://www.youtube.com/watch?v=${id}`, target: '_blank', rel: 'noopener', textContent: `youtu.be/${id} ↗` }))
+    );
+  }
+  form.video?.addEventListener('input', ytPreview);
+
   const DEFAULT_DOC_TYPES = ['시스템 기획서', '콘텐츠 기획서', '레벨 디자인', '밸런싱·데이터', 'UI·UX 기획서', '역기획서', '기타'];
   const docTypeList = () => (db.settings?.docTypes?.length ? db.settings.docTypes : DEFAULT_DOC_TYPES);
   function fillDocTypes(cur = '') {
@@ -345,9 +369,11 @@
     $('#editor-title').textContent = p ? '포트폴리오 수정' : '새 포트폴리오 등록';
     $('#save-post').textContent = p ? '수정 완료' : '게시하기';
     fillDocTypes('');
+    ytPreview();
     if (p) {
       ['title', 'subtitle', 'category', 'year', 'summary', 'description'].forEach((k) => (form[k].value = p[k] || ''));
       form.tags.value = (p.tags || []).join(', ');
+      form.video.value = p.video || '';
       form.visible.checked = p.visible !== false;
       fillDocTypes(p.docType || '');
       const cur = p.thumb || p.cover;
@@ -508,6 +534,11 @@
       return toast('제목을 입력하세요.', true);
     }
     if (state.loadingPages) return toast('썸네일을 만드는 중입니다. 잠시만 기다려주세요.');
+    const video = form.video.value.trim();
+    if (video && !ytId(video)) {
+      form.video.focus();
+      return toast('유튜브 링크를 확인해 주세요. 영상 페이지 주소를 그대로 붙여 넣으면 돼요.', true);
+    }
     const id = editing?.id || uid();
     const now = new Date().toISOString();
     const fields = {
@@ -515,6 +546,7 @@
       subtitle: form.subtitle.value.trim(),
       category: form.category.value.trim(),
       docType: form.docType.value,
+      video: video ? `https://www.youtube.com/watch?v=${ytId(video)}` : undefined,
       sample: undefined, // 직접 수정해 저장하면 더 이상 '예시'가 아님
       year: form.year.value.trim(),
       tags: form.tags.value.split(',').map((t) => t.trim()).filter(Boolean),

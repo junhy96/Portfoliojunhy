@@ -48,9 +48,12 @@ export class PdfViewer {
       if (act === 'zoom-out') this.setZoom(this.zoomIndex - 1);
       if (act === 'fit') this.setZoom(2);
       if (act === 'desc') this.toggleDesc();
+      if (act === 'tab-pdf') this.setMode('pdf');
+      if (act === 'tab-video') this.setMode('video');
     });
     this.root.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') this.close();
+      if (this.mode === 'video') return e.key === 'Tab' && this._trapFocus(e);
       if (e.key === '+' || e.key === '=') this.setZoom(this.zoomIndex + 1);
       if (e.key === '-') this.setZoom(this.zoomIndex - 1);
       if (e.key === 'Tab') this._trapFocus(e);
@@ -75,6 +78,7 @@ export class PdfViewer {
   async open(project, opener) {
     this.opener = opener || document.activeElement;
     const session = ++this.session;
+    this.project = project;
     $('viewer-kicker').textContent = [project.docType, project.category, project.year].filter(Boolean).join(' · ');
     $('viewer-title').textContent = project.title;
     $('viewer-summary').textContent = project.summary || project.subtitle || '';
@@ -100,8 +104,15 @@ export class PdfViewer {
     this.root.querySelector('[data-act="close"]').focus({ preventScroll: true });
     this.onOpen?.();
 
+    // 유튜브 영상: PDF와 둘 다 있으면 위쪽 탭으로 오감 (기획서 먼저), 영상만 있으면 바로 재생
+    const yt = project._yt;
+    $('viewer-tabs').hidden = !(yt && project.pdf);
+    const ytLink = $('viewer-yt');
+    ytLink.hidden = !yt;
+    if (yt) ytLink.href = `https://www.youtube.com/watch?v=${yt}`;
+    this.setMode(project.pdf || !yt ? 'pdf' : 'video');
     if (!project.pdf) {
-      this._noPdf(project);
+      if (!yt) this._noPdf(project);
       return;
     }
     this.statusEl.textContent = '기획서를 불러오는 중…';
@@ -147,9 +158,33 @@ export class PdfViewer {
     this.descEl.hidden = false;
   }
 
+  /** 'pdf' | 'video' — 영상 칸은 열 때만 iframe을 넣고, 닫거나 탭을 바꾸면 빼서 소리가 멈추게 */
+  setMode(mode) {
+    this.mode = mode;
+    const yt = this.project?._yt;
+    const video = mode === 'video' && yt;
+    this.root.classList.toggle('is-video', !!video);
+    $('viewer-video').hidden = !video;
+    this.scroller.hidden = !!video;
+    this.root.querySelectorAll('.vtab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.act === 'tab-' + mode)));
+    const frame = $('viewer-frame');
+    if (video) {
+      if (!frame.firstChild) {
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+        f.title = (this.project.title || '') + ' 영상';
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+        f.allowFullscreen = true;
+        f.referrerPolicy = 'strict-origin-when-cross-origin';
+        frame.append(f);
+      }
+    } else frame.replaceChildren();
+  }
+
   close() {
     if (!this.isOpen) return;
     this.session++;
+    $('viewer-frame').replaceChildren();
     this.root.classList.remove('is-open');
     document.body.classList.remove('viewer-open');
     setTimeout(() => {
