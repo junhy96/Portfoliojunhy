@@ -5,6 +5,8 @@ import { initAnalytics } from './analytics.js';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
+const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
+const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -269,6 +271,7 @@ async function boot() {
     data.projects = (data.projects || []).filter((p) => p.visible !== false);
   } catch (e) {
     $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';
+    $('.loader-bar').hidden = true;
     return;
   }
   render(data);
@@ -432,7 +435,8 @@ async function boot() {
   await Promise.race([stage.load ? stage.load(sectionImage(state.section).src) : Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
   initAnalytics(settings.analytics);
   deck.go(start, { animate: false });
-  requestAnimationFrame(() => document.body.classList.add('is-ready'));
+  const wait = Math.max(0, SPLASH_MIN - (performance.now() - bootAt));
+  setTimeout(() => requestAnimationFrame(() => document.body.classList.add('is-ready')), wait);
 }
 
 boot();
