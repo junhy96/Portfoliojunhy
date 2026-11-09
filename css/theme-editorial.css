@@ -79,6 +79,20 @@ html[data-theme="editorial"] .rail-pages {
 html[data-theme="editorial"] .rail-links { margin: 0 0 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 html[data-theme="editorial"] .rail-links a { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; color: var(--fg-3); transition: color .3s, background .3s; }
 html[data-theme="editorial"] .rail-links a:hover, html[data-theme="editorial"] .rail-links a:focus-visible { color: var(--fg); background: rgba(244, 244, 239, .08); }
+/* 마우스를 올리면 아이콘이 좌우로 흔들림 — Animista wobble-hor-bottom (레일 폭에 맞춰 흔들림 폭만 줄임) */
+html[data-theme="editorial"] .rail-links a:hover svg,
+html[data-theme="editorial"] .rail-links a:focus-visible svg { animation: wobble-hor-bottom .8s both; }
+@keyframes wobble-hor-bottom {
+  0%, 100% { transform: translateX(0%); transform-origin: 50% 50%; }
+  15% { transform: translateX(-9px) rotate(-6deg); }
+  30% { transform: translateX(5px) rotate(6deg); }
+  45% { transform: translateX(-5px) rotate(-3.6deg); }
+  60% { transform: translateX(3px) rotate(2.4deg); }
+  75% { transform: translateX(-2px) rotate(-1.2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="editorial"] .rail-links a:hover svg, html[data-theme="editorial"] .rail-links a:focus-visible svg { animation: none; }
+}
 /* 페이지 위치는 레일이 보여 주므로 위쪽 번호 표시는 숨김 */
 html[data-theme="editorial"] .pager { display: none; }
 
