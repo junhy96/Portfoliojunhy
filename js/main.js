@@ -41,12 +41,12 @@ function workItem(p, i, variant) {
     // Mono: 썸네일 그리드 카드
     btn = el(
       'button', { className: 'work-card', type: 'button' },
-      el('span', { className: 'card-media' }, pic('card-img'), el('span', { className: 'card-no', textContent: pad(i + 1) }), el('span', { className: 'card-open', textContent: p.pdf ? 'PDF 보기 ↗' : '자세히 보기 ↗' })),
+      el('span', { className: 'card-media' }, pic('card-img'), el('span', { className: 'card-no', textContent: pad(i + 1) }), el('span', { className: 'card-open', textContent: p.pdf ? 'View PDF ↗' : 'Details ↗' })),
       el('span', { className: 'card-meta' }, el('span', { className: 'card-title', textContent: p.title }), el('span', { className: 'card-info small', textContent: metaOf(p) }), el('span', { className: 'card-sub small', textContent: p.subtitle || '' }))
     );
   }
   btn.dataset.index = i;
-  btn.setAttribute('aria-label', `${p.title} 기획서 보기`);
+  btn.setAttribute('aria-label', `Open ${p.title}`);
   return el('li', {}, btn);
 }
 
@@ -92,7 +92,7 @@ function render({ settings: s, projects }) {
     'links-plain': () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label }))),
     'works-count': (v, node) => [node.tagName === 'SUP' ? `(${pad(projects.length)})` : pad(projects.length)],
     works: (v) => {
-      if (!projects.length) return [el('li', { className: 'works-empty small', textContent: '아직 등록된 포트폴리오가 없습니다.' })];
+      if (!projects.length) return [el('li', { className: 'works-empty small', textContent: 'No projects yet' })];
       return (v === 'latest' ? projects.slice(0, 2) : projects).map((p, i) => workItem(p, i, v));
     },
   };
@@ -268,7 +268,7 @@ async function boot() {
     data = await res.json();
     data.projects = (data.projects || []).filter((p) => p.visible !== false);
   } catch (e) {
-    $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';
+    $('.loader-name').textContent = 'Could not load the site';
     return;
   }
   render(data);

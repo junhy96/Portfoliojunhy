@@ -17,7 +17,7 @@ function loadPdfJs() {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER;
       resolve(window.pdfjsLib);
     };
-    s.onerror = () => reject(new Error('pdf.js를 불러오지 못했습니다.'));
+    s.onerror = () => reject(new Error('Could not load pdf.js'));
     document.head.appendChild(s);
   });
   return pdfjsPromise;
@@ -104,7 +104,7 @@ export class PdfViewer {
       this._noPdf(project);
       return;
     }
-    this.statusEl.textContent = '기획서를 불러오는 중…';
+    this.statusEl.textContent = 'Loading the document…';
     try {
       const pdfjs = await loadPdfJs();
       const doc = await pdfjs.getDocument({ url: project.pdf }).promise;
@@ -130,8 +130,8 @@ export class PdfViewer {
       if (session !== this.session) return;
       console.error(err);
       this.statusEl.innerHTML = '';
-      const a = Object.assign(document.createElement('a'), { href: project.pdf, target: '_blank', rel: 'noopener', textContent: '새 창에서 PDF 열기 ↗' });
-      this.statusEl.append('PDF를 표시하지 못했습니다. ', a);
+      const a = Object.assign(document.createElement('a'), { href: project.pdf, target: '_blank', rel: 'noopener', textContent: 'Open the PDF in a new tab ↗' });
+      this.statusEl.append('Could not show the PDF. ', a);
     }
   }
 
@@ -142,7 +142,7 @@ export class PdfViewer {
       this.pagesEl.appendChild(img);
       this.pagesEl.style.width = `min(100%, 1200px)`;
     }
-    this.statusEl.textContent = '등록된 PDF가 없습니다.';
+    this.statusEl.textContent = 'No PDF for this project yet';
     $('viewer-page').textContent = '– / –';
     this.descEl.hidden = false;
   }

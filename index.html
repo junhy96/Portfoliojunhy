@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Game Designer Portfolio</title>
-  <meta name="description" content="게임 기획자 포트폴리오" />
+  <meta name="description" content="Game designer portfolio" />
   <meta name="theme-color" content="#0a0a0a" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,7 +32,7 @@
 
   <!-- 스타일별 고정 요소 -->
   <div class="px-panel" aria-hidden="true"></div>
-  <aside class="rail" aria-label="링크">
+  <aside class="rail" aria-label="Links">
     <a class="rail-mark" href="#home" data-go="0" data-bind="initials"></a>
     <ul class="rail-links" data-list="links-plain"></ul>
   </aside>
@@ -49,7 +49,7 @@
       <strong data-bind="nameKo"></strong>
       <span class="small brand-role" data-bind="role"></span>
     </a>
-    <nav class="nav" aria-label="섹션">
+    <nav class="nav" aria-label="Sections">
       <a href="#home" data-go="0"><span>01</span>Home</a>
       <a href="#about" data-go="1"><span>02</span>About</a>
       <i class="nav-icon px-icon" data-icon="controller" aria-hidden="true"></i>
@@ -61,7 +61,7 @@
 
   <main class="deck" id="deck">
     <!-- ============================== 01 HOME ============================== -->
-    <section class="panel panel-hero" id="home" data-key="hero" aria-label="소개">
+    <section class="panel panel-hero" id="home" data-key="hero" aria-label="Intro">
       <!-- Mono -->
       <div class="panel-body layout layout-mono" data-themes="mono" data-scroll>
         <div class="hero-main">
@@ -109,7 +109,7 @@
     </section>
 
     <!-- ============================== 02 ABOUT ============================== -->
-    <section class="panel panel-about" id="about" data-key="about" aria-label="자기소개">
+    <section class="panel panel-about" id="about" data-key="about" aria-label="About">
       <!-- Mono · Editorial (Mono 구성을 Editorial 색·글꼴로) -->
       <div class="panel-body layout layout-mono" data-themes="mono editorial" data-scroll>
         <div class="about-wrap">
@@ -168,7 +168,7 @@
     </section>
 
     <!-- ============================== 03 WORKS ============================== -->
-    <section class="panel panel-works" id="works" data-key="works" aria-label="포트폴리오">
+    <section class="panel panel-works" id="works" data-key="works" aria-label="Works">
       <!-- Mono · Editorial (Mono 구성을 Editorial 색·글꼴로) -->
       <div class="panel-body layout layout-mono works-body" data-themes="mono editorial">
         <div class="works-head">
@@ -192,7 +192,7 @@
         </div>
         <div class="px-works">
           <div class="px-card px-card-feature reveal" style="--d:1">
-            <button class="morph-slot" data-open-active aria-label="선택한 포트폴리오 PDF 열기"><img class="slot-img" data-img="active-work" alt="" /></button>
+            <button class="morph-slot" data-open-active aria-label="Open the selected design document"><img class="slot-img" data-img="active-work" alt="" /></button>
             <div class="px-card-row">
               <span class="px-sprite px-avatar" aria-hidden="true"></span>
               <span class="px-card-who"><b data-work="title"></b><small data-work="meta"></small></span>
@@ -207,7 +207,7 @@
     </section>
 
     <!-- ============================== 04 CONTACT ============================== -->
-    <section class="panel panel-contact" id="contact" data-key="contact" aria-label="연락처">
+    <section class="panel panel-contact" id="contact" data-key="contact" aria-label="Contact">
       <!-- Mono -->
       <div class="panel-body layout layout-mono" data-themes="mono" data-scroll>
         <div class="contact-wrap">
@@ -264,11 +264,11 @@
     <span class="pager-cur" id="pager-cur">01</span>
     <span class="pager-line"><i id="pager-fill"></i></span>
     <span class="pager-total">04</span>
-    <button class="pager-btn" data-step="-1" aria-label="이전 섹션">‹</button>
-    <button class="pager-btn" data-step="1" aria-label="다음 섹션">›</button>
+    <button class="pager-btn" data-step="-1" aria-label="Previous section">‹</button>
+    <button class="pager-btn" data-step="1" aria-label="Next section">›</button>
   </div>
   <div class="scroll-hint small" aria-hidden="true"><i></i>Scroll</div>
-  <nav class="dots" aria-label="섹션 이동">
+  <nav class="dots" aria-label="Go to section">
     <button data-go="0" aria-label="Home"></button>
     <button data-go="1" aria-label="About"></button>
     <button data-go="2" aria-label="Works"></button>
@@ -276,7 +276,7 @@
   </nav>
 
   <!-- 스타일 전환 버튼 -->
-  <div class="theme-switch" id="theme-switch" role="group" aria-label="스타일 선택" hidden>
+  <div class="theme-switch" id="theme-switch" role="group" aria-label="Choose style" hidden>
     <span class="ts-label">Style</span>
     <button type="button" data-theme-set="mono">Mono</button>
     <button type="button" data-theme-set="pixel">Pixel</button>
@@ -292,16 +292,16 @@
         <p class="viewer-summary small" id="viewer-summary"></p>
       </div>
       <div class="viewer-tools small">
-        <button class="vbtn" data-act="desc" aria-expanded="false">설명</button>
+        <button class="vbtn" data-act="desc" aria-expanded="false">Details</button>
         <span class="viewer-page" id="viewer-page">– / –</span>
         <span class="vgroup">
-          <button class="vbtn icon" data-act="zoom-out" aria-label="축소">−</button>
+          <button class="vbtn icon" data-act="zoom-out" aria-label="Zoom out">−</button>
           <span class="viewer-zoom" id="viewer-zoom">100%</span>
-          <button class="vbtn icon" data-act="zoom-in" aria-label="확대">+</button>
+          <button class="vbtn icon" data-act="zoom-in" aria-label="Zoom in">+</button>
         </span>
-        <button class="vbtn" data-act="fit">맞춤</button>
-        <a class="vbtn" data-act="download" id="viewer-download" download>다운로드</a>
-        <button class="vbtn close" data-act="close" aria-label="닫기">
+        <button class="vbtn" data-act="fit">Fit</button>
+        <a class="vbtn" data-act="download" id="viewer-download" download>Download</a>
+        <button class="vbtn close" data-act="close" aria-label="Close">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
       </div>
