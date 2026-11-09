@@ -68,12 +68,10 @@ html[data-theme="editorial"] .rail-pages {
 .rail-step.is-past { color: var(--fg-2); }
 .rail-step.is-active { color: var(--fg); font-size: 17px; font-weight: 700; }
 .rail-step:focus-visible { outline: 1px solid var(--line-2); outline-offset: -4px; border-radius: 6px; }
-.rail-name {
-  margin-top: 18px; writing-mode: vertical-rl; transform: rotate(180deg);
-  font-size: 8.5pt; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-2); white-space: nowrap;
-}
-.rail-name.swap { animation: rail-name-in .5s var(--ease-out) both; }
-@keyframes rail-name-in { from { opacity: 0; transform: rotate(180deg) translateY(-10px); } to { opacity: 1; transform: rotate(180deg); } }
+/* 지금 페이지 이름: 번호 목록 아래 가로로 (휴대폰 상단의 '03 / 06 Timeline'과 같은 결) */
+.rail-name { margin-top: 12px; font-size: 9.5pt; letter-spacing: 0; color: var(--fg); white-space: nowrap; }
+.rail-name.swap { animation: rail-name-in .45s var(--ease-out) both; }
+@keyframes rail-name-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* 레일 아래: 링크 아이콘 */
 html[data-theme="editorial"] .rail-links { margin: 0 0 24px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -629,3 +627,9 @@ html[data-theme="editorial"] .panel .skills-body {
   html[data-theme="editorial"] .ed-strip-label { padding-top: 16px; padding-bottom: 8px; }
   html[data-theme="editorial"] .ed-post-text { -webkit-line-clamp: 1; }
 }
+
+/* About의 Tools: 테두리 칩 대신 툴 로고 + 이름, 2열 (로고가 없으면 같은 자리를 비워 줄을 맞춤) */
+.tool-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; list-style: none; margin: 0; padding: 0; }
+.tool-list li { display: flex; align-items: center; gap: 10px; color: var(--fg); min-width: 0; }
+.tool-list .tool-icon { flex: none; display: grid; place-items: center; width: 18px; height: 18px; color: var(--fg-2); }
+.tool-list span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090853';
-import { PdfViewer } from './pdf-viewer.js?v=202611090853';
-import { renderSkillChart } from './skills.js?v=202611090853';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090853';
-import { initWorks } from './works.js?v=202611090853';
-import { initAnalytics } from './analytics.js?v=202611090853';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090914';
+import { PdfViewer } from './pdf-viewer.js?v=202611090914';
+import { renderSkillChart } from './skills.js?v=202611090914';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090914';
+import { initWorks } from './works.js?v=202611090914';
+import { initAnalytics } from './analytics.js?v=202611090914';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -122,7 +122,17 @@ function render({ settings: s, projects }) {
         return d;
       }),
     skills: () => skills.map((t) => el('li', { textContent: t })),
-    tools: () => tools.map((t) => el('li', { textContent: t })),
+    // 툴 이름으로 로고 찾기 (스킬 차트와 같은 아이콘 모음): 키나 이름이 같으면, 'Unreal Engine' → unreal 처럼
+    tools: () =>
+      tools.map((t) => {
+        const icons = window.SKILL_ICONS || {};
+        const norm = String(t).toLowerCase().replace(/\s+/g, '');
+        const alias = { unrealengine: 'unreal', googlesheets: 'sheets', 'c#': 'csharp', 'c++': 'cpp', ms_excel: 'excel', 'microsoftexcel': 'excel', powerpoint: 'powerpoint', ppt: 'powerpoint' };
+        const key = icons[alias[norm]] ? alias[norm] : Object.keys(icons).find((k) => (icons[k].logo || icons[k].made) && (k === norm || icons[k].label.toLowerCase().replace(/\s+/g, '') === norm));
+        const ic = el('span', { className: 'tool-icon' });
+        if (key && window.skillIconSvg) ic.innerHTML = window.skillIconSvg(key, 18);
+        return el('li', {}, ic, el('span', { textContent: t }));
+      }),
     links: () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label + ' ↗' }))),
     'links-plain': () => links.map((l) => el('li', {}, el('a', { href: l.url, target: '_blank', rel: 'noopener', textContent: l.label }))),
     // 왼쪽 레일: 링크를 로고 아이콘으로
