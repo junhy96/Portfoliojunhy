@@ -1,6 +1,5 @@
 import { MorphStage, FallbackStage } from './morph.js';
 import { PdfViewer } from './pdf-viewer.js';
-import { paintPixelArt } from './pixel-art.js';
 import { initAnalytics } from './analytics.js';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
@@ -28,10 +27,7 @@ function workItem(p, i, variant) {
   const img = thumbOf(p);
   const pic = (cls) => (img ? el('img', { className: cls, src: img, alt: '', loading: 'lazy', decoding: 'async' }) : el('span', { className: cls + ' is-empty', textContent: p.title }));
   let btn;
-  if (variant === 'tiles') {
-    // Pixel: 썸네일 타일
-    btn = el('button', { className: 'work-card px-tile', type: 'button' }, el('span', { className: 'px-tile-media' }, pic('px-tile-img')), el('span', { className: 'px-tile-name', textContent: p.title }));
-  } else if (variant === 'latest') {
+  if (variant === 'latest') {
     // Editorial 첫 화면 유리 띠: 최근 작업 글
     btn = el(
       'button', { className: 'work-card ed-post', type: 'button' },
@@ -73,16 +69,8 @@ function render({ settings: s, projects }) {
   const tools = s.about?.tools || [];
   const exp = s.about?.experience || [];
   const lists = {
-    meta: (v) =>
+    meta: () =>
       (s.meta || []).map((m, i) => {
-        if (v === 'pixel') {
-          // Pixel 정보 바: 항목마다 픽셀 아이콘 하나
-          const icon = ['star', 'wrench', 'pin', 'flag'][i % 4];
-          const i_ = el('i', { className: 'px-icon' });
-          i_.dataset.icon = icon;
-          i_.setAttribute('aria-hidden', 'true');
-          return el('div', { className: 'px-meta' }, i_, el('dt', { textContent: m.label }), el('dd', { textContent: m.value }));
-        }
         const d = el('div', {}, el('dt', { textContent: m.label }), el('dd', { textContent: m.value }));
         d.style.setProperty('--d', i);
         return d;
@@ -111,7 +99,6 @@ function render({ settings: s, projects }) {
       img.style.objectPosition = `${(im.focusX ?? 0.5) * 100}% 50%`;
     }
   });
-  paintPixelArt();
 }
 
 /* ------------------------------------------------------------------ */
@@ -259,7 +246,6 @@ class Deck {
 /* ------------------------------------------------------------------ */
 /* 시작                                                                 */
 /* ------------------------------------------------------------------ */
-const THEMES = { mono: 0, pixel: 1, editorial: 2 };
 
 async function boot() {
   let data;
@@ -277,8 +263,7 @@ async function boot() {
   render(data);
   const { settings, projects } = data;
   const images = settings.images || {};
-  const root = document.documentElement;
-  const state = { theme: 'mono', section: 'hero', active: 0 };
+  const state = { section: 'hero' };
 
   // 모핑 스테이지
   const canvas = $('#stage');
@@ -294,75 +279,15 @@ async function boot() {
   }
   stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf)]);
 
-  // 섹션마다 보여줄 이미지. Pixel·Editorial의 Works는 선택된 작업의 썸네일
-  const sectionImage = (key) => {
-    if (key === 'works' && state.theme === 'pixel' && projects.length) {
-      return { src: thumbOf(projects[state.active]) || images.works?.src, focusX: 0.5 };
-    }
-    return images[key] || {};
-  };
+  stage.setMode(2, { instant: true }); // Editorial 색보정 (청록 회색)
+
+  const sectionImage = (key) => images[key] || {};
   const showSection = (opts) => {
-    stage.flip = state.theme === 'editorial' && state.section === 'hero';
+    // 첫 화면은 이름이 오른쪽에 오도록 사진을 좌우 반전
+    stage.flip = state.section === 'hero';
     const im = sectionImage(state.section);
     stage.show(im.src, im.focusX ?? 0.5, opts);
   };
-
-  // Pixel 스타일은 캔버스를 현재 섹션의 이미지 박스 안으로 옮김
-  const hostCanvas = () => {
-    if (!(stage instanceof MorphStage)) return;
-    if (state.theme === 'pixel') {
-      const slot = $('.panel.is-active .layout-pixel .morph-slot');
-      if (slot && canvas.parentElement !== slot) slot.appendChild(canvas);
-    } else if (canvas.parentElement !== document.body) {
-      document.body.prepend(canvas);
-    }
-  };
-
-  // 선택된 작업 (Pixel 큰 카드 · Editorial 대형 타이틀)
-  const setActive = (i, { morph = true } = {}) => {
-    const p = projects[i];
-    if (!p) return;
-    state.active = i;
-    const fields = { title: p.title, meta: metaOf(p), summary: p.summary || p.subtitle || '', no: 'No. ' + pad(i + 1) };
-    $$('[data-work]').forEach((n) => (n.textContent = fields[n.dataset.work] ?? ''));
-    $$('.work-card[data-index]').forEach((c) => c.classList.toggle('is-current', Number(c.dataset.index) === i));
-    $$('img.slot-img[data-img="active-work"]').forEach((img) => thumbOf(p) && (img.src = thumbOf(p)));
-    if (morph && state.section === 'works' && state.theme === 'pixel') showSection({ duration: 1100 });
-  };
-  setActive(0, { morph: false });
-
-  // 스타일 전환
-  const switcher = $('#theme-switch');
-  const canSwitch = settings.themeSwitcher !== false;
-  const fromUrl = new URLSearchParams(location.search).get('theme');
-  let saved = null;
-  try {
-    saved = localStorage.getItem('pf-theme');
-  } catch {}
-  const applyTheme = (theme, animate) => {
-    state.theme = theme;
-    root.dataset.theme = theme;
-    stage.setMode(THEMES[theme], { instant: !animate });
-    $$('button', switcher).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === theme)));
-    hostCanvas();
-  };
-  applyTheme([fromUrl, canSwitch ? saved : null, settings.theme, 'mono'].find((t) => t in THEMES), false);
-  switcher.hidden = EMBED || (!canSwitch && !(fromUrl in THEMES));
-  switcher.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-theme-set]');
-    if (!b || b.dataset.themeSet === state.theme) return;
-    try {
-      localStorage.setItem('pf-theme', b.dataset.themeSet);
-    } catch {}
-    // 화면을 잠깐 덮고 레이아웃을 바꾼 뒤 걷어냄
-    root.classList.add('theme-swapping');
-    setTimeout(() => {
-      applyTheme(b.dataset.themeSet, true);
-      window.dispatchEvent(new Event('resize'));
-      showSection({ instant: true });
-      requestAnimationFrame(() => setTimeout(() => root.classList.remove('theme-swapping'), 80));
-    }, 280);
-  });
 
   // 풀페이지 덱
   const navLinks = $$('.nav a');
@@ -377,7 +302,6 @@ async function boot() {
     dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
     $('#pager-cur').textContent = pad(i + 1);
     $('#pager-fill').style.width = ((i + 1) / total) * 100 + '%';
-    hostCanvas();
     showSection();
   });
   $$('.pager-btn').forEach((b) => b.addEventListener('click', () => deck.go(deck.index + Number(b.dataset.step))));
@@ -398,12 +322,8 @@ async function boot() {
   const hover = (i) => {
     clearTimeout(hoverTimer);
     hoverTimer = setTimeout(() => {
-      if (state.section !== 'works' && state.theme !== 'pixel') return;
-      if (state.theme === 'pixel') {
-        if (i != null && i !== state.active) setActive(i);
-        return;
-      }
-      // Mono·Editorial: 배경 전체가 커버로 모핑되고, 목록에서 벗어나면 원래 사진으로
+      if (state.section !== 'works') return;
+      // 배경 전체가 커버로 모핑되고, 목록에서 벗어나면 원래 사진으로
       const p = projects[i];
       document.body.classList.toggle('is-previewing', !!p);
       if (p) stage.show(thumbOf(p) || images.works?.src, 0.5, { duration: 1200 });
@@ -422,11 +342,7 @@ async function boot() {
   });
   document.addEventListener('click', (e) => {
     const b = e.target.closest('.work-card[data-index]');
-    if (b) {
-      return viewer.open(projects[b.dataset.index], b);
-    }
-    const open = e.target.closest('[data-open-active]');
-    if (open && projects[state.active]) viewer.open(projects[state.active], open);
+    if (b) viewer.open(projects[b.dataset.index], b);
   });
 
   // 첫 화면

@@ -206,7 +206,7 @@
     $$('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.view === name || (name === 'editor' && t.dataset.view === 'board')));
     if (name === 'settings') fillSettings();
     if (name === 'board') renderBoard();
-    if (name === 'stats') window.StudioStats?.open(db.settings?.analytics, db.settings?.theme);
+    if (name === 'stats') window.StudioStats?.open(db.settings?.analytics);
     window.scrollTo(0, 0);
     return true;
   }
@@ -619,9 +619,6 @@
     f.contactMessage.value = s.contact?.message || '';
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
-    const theme = ['mono', 'pixel', 'editorial'].includes(s.theme) ? s.theme : 'mono';
-    $$('input[name=theme]', f).forEach((r) => (r.checked = r.value === theme));
-    f.themeSwitcher.checked = s.themeSwitcher !== false;
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
     repeater($('#rep-exp'), s.about?.experience || [], [['period', '연도'], ['title', '제목'], ['desc', '설명']], 'exp', '경력 추가');
     repeater($('#rep-links'), s.contact?.links || [], [['label', '이름 (예: Notion)'], ['url', 'https://']], 'links', '링크 추가');
@@ -674,8 +671,6 @@
     const files = Object.entries(slotFiles).map(([slot, blob]) => ({ slot, path: `uploads/site-${slot}-${uid()}.${extOf(blob)}`, blob }));
     const values = {
       analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
-      theme: ($$('input[name=theme]', f).find((r) => r.checked) || {}).value || 'mono',
-      themeSwitcher: f.themeSwitcher.checked,
       siteTitle: f.siteTitle.value.trim(),
       nameKo: f.nameKo.value.trim(),
       nameEn: f.nameEn.value.trim(),

@@ -84,7 +84,6 @@ body.viewer-open .shade-full { opacity: .9; }
 .loader-name { color: var(--fg-3); letter-spacing: .02em; opacity: 0; animation: loader-fade .4s ease .6s forwards; }
 @keyframes loader-fade { to { opacity: 1; } }
 html[data-theme="editorial"] .loader-word { font-family: var(--display); }
-html[data-theme="pixel"] .loader-word { font-family: var(--px); font-weight: 700; letter-spacing: .1em; }
 .loader-bar { width: 120px; height: 1px; background: var(--line); overflow: hidden; }
 .loader-bar i { display: block; height: 100%; width: 100%; background: var(--fg); transform-origin: left; animation: load 1.2s var(--ease) infinite; }
 @keyframes load { 0% { transform: scaleX(0); } 60% { transform: scaleX(1); transform-origin: left; } 61% { transform-origin: right; } 100% { transform: scaleX(0); transform-origin: right; } }
@@ -390,46 +389,11 @@ body.viewer-open .topbar, body.viewer-open .pager, body.viewer-open .scroll-hint
 /* =========================================================
    스타일(테마) 공통 — 기본은 Mono
    ========================================================= */
-/* 현재 스타일의 레이아웃만 보임 */
-html[data-theme="mono"] .layout:not([data-themes~="mono"]),
-html[data-theme="pixel"] .layout:not([data-themes~="pixel"]),
-html[data-theme="editorial"] .layout:not([data-themes~="editorial"]) { display: none !important; }
-.px-panel, .rail, .pager-btn { display: none; }
-html:not([data-theme="pixel"]) .brand-sprite,
-html:not([data-theme="pixel"]) .nav-icon { display: none !important; }
-.px-sprite, .px-icon { display: inline-block; line-height: 0; }
-.px-sprite svg, .px-icon svg { width: 100%; height: 100%; display: block; }
-
-/* 스타일 전환 버튼 */
-.theme-switch {
-  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 30;
-  display: flex; align-items: center; gap: 2px; padding: 4px;
-  border: 1px solid var(--line-2); border-radius: 12px;
-  background: rgba(10, 10, 10, .55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  font-size: 9pt; letter-spacing: .06em; color: var(--fg-2);
-  transition: opacity .5s ease;
-}
-.theme-switch[hidden] { display: none; }
-.ts-label { padding: 0 8px 0 12px; color: var(--fg-3); letter-spacing: .02em; font-size: 9pt; }
-.theme-switch button { padding: 8px 12px; border-radius: 8px; transition: background-color .16s var(--ease-out), color .16s var(--ease-out); }
-.theme-switch button:hover { color: var(--fg); }
-.theme-switch button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-body.viewer-open .theme-switch { opacity: 0; pointer-events: none; }
-
-/* 스타일이 바뀔 때 잠깐 덮는 막 */
-.theme-veil { position: fixed; inset: 0; z-index: 45; background: #0a0a0a; opacity: 0; pointer-events: none; transition: opacity .28s ease; }
-html.theme-swapping .theme-veil { opacity: 1; }
+.rail, .pager-btn { display: none; }
 
 /* WebGL을 못 쓰는 환경에서의 스타일별 사진 보정 */
-.stage-fallback[data-mode="1"] img { filter: grayscale(.2) sepia(.35) contrast(1.15) brightness(.85) !important; image-rendering: pixelated; }
 .stage-fallback[data-mode="2"] img { filter: grayscale(.55) sepia(.2) hue-rotate(130deg) brightness(.85) !important; }
 
-@media (max-width: 820px) {
-  .theme-switch { left: auto; right: 12px; top: 16px; bottom: auto; transform: none; }
-  body:has(.theme-switch:not([hidden])) .brand-role { display: none; }
-  .ts-label { display: none; }
-  .theme-switch button { padding: 4px 8px; }
-}
 
 /* 관리자 클릭 히트맵 미리보기 (?embed): 로더·등장 애니메이션 없이 바로 */
 html.is-embed .loader { display: none; }
@@ -452,11 +416,11 @@ html.is-embed .reveal, html.is-embed .hero-meta div { transition: none !importan
 .tracking-in-expand {
   animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
-body.is-ready .panel.is-active :is(.name, .px-title, .ed-name, .section-title, .contact-title, .ed-giant) {
+body.is-ready .panel.is-active :is(.ed-name, .section-title, .ed-giant) {
   animation: tracking-in-expand 1s cubic-bezier(0.215, 0.610, 0.355, 1.000) .5s both;
 }
-html.is-embed .panel :is(.name, .px-title, .ed-name, .section-title, .contact-title, .ed-giant) { animation: none !important; }
+html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .tracking-in-expand { animation: none; }
-  body.is-ready .panel.is-active :is(.name, .px-title, .ed-name, .section-title, .contact-title, .ed-giant) { animation: none; }
+  body.is-ready .panel.is-active :is(.ed-name, .section-title, .ed-giant) { animation: none; }
 }

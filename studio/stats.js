@@ -15,8 +15,7 @@
   let auth = null;
   let days = 7;
   let all = [];
-  let defaultTheme = 'mono';
-  const heat = { section: 'hero', theme: null, device: 'desktop' };
+  const heat = { section: 'hero', device: 'desktop' };
 
   const h = (tag, props = {}, ...kids) => {
     const n = Object.assign(document.createElement(tag), props);
@@ -431,20 +430,14 @@
   const REF = { desktop: [1440, 900], mobile: [390, 844] };
   function heatClicks() {
     const { cur } = split();
-    return cur.filter((e) => e.type === 'click' && e.section === heat.section && (e.theme || 'mono') === heat.theme && (heat.device === 'mobile' ? e.device === 'mobile' : e.device !== 'mobile') && e.x != null && e.y != null);
+    return cur.filter((e) => e.type === 'click' && e.section === heat.section && (heat.device === 'mobile' ? e.device === 'mobile' : e.device !== 'mobile') && e.x != null && e.y != null);
   }
   function setSeg(id, value) {
     $$(`#${id} button`).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === value)));
   }
   let lastSrc = '';
   function renderHeat() {
-    const { cur } = split();
-    if (!heat.theme) {
-      // 클릭이 가장 많은 스타일을 먼저 보여줌
-      heat.theme = countBy(cur.filter((e) => e.type === 'click'), (e) => e.theme || 'mono')[0]?.[0] || defaultTheme;
-    }
     setSeg('heat-section', heat.section);
-    setSeg('heat-theme', heat.theme);
     setSeg('heat-device', heat.device);
     const [rw, rh] = REF[heat.device];
     const stage = $('#heat-stage');
@@ -460,7 +453,7 @@
       n.style.transform = `scale(${scale})`;
     });
     const id = SECTIONS.find(([k]) => k === heat.section)[2];
-    const src = `${ROOT}?theme=${heat.theme}&embed=1#${id}`;
+    const src = `${ROOT}?embed=1#${id}`;
     if (src !== lastSrc) {
       frame.src = src;
       lastSrc = src;
@@ -505,7 +498,7 @@
     }
     ctx.putImageData(img, 0, 0);
   }
-  [['heat-section', 'section'], ['heat-theme', 'theme'], ['heat-device', 'device']].forEach(([id, key]) =>
+  [['heat-section', 'section'], ['heat-device', 'device']].forEach(([id, key]) =>
     $('#' + id).addEventListener('click', (e) => {
       const b = e.target.closest('[data-v]');
       if (!b) return;
@@ -541,8 +534,7 @@
 
   /* ---------------- 시작 ---------------- */
   window.StudioStats = {
-    open(c, theme) {
-      defaultTheme = theme || 'mono';
+    open(c) {
       try {
         notrack.checked = localStorage.getItem('pf-notrack') === '1';
       } catch {}

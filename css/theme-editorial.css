@@ -39,7 +39,7 @@ html[data-theme="editorial"] .rail {
 }
 html[data-theme="editorial"] .rail-mark { font-family: var(--display); font-weight: 600; font-size: 16px; letter-spacing: 0; }
 html[data-theme="editorial"] .rail-links {
-  margin: auto 0 152px; display: flex; gap: 28px; writing-mode: vertical-rl; transform: rotate(180deg);
+  margin: auto 0 32px; display: flex; gap: 28px; writing-mode: vertical-rl; transform: rotate(180deg);
   font-size: 8.5pt; letter-spacing: .04em; text-transform: lowercase;
 }
 html[data-theme="editorial"] .rail-links a { color: var(--fg-3); transition: color .3s; }
@@ -155,17 +155,6 @@ html[data-theme="editorial"] .work-card:focus-visible .card-media img { filter: 
 html[data-theme="editorial"] .card-title { font-family: var(--display); font-weight: 700; letter-spacing: -.01em; }
 html[data-theme="editorial"] .card-open { background: var(--accent); color: #1b2424; }
 
-/* 스타일 전환: 레일 아래쪽에 세로로 */
-html[data-theme="editorial"] .theme-switch {
-  left: 0; right: auto; bottom: 0; top: auto; transform: none; width: var(--rail);
-  flex-direction: column; align-items: stretch; gap: 0; padding: 12px 8px 16px;
-  border: 0; border-top: 1px solid var(--line); border-radius: 0; background: none; backdrop-filter: none; z-index: 22;
-  font-size: 8pt; letter-spacing: .02em;
-}
-html[data-theme="editorial"] .ts-label { padding: 0 0 8px; text-align: center; font-size: 7pt; }
-html[data-theme="editorial"] .theme-switch button { border-radius: 2px; padding: 4px 0; }
-html[data-theme="editorial"] .theme-switch button[aria-pressed="true"] { background: var(--fg); color: #1b2424; }
-
 /* 뷰어 */
 html[data-theme="editorial"] .viewer { background: #141d1d; }
 html[data-theme="editorial"] .viewer-title { font-family: var(--display); font-weight: 900; text-transform: uppercase; }
@@ -195,7 +184,4 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
   html[data-theme="editorial"] .ed-latest { grid-template-columns: 1fr; gap: 16px; }
   html[data-theme="editorial"] .ed-more { writing-mode: horizontal-tb; transform: none; grid-row: auto; grid-column: 1; padding: 12px; }
   html[data-theme="editorial"] .pager { top: auto; bottom: 16px; left: auto; right: var(--gutter); width: auto; display: none; }
-  html[data-theme="editorial"] .theme-switch { top: 16px; bottom: auto; left: auto; right: 12px; width: auto; flex-direction: row; padding: 4px; border: 1px solid var(--line-2); border-radius: 3px; background: rgba(28, 40, 40, .6); }
-  html[data-theme="editorial"] .ts-label { display: none; }
-  html[data-theme="editorial"] .theme-switch button { padding: 4px 8px; }
 }
