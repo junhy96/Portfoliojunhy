@@ -1,12 +1,17 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090545';
-import { PdfViewer } from './pdf-viewer.js?v=202611090545';
-import { initAnalytics } from './analytics.js?v=202611090545';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090546';
+import { PdfViewer } from './pdf-viewer.js?v=202611090546';
+import { initAnalytics } from './analytics.js?v=202611090546';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
 const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
+// 스타일은 Editorial 하나 (예전 페이지가 캐시에 남아 다른 스타일을 고르더라도 덮어씀)
+document.documentElement.dataset.theme = 'editorial';
+try {
+  localStorage.removeItem('pf-theme');
+} catch {}
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
