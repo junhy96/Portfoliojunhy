@@ -32,6 +32,11 @@ uniform vec2 uMouse;
 uniform float uGrade;
 uniform float uMotion;
 uniform float uStrength;
+uniform float uMode0;
+uniform float uMode1;
+uniform float uModeT;
+uniform float uPixel;
+uniform float uFlip;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -56,8 +61,8 @@ vec2 cover(vec2 uv, vec2 size, float focus) {
   return uv * s + (1.0 - s) * vec2(focus, 0.5);
 }
 
-void main() {
-  vec2 uv = vUv;
+// 두 이미지를 모핑으로 합성한 원본 색 (색보정 전)
+vec3 composite(vec2 uv) {
   float p = uProgress;
   float t = uTime * uMotion;
   vec2 par = (uMouse - 0.5) * 0.014 * uMotion;
@@ -77,8 +82,10 @@ void main() {
   ub = (ub - 0.5) * (1.0 + 0.06 * (1.0 - p)) + 0.5;
 
   float z = 1.0 - 0.02 * uMotion;
-  vec2 ta = uSnap0 > 0.5 ? ua : cover((ua - 0.5) * z + 0.5 + par, uSize0, uFocus0);
-  vec2 tb = cover((ub - 0.5) * z + 0.5 + par, uSize1, uFocus1);
+  vec2 fa = uFlip > 0.5 ? vec2(1.0 - ua.x, ua.y) : ua;
+  vec2 fb = uFlip > 0.5 ? vec2(1.0 - ub.x, ub.y) : ub;
+  vec2 ta = uSnap0 > 0.5 ? ua : cover((fa - 0.5) * z + 0.5 + par, uSize0, uFocus0);
+  vec2 tb = cover((fb - 0.5) * z + 0.5 + par, uSize1, uFocus1);
 
   // 전환 중 살짝 번지는 느낌 (가로 방향 3탭 블러)
   float blur = bell * 0.004;
@@ -89,16 +96,62 @@ void main() {
   float m = smoothstep(n - 0.17, n + 0.17, edge);
   vec3 col = mix(a, b, m);
   col += (1.0 - abs(m * 2.0 - 1.0)) * 0.05 * bell;   // 경계의 은은한 빛
+  return col;
+}
 
-  if (uGrade > 0.5) {
-    float l = dot(col, vec3(0.299, 0.587, 0.114));
-    col = mix(vec3(l), col, 0.06);                    // 모노톤
-    col = (col - 0.5) * 1.08 + 0.5;                   // 대비
-    col = pow(max(col, 0.0), vec3(1.05));
-    vec2 q = (vUv - 0.5) * vec2(uRes.x / uRes.y, 1.0);
-    col *= mix(0.48, 1.0, smoothstep(1.2, 0.25, length(q)));   // 비네팅
-    col += (hash(vUv * uRes + fract(uTime * 7.0) * 91.7) - 0.5) * 0.045; // 그레인
+const vec3 LUM = vec3(0.299, 0.587, 0.114);
+float vignette(float strength) {
+  vec2 q = (vUv - 0.5) * vec2(uRes.x / uRes.y, 1.0);
+  return mix(1.0 - strength, 1.0, smoothstep(1.2, 0.25, length(q)));
+}
+float grain(float amount) {
+  return (hash(vUv * uRes + fract(uTime * 7.0) * 91.7) - 0.5) * amount;
+}
+float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
+float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+
+// 스타일별 색보정  0 = Mono, 1 = Pixel, 2 = Editorial
+vec3 shade(float mode, vec3 raw) {
+  if (mode > 0.5 && mode < 1.5) {
+    // Pixel: 평소엔 사진 그대로(따뜻한 톤). 이미지가 바뀌는 동안만 픽셀 블록으로 전환
+    float bell = sin(uProgress * 3.14159265);
+    vec3 c = raw;
+    if (bell > 0.02) {
+      float size = max(1.0, uPixel * bell * 5.0);
+      vec2 cell = floor(vUv * uRes / size);
+      c = composite((cell + 0.5) * size / uRes);
+    }
+    c = (c - 0.5) * 1.05 + 0.5;
+    c *= vec3(1.02, 1.0, 0.94);
+    return c * vignette(0.18);
   }
+  vec3 c = raw;
+  float l = dot(c, LUM);
+  if (mode < 0.5) {
+    c = mix(vec3(l), c, 0.06);                         // 모노톤
+    c = (c - 0.5) * 1.08 + 0.5;
+    c = pow(max(c, 0.0), vec3(1.05));
+    c *= vignette(0.52);
+    c += grain(0.045);
+  } else {
+    c = mix(vec3(l), c, 0.45);                         // 채도를 낮춘 청록 회색
+    c *= vec3(0.80, 0.95, 0.93);
+    c = mix(c, vec3(0.17, 0.23, 0.23), 0.14);          // 매트한 블랙
+    c = (c - 0.5) * 1.04 + 0.5;
+    c *= vignette(0.3);
+    c += grain(0.03);
+  }
+  return c;
+}
+
+void main() {
+  if (uGrade < 0.5) {                                 // 스냅샷: 색보정 없는 원본
+    gl_FragColor = vec4(composite(vUv), 1.0);
+    return;
+  }
+  vec3 raw = composite(vUv);
+  vec3 col = shade(uMode0, raw);
+  if (uModeT > 0.001) col = mix(col, shade(uMode1, raw), uModeT);
   gl_FragColor = vec4(col, 1.0);
 }`;
 
@@ -122,6 +175,10 @@ export class MorphStage {
     this.mouseTarget = [0.5, 0.5];
     this.motion = reduceMotion ? 0 : 1;
     this.start = performance.now();
+    this.modeFrom = 0;
+    this.modeTo = 0;
+    this.modeAnim = null;
+    this.modeT = 0;
 
     const prog = (this.prog = gl.createProgram());
     [[gl.VERTEX_SHADER, VERT], [gl.FRAGMENT_SHADER, FRAG]].forEach(([type, src]) => {
@@ -143,7 +200,7 @@ export class MorphStage {
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
     this.u = {};
-    ['uTex0', 'uTex1', 'uRes', 'uSize0', 'uSize1', 'uFocus0', 'uFocus1', 'uSnap0', 'uProgress', 'uTime', 'uMouse', 'uGrade', 'uMotion', 'uStrength'].forEach(
+    ['uTex0', 'uTex1', 'uRes', 'uSize0', 'uSize1', 'uFocus0', 'uFocus1', 'uSnap0', 'uProgress', 'uTime', 'uMouse', 'uGrade', 'uMotion', 'uStrength', 'uMode0', 'uMode1', 'uModeT', 'uPixel', 'uFlip'].forEach(
       (n) => (this.u[n] = gl.getUniformLocation(prog, n))
     );
     gl.uniform1i(this.u.uTex0, 0);
@@ -164,6 +221,7 @@ export class MorphStage {
 
     this._resize = this._resize.bind(this);
     window.addEventListener('resize', this._resize);
+    if (window.ResizeObserver) new ResizeObserver(this._resize).observe(canvas);
     this._resize();
 
     window.addEventListener('pointermove', (e) => {
@@ -208,12 +266,18 @@ export class MorphStage {
 
   _resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const w = Math.round(window.innerWidth * dpr);
-    const h = Math.round(window.innerHeight * dpr);
+    const w = Math.max(2, Math.round((this.canvas.clientWidth || window.innerWidth) * dpr));
+    const h = Math.max(2, Math.round((this.canvas.clientHeight || window.innerHeight) * dpr));
     if (this.canvas.width === w && this.canvas.height === h) return;
     this.canvas.width = w;
     this.canvas.height = h;
     const gl = this.gl;
+    // 크기가 바뀌면 스냅샷이 지워지므로, 전환 중이었다면 목표 이미지로 바로 정리
+    if (this.from?.snap) {
+      this.from = { ...this.to, snap: false };
+      this.anim = null;
+      this.progress = 0;
+    }
     this.snaps.forEach((s) => {
       gl.bindTexture(gl.TEXTURE_2D, s.tex);
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -310,10 +374,42 @@ export class MorphStage {
     gl.uniform1f(u.uGrade, grade ? 1 : 0);
     gl.uniform1f(u.uMotion, this.motion);
     gl.uniform1f(u.uStrength, this.strength || 0.32);
+    gl.uniform1f(u.uFlip, this.flip ? 1 : 0);
+    gl.uniform1f(u.uMode0, this.modeFrom);
+    gl.uniform1f(u.uMode1, this.modeTo);
+    gl.uniform1f(u.uModeT, this.modeT);
+    gl.uniform1f(u.uPixel, Math.max(4, Math.round(7 * Math.min(window.devicePixelRatio || 1, 1.5))));
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
 
+  /** 스타일 전환: 0 = Mono, 1 = Pixel, 2 = Editorial (색보정이 부드럽게 바뀜) */
+  setMode(mode, { instant = false } = {}) {
+    if (mode === this.modeTo && !this.modeAnim) {
+      if (instant) { this.modeFrom = mode; this.modeT = 0; }
+      return;
+    }
+    if (this.modeAnim && this.modeT > 0.5) this.modeFrom = this.modeTo;
+    this.modeTo = mode;
+    if (instant || reduceMotion) {
+      this.modeFrom = mode;
+      this.modeT = 0;
+      this.modeAnim = null;
+      return;
+    }
+    this.modeT = 0;
+    this.modeAnim = { start: performance.now(), duration: 900 };
+  }
+
   _tick(now) {
+    if (this.modeAnim) {
+      const t = Math.min(1, (now - this.modeAnim.start) / this.modeAnim.duration);
+      this.modeT = easeInOut(t);
+      if (t >= 1) {
+        this.modeFrom = this.modeTo;
+        this.modeT = 0;
+        this.modeAnim = null;
+      }
+    }
     if (this.anim) {
       const t = Math.min(1, (now - this.anim.start) / this.anim.duration);
       this.progress = easeInOut(t);
@@ -345,6 +441,9 @@ export class FallbackStage {
   }
   preload(srcs) {
     srcs.filter(Boolean).forEach((s) => (new Image().src = s));
+  }
+  setMode(mode) {
+    this.el.dataset.mode = mode;
   }
   show(src, focus = 0.5) {
     if (!src || src === this.current) return;

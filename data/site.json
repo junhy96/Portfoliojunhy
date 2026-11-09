@@ -1,5 +1,7 @@
 {
   "settings": {
+    "theme": "mono",
+    "themeSwitcher": true,
     "siteTitle": "이도하 — Game Designer Portfolio",
     "nameEn": "LEE DOHA",
     "nameKo": "이도하",

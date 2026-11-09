@@ -5,6 +5,18 @@
 - **사이트** `/`: 스크롤하면 한 섹션씩 넘어갑니다(Home · About · Works · Contact). 섹션이 바뀔 때 배경 사진이 모핑되고, Works 썸네일을 누르면 PDF가 전체화면으로 열립니다.
 - **관리자** `/studio/`: 게시판처럼 포트폴리오 PDF를 올리고, 썸네일을 고르고, 글을 수정·삭제·숨김·정렬합니다. 저장하면 GitHub 저장소에 바로 커밋되고 1~2분 뒤 사이트에 반영됩니다.
 
+## 스타일 3가지
+
+사이트 아래쪽(또는 위쪽)의 **Style** 버튼으로 디자인을 바꿔볼 수 있습니다. 주소 뒤에 `?theme=pixel`처럼 붙여도 됩니다.
+
+| 스타일 | 특징 |
+| --- | --- |
+| `mono` | 흑백 풀스크린 사진, 큰 한글 이름 |
+| `pixel` | 둥근 패널, 크림색 박스, 도트 폰트, 픽셀 캐릭터·아이콘 (사진은 그대로) |
+| `editorial` | 왼쪽 세로 레일, 01/04 카운터, 사진 위 초대형 이름, 하단 유리 띠 |
+
+하나로 정했으면 관리자 페이지 → **사이트 설정 → 스타일**에서 기본 스타일을 고르고 “전환 버튼 보이기”를 끄세요.
+
 ## 배포 방법 (처음 한 번)
 
 1. **저장소 만들기**: GitHub에서 New repository를 누릅니다.
@@ -60,9 +72,11 @@ python3 -m http.server 8000
 index.html, css/, js/       공개 사이트
   js/morph.js               WebGL 모핑 (노이즈 변위 + 모노톤 보정)
   js/pdf-viewer.js          전체화면 PDF 뷰어 (pdf.js)
+  js/pixel-art.js           픽셀 캐릭터·아이콘 (Pixel 스타일)
+css/theme-*.css             스타일별 디자인 (pixel, editorial)
 data/site.json              사이트 설정 + 포트폴리오 목록
 uploads/                    PDF·썸네일·사진 (uploads/seed = 샘플)
 studio/                     관리자 페이지 (github.js = 저장소 저장 로직)
-vendor/                     pdf.js (폰트 Pretendard는 CDN에서 불러옴)
+vendor/                     pdf.js, 갈무리 도트 폰트 (Pretendard는 CDN)
 .nojekyll                   GitHub Pages가 파일을 그대로 쓰도록 하는 설정
 ```

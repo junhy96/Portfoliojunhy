@@ -1,0 +1,81 @@
+/**
+ * 픽셀 아트 — 점 지도(문자 그림)를 SVG로 바꿔 넣습니다.
+ * 사진은 그대로 두고, 캐릭터·아이콘 같은 장식만 픽셀 아트로 그립니다.
+ */
+
+// 헤드셋을 쓴 게임 기획자 캐릭터 (14 × 16)
+const SPRITE = {
+  palette: { k: '#1b1b19', h: '#4b4640', s: '#e9cfa8', c: '#ece6c5', m: '#c98f7a', b: '#ece6c5', d: '#a8a38c', e: '#1b1b19' },
+  rows: [
+    '....kkkkkk....',
+    '..kkhhhhhhkk..',
+    '.khhhhhhhhhhk.',
+    '.kchhhhhhhhck.',
+    'kchhsssssshhck',
+    'kcssessssessck',
+    'kcssssssssssck',
+    '.kssssmmssssk.',
+    '..kssssssssk..',
+    '...kkksskkk...',
+    '.kbbbbbbbbbbk.',
+    'kbbbbbddbbbbbk',
+    'kbbbbbbbbbbbbk',
+    'kbdbbbbbbbbdbk',
+    'kbdbbbbbbbbdbk',
+    'kkkkkkkkkkkkkk',
+  ],
+};
+
+const ICONS = {
+  controller: [
+    '............', '............', '..########..', '.##########.', '##.########.', '#...####.#.#',
+    '##.####.#.##', '###########.', '####....####', '.##......##.', '............', '............',
+  ],
+  heart: [
+    '............', '.###...###..', '#####.#####.', '###########.', '###########.', '###########.',
+    '.#########..', '..#######...', '...#####....', '....###.....', '.....#......', '............',
+  ],
+  star: [
+    '.....##.....', '.....##.....', '....####....', '############', '.##########.', '..########..',
+    '...######...', '..########..', '..###..###..', '.###....###.', '.##......##.', '............',
+  ],
+  sword: [
+    '..........##', '.........###', '........###.', '.......###..', '......###...', '.#...###....',
+    '..#.###.....', '...###......', '...##.......', '..#..#......', '.#..........', '#...........',
+  ],
+  coin: [
+    '............', '....####....', '..##....##..', '.#..####..#.', '.#.##..##.#.', '#..##..##..#',
+    '#..##..##..#', '.#.##..##.#.', '.#..####..#.', '..##....##..', '....####....', '............',
+  ],
+  potion: [
+    '....####....', '....#..#....', '.....##.....', '....#..#....', '...#....#...', '..#......#..',
+    '.#.######.#.', '.#.######.#.', '.#.######.#.', '..#.####.#..', '...######...', '............',
+  ],
+};
+
+function toSvg(rows, palette, title) {
+  const w = rows[0].length;
+  const h = rows.length;
+  const byColor = {};
+  rows.forEach((r, y) =>
+    [...r].forEach((ch, x) => {
+      const fill = palette ? palette[ch] : ch === '#' ? 'currentColor' : null;
+      if (!fill) return;
+      (byColor[fill] ||= []).push(`M${x} ${y}h1v1h-1z`);
+    })
+  );
+  const paths = Object.entries(byColor)
+    .map(([fill, d]) => `<path fill="${fill}" d="${d.join('')}"/>`)
+    .join('');
+  return `<svg viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" aria-hidden="true">${title ? `<title>${title}</title>` : ''}${paths}</svg>`;
+}
+
+const spriteSvg = toSvg(SPRITE.rows, SPRITE.palette);
+
+export function paintPixelArt(root = document) {
+  root.querySelectorAll('.px-sprite:empty').forEach((el) => (el.innerHTML = spriteSvg));
+  root.querySelectorAll('.px-icon[data-icon]:empty').forEach((el) => {
+    const rows = ICONS[el.dataset.icon];
+    if (rows) el.innerHTML = toSvg(rows, null);
+  });
+}
