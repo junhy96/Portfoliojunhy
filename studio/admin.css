@@ -331,13 +331,23 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 
 /* 타임라인(연혁) 편집기 */
 .tl-editor { display: grid; gap: 10px; }
-.tl-row { display: grid; grid-template-columns: 110px 190px 1fr 1fr 30px; gap: 8px; align-items: start; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.tl-row { display: grid; grid-template-columns: 132px 104px 180px 1fr 1fr 30px; gap: 8px; align-items: start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .tl-row select { height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
-.tl-row textarea { grid-column: 2 / 5; resize: vertical; }
-.tl-row .icon-btn { grid-column: 5; grid-row: 1; }
+.tl-row textarea { resize: vertical; }
+.tl-row textarea[data-key="desc"] { grid-column: 2 / 4; }
+.tl-row textarea[data-tasks] { grid-column: 4 / 6; }
+.tl-row .icon-btn { grid-column: 6; grid-row: 1; }
+.tl-photo-cell { grid-row: 1 / 3; display: grid; gap: 4px; }
+.tl-drop { min-height: 0; aspect-ratio: 4 / 3; padding: 0; }
+.tl-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tl-drop .drop-empty { padding: 8px; font-size: 12px; }
+.tl-drop-clear { font-size: 12px; color: var(--fg-3); text-align: left; background: none; border: 0; padding: 2px 0; cursor: pointer; }
+.tl-drop-clear:hover { color: var(--fg); }
 .tl-editor .rep-add { justify-self: start; }
 @media (max-width: 900px) {
   .tl-row { grid-template-columns: 1fr 1fr 30px; }
-  .tl-row > :nth-child(3), .tl-row > :nth-child(4), .tl-row textarea { grid-column: 1 / 3; }
-  .tl-row .icon-btn { grid-column: 3; }
+  .tl-photo-cell { grid-row: auto; grid-column: 1 / 3; }
+  .tl-photo-cell .tl-drop { width: 160px; }
+  .tl-row > :nth-child(4), .tl-row > :nth-child(5), .tl-row textarea[data-key="desc"], .tl-row textarea[data-tasks] { grid-column: 1 / 3; }
+  .tl-row .icon-btn { grid-column: 3; grid-row: 1; }
 }

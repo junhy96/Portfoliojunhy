@@ -1,11 +1,12 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090648';
-import { PdfViewer } from './pdf-viewer.js?v=202611090648';
-import { renderSkillChart } from './skills.js?v=202611090648';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090648';
-import { initAnalytics } from './analytics.js?v=202611090648';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090703';
+import { PdfViewer } from './pdf-viewer.js?v=202611090703';
+import { renderSkillChart } from './skills.js?v=202611090703';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090703';
+import { initAnalytics } from './analytics.js?v=202611090703';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
+let onTimelineFocus = null; // 타임라인에서 보는 항목이 바뀔 때 (boot에서 채움)
 const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
@@ -105,7 +106,7 @@ function render({ settings: s, projects }) {
   });
 
   renderSkillChart($('#skill-chart'), s.skillChart);
-  renderTimeline($('#timeline-track'), tl);
+  renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
   $$('img.slot-img[data-img]').forEach((img) => {
@@ -326,7 +327,7 @@ async function boot() {
     canvas.remove();
     stage = lightStage();
   }
-  stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf)]);
+  stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf), ...timelineItems(settings).map((x) => x.image).filter(Boolean)]);
 
   stage.setMode(2, { instant: true }); // Editorial 색보정 (청록 회색)
 
@@ -339,6 +340,22 @@ async function boot() {
     stage.show(im.src, im.focusX ?? 0.5, opts);
   };
 
+  // 타임라인: 보고 있는 항목에 배경 사진이 있으면 그 사진으로 모핑, 없으면 기본 배경
+  let tlTimer;
+  let tlShown = null;
+  onTimelineFocus = (it) => {
+    clearTimeout(tlTimer);
+    tlTimer = setTimeout(() => {
+      if (state.section !== 'timeline') return;
+      const src = it?.image || null;
+      document.body.classList.toggle('tl-photo', !!src);
+      if (src === tlShown) return;
+      tlShown = src;
+      if (src) stage.show(src, it.focusX ?? 0.5, { duration: 1200 });
+      else showSection({ duration: 1200 });
+    }, 260);
+  };
+
   // 풀페이지 덱
   const navLinks = $$('.nav a');
   const dots = $$('.dots button');
@@ -347,7 +364,8 @@ async function boot() {
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;
     document.body.dataset.section = state.section;
-    document.body.classList.remove('is-previewing');
+    document.body.classList.remove('is-previewing', 'tl-photo');
+    tlShown = null;
     navLinks.forEach((a, k) => a.classList.toggle('is-active', k === i));
     dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
     $('#pager-cur').textContent = pad(i + 1);

@@ -612,12 +612,42 @@
       const period = h('input', { value: it.period || '', placeholder: '기간 (예: 2023.07 — 2023.12)', maxLength: 40 });
       const title = h('input', { value: it.title || '', placeholder: '제목 (예: ○○게임즈 기획 인턴)', maxLength: 60 });
       const org = h('input', { value: it.org || '', placeholder: '기관 · 소속 (선택)', maxLength: 60 });
-      const desc = h('textarea', { value: it.desc || '', placeholder: '한두 줄 설명 (선택)', maxLength: 200, rows: 2 });
+      const desc = h('textarea', { value: it.desc || '', placeholder: '한두 줄 설명 (선택)', maxLength: 200, rows: 3 });
+      const tasks = h('textarea', { value: (Array.isArray(it.tasks) ? it.tasks : []).join('\n'), placeholder: '주요 업무 — 한 줄에 하나씩 (선택)\n예: 이벤트 기획서 작성\n예: 보상 테이블 정리', rows: 3 });
       const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
       del.onclick = () => { r.remove(); dirty = true; };
       [type, period, title, org, desc].forEach((n, k) => (n.dataset.key = ['type', 'period', 'title', 'org', 'desc'][k]));
+      tasks.dataset.tasks = '1';
       type.addEventListener('change', () => (dirty = true));
-      r.append(type, period, title, org, desc, del);
+      // 배경 사진: 사이트에서 이 항목을 보고 있을 때 뒷배경이 이 사진으로 바뀜
+      r._image = it.image || '';
+      r._focusX = it.focusX ?? 0.5;
+      const drop = h(
+        'label', { className: 'drop tl-drop', title: '배경 사진 — 이 항목을 볼 때 뒷배경이 이 사진으로 바뀌어요' },
+        h('input', { type: 'file', accept: 'image/jpeg,image/png,image/webp,image/gif', hidden: true }),
+        h('span', { className: 'drop-empty', textContent: '+ 배경 사진', hidden: !!r._image }),
+        r._image ? img(r._image) : null
+      );
+      const clear = h('button', { type: 'button', className: 'tl-drop-clear', textContent: '사진 빼기', hidden: !r._image });
+      clear.onclick = () => {
+        r._image = '';
+        r._blob = null;
+        $('img', drop)?.remove();
+        $('.drop-empty', drop).hidden = false;
+        clear.hidden = true;
+        dirty = true;
+      };
+      bindDrop(drop, async (file) => {
+        if (!file || !/^image\//.test(file.type)) return toast('이미지 파일만 올릴 수 있습니다.', true);
+        r._blob = await resizeImage(file, 2400, 0.88);
+        dirty = true;
+        let el = $('img', drop);
+        if (!el) drop.append((el = h('img', { alt: '' })));
+        el.src = URL.createObjectURL(r._blob);
+        $('.drop-empty', drop).hidden = true;
+        clear.hidden = false;
+      });
+      r.append(h('div', { className: 'tl-photo-cell' }, drop, clear), type, period, title, org, desc, tasks, del);
       return r;
     };
     const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 연혁 추가' });
@@ -628,9 +658,20 @@
     };
     box.replaceChildren(...items.map(row), add);
   }
-  function readTimeline() {
+  /** 연혁 읽기. 새로 고른 배경 사진은 files에 넣어 함께 커밋 */
+  function readTimeline(files = []) {
     return $$('#tl-editor .tl-row')
-      .map((r) => Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()])))
+      .map((r) => {
+        const x = Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()]));
+        x.tasks = $('[data-tasks]', r).value.split('\n').map((t) => t.trim()).filter(Boolean);
+        if (r._blob) {
+          const path = `uploads/timeline-${uid()}.${extOf(r._blob)}`;
+          files.push({ slot: 'timeline-item', path, blob: r._blob });
+          x.image = path;
+        } else if (r._image) x.image = r._image;
+        if (x.image) x.focusX = r._focusX;
+        return x;
+      })
       .filter((x) => x.title || x.period);
   }
 
@@ -772,7 +813,7 @@
       worksIntro: f.worksIntro.value.trim(),
       timelineHeading: f.timelineHeading.value.trim() || 'Timeline',
       timelineIntro: f.timelineIntro.value.trim(),
-      timeline: readTimeline(),
+      timeline: readTimeline(files),
       skillsHeading: f.skillsHeading.value.trim() || 'Skills',
       skillsIntro: f.skillsIntro.value.trim(),
       skillChart: readSkills(),
