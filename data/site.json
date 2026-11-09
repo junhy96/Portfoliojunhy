@@ -1,6 +1,12 @@
 {
   "settings": {
-    "siteTitle": "이도하 — Game Designer Portfolio",
+    "analytics": {
+      "url": "",
+      "key": ""
+    },
+    "theme": "mono",
+    "themeSwitcher": true,
+    "siteTitle": "전현영 — Game Designer Portfolio",
     "nameKo": "전현영",
     "nameEn": "Jeon Hyun Young",
     "role": "Game Designer",
@@ -165,5 +171,5 @@
       "updatedAt": "2026-08-01T09:00:00.000Z"
     }
   ],
-  "rev": 1794195376443
+  "rev": 1794200159522
 }
