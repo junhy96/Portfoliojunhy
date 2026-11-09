@@ -567,8 +567,9 @@
   const SLOTS = [
     ['hero', '01 Home'],
     ['about', '02 About'],
-    ['works', '03 Works'],
-    ['contact', '04 Contact'],
+    ['skills', '03 Skills'],
+    ['works', '04 Works'],
+    ['contact', '05 Contact'],
   ];
   sForm.addEventListener('input', () => (dirty = true));
 
@@ -600,6 +601,51 @@
       .map((r) => Object.fromEntries($$('input', r).map((i) => [i.dataset.key, i.value.trim()])))
       .filter((o) => Object.values(o).some(Boolean));
 
+  /* --- 스킬 차트 편집기 --- */
+  const ICONS = window.SKILL_ICONS || {};
+  function skillEditor(items) {
+    const box = $('#skill-editor');
+    const row = (it = { name: '', level: 70, icon: 'idea', desc: '' }) => {
+      const r = h('div', { className: 'skill-row' });
+      const preview = h('span', { className: 'skill-icon-preview' });
+      const icon = h('select', { className: 'skill-icon-select', title: '아이콘' }, ...Object.entries(ICONS).map(([k, v]) => h('option', { value: k, textContent: v.label, selected: k === it.icon })));
+      const setPreview = () => (preview.innerHTML = window.skillIconSvg ? window.skillIconSvg(icon.value, 18) : '');
+      icon.addEventListener('change', () => { setPreview(); dirty = true; });
+      setPreview();
+      const name = h('input', { value: it.name || '', placeholder: '스킬 이름 (예: 시스템 기획)', maxLength: 30 });
+      const level = h('input', { type: 'number', min: 0, max: 100, step: 5, value: it.level ?? 70, title: '숙련도 (0~100)' });
+      const bar = h('i', { className: 'skill-level-bar' });
+      const setBar = () => bar.style.setProperty('--w', Math.max(0, Math.min(100, Number(level.value) || 0)) + '%');
+      level.addEventListener('input', setBar);
+      setBar();
+      const desc = h('input', { value: it.desc || '', placeholder: '말풍선 설명: 이 스킬로 무엇을 할 수 있는지', maxLength: 160 });
+      const up = h('button', { type: 'button', className: 'icon-btn', textContent: '▲', title: '위로' });
+      const down = h('button', { type: 'button', className: 'icon-btn', textContent: '▼', title: '아래로' });
+      const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
+      up.onclick = () => { r.previousElementSibling?.classList.contains('skill-row') && box.insertBefore(r, r.previousElementSibling); dirty = true; };
+      down.onclick = () => { r.nextElementSibling?.classList.contains('skill-row') && box.insertBefore(r.nextElementSibling, r); dirty = true; };
+      del.onclick = () => { r.remove(); dirty = true; };
+      r.append(h('span', { className: 'skill-icon-cell' }, preview, icon), name, h('span', { className: 'skill-level-cell' }, level, bar), desc, h('span', { className: 'acts' }, up, down, del));
+      return r;
+    };
+    const head = h('div', { className: 'skill-row head muted sm' }, h('span', { textContent: '아이콘' }), h('span', { textContent: '스킬 이름' }), h('span', { textContent: '숙련도 (0~100)' }), h('span', { textContent: '설명' }), h('span'));
+    const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 스킬 추가' });
+    add.onclick = () => {
+      if ($$('.skill-row:not(.head)', box).length >= 12) return toast('스킬은 12개까지 넣을 수 있어요.', true);
+      box.insertBefore(row(), add);
+      dirty = true;
+    };
+    box.replaceChildren(head, ...items.map(row), add);
+  }
+  function readSkills() {
+    return $$('#skill-editor .skill-row:not(.head)')
+      .map((r) => {
+        const [name, level, desc] = $$('input', r);
+        return { name: name.value.trim(), level: Math.max(0, Math.min(100, Math.round(Number(level.value) || 0))), icon: $('select', r).value, desc: desc.value.trim() };
+      })
+      .filter((s) => s.name);
+  }
+
   function fillSettings() {
     const s = db.settings || {};
     const f = sForm;
@@ -620,6 +666,9 @@
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
+    f.skillsHeading.value = s.skillsHeading || 'Skills';
+    f.skillsIntro.value = s.skillsIntro || '';
+    skillEditor(s.skillChart || []);
     repeater($('#rep-exp'), s.about?.experience || [], [['period', '연도'], ['title', '제목'], ['desc', '설명']], 'exp', '경력 추가');
     repeater($('#rep-links'), s.contact?.links || [], [['label', '이름 (예: Notion)'], ['url', 'https://']], 'links', '링크 추가');
 
@@ -686,6 +735,9 @@
         experience: readRepeater($('#rep-exp')),
       },
       worksIntro: f.worksIntro.value.trim(),
+      skillsHeading: f.skillsHeading.value.trim() || 'Skills',
+      skillsIntro: f.skillsIntro.value.trim(),
+      skillChart: readSkills(),
       contact: {
         heading: f.contactHeading.value.trim(),
         message: f.contactMessage.value.trim(),

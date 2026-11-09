@@ -24,10 +24,12 @@ html[data-theme="editorial"] .shade-bottom { background: linear-gradient(0deg, r
 html[data-theme="editorial"] .shade-full { background: #142020; }
 html[data-theme="editorial"] body[data-section="contact"] .shade-side { opacity: .4; }
 html[data-theme="editorial"] body[data-section="about"] .shade-side,
+html[data-theme="editorial"] body[data-section="skills"] .shade-side,
 html[data-theme="editorial"] body[data-section="works"] .shade-side { background: linear-gradient(90deg, rgba(18,28,28,.8) 0%, rgba(18,28,28,.35) 50%, rgba(18,28,28,0) 75%); opacity: 1; }
 html[data-theme="editorial"] body[data-section="works"] .shade-full { opacity: .45; }
 html[data-theme="editorial"] body[data-section="works"].is-previewing .shade-full { opacity: .7; }
 html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .25; }
+html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .55; }
 html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity: .3; }
 
 /* 왼쪽 세로 레일 */
@@ -184,4 +186,65 @@ html[data-theme="editorial"] .vbtn:hover, html[data-theme="editorial"] .vbtn[ari
   html[data-theme="editorial"] .ed-latest { grid-template-columns: 1fr; gap: 16px; }
   html[data-theme="editorial"] .ed-more { writing-mode: horizontal-tb; transform: none; grid-row: auto; grid-column: 1; padding: 12px; }
   html[data-theme="editorial"] .pager { top: auto; bottom: 16px; left: auto; right: var(--gutter); width: auto; display: none; }
+}
+
+/* ---------- 03 SKILLS: 둥근 조각 차트 ---------- */
+html[data-theme="editorial"] .panel .skills-body {
+  display: grid; grid-template-columns: minmax(260px, .75fr) minmax(0, 1.25fr); gap: 48px; align-items: center;
+  padding-left: calc(var(--rail) + var(--gutter)); padding-top: calc(var(--top) + 72px); padding-bottom: 48px;
+}
+.skills-intro { margin-top: 24px; color: var(--fg-2); max-width: 28em; white-space: pre-line; }
+.skills-hint { margin-top: 16px; color: var(--fg-3); }
+.skill-chart {
+  position: relative; justify-self: center; aspect-ratio: 1;
+  width: min(100%, calc(var(--vh) - var(--top) - 140px), 640px);
+}
+.skill-chart > svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.skill-wedge { cursor: pointer; outline: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
+.skill-wedge .track { fill: rgba(244, 244, 239, .10); stroke: rgba(244, 244, 239, .10); stroke-width: 12; stroke-linejoin: round; transition: fill .16s, stroke .16s; }
+.skill-wedge .fill { fill: url(#skill-fill); stroke: url(#skill-fill); stroke-width: 12; stroke-linejoin: round; transform-box: view-box; transform-origin: 50% 50%; }
+.skill-wedge:hover, .skill-wedge.is-on, .skill-wedge:focus-visible { transform: scale(1.06); }
+.skill-wedge:hover .track, .skill-wedge.is-on .track { fill: rgba(244, 244, 239, .16); stroke: rgba(244, 244, 239, .16); }
+.skill-wedge:focus-visible .track { stroke: rgba(244, 244, 239, .5); }
+.skill-label-wrap { pointer-events: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
+.skill-label-wrap.is-on { transform: scale(1.06); }
+.skill-label { color: var(--fg); fill: var(--fg); }
+.skill-label text { font-family: var(--display); font-weight: 600; letter-spacing: 0; }
+.skill-label .skill-icon { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.skill-label.on-fill { color: #1b2424; fill: #1b2424; }
+/* 섹션에 들어올 때 밝은 부분이 가운데서부터 차오름 */
+.panel.is-active .skill-wedge .fill { animation: wedge-grow .7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(150ms + var(--i, 0) * 50ms); }
+@keyframes wedge-grow { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* 말풍선 */
+.skill-tip {
+  position: absolute; left: 0; top: 0; z-index: 5; width: 264px; padding: 16px;
+  border-radius: 12px; border: 1px solid var(--line-2); background: rgba(22, 32, 32, .94);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  color: var(--fg); pointer-events: none; opacity: 0; visibility: hidden;
+  transition: opacity .16s ease, visibility 0s linear .16s;
+}
+.skill-tip.show { opacity: 1; visibility: visible; transition: opacity .16s ease; }
+.skill-tip::before {
+  content: ""; position: absolute; top: var(--tail-y, 50%); left: -7px; width: 12px; height: 12px; margin-top: -6px;
+  background: inherit; border-left: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2); transform: rotate(45deg);
+}
+.skill-tip.to-left::before { left: auto; right: -7px; transform: rotate(-135deg); }
+.tip-head { display: flex; align-items: center; gap: 8px; }
+.tip-head svg { flex: none; color: var(--fg-2); }
+.tip-head b { font-family: var(--display); font-weight: 600; font-size: 15px; }
+.tip-score { margin-top: 12px; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+.tip-score span { font-family: var(--display); font-size: 28px; font-weight: 600; color: var(--fg); margin-right: 4px; }
+.tip-meter { display: block; height: 4px; margin-top: 8px; border-radius: 2px; background: rgba(244, 244, 239, .12); position: relative; overflow: hidden; }
+.tip-meter::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w, 0); border-radius: 2px; background: var(--fg); }
+.tip-desc { margin-top: 12px; color: var(--fg-2); line-height: 1.6; font-size: 10.5pt; }
+
+@media (max-width: 820px) {
+  html[data-theme="editorial"] .panel .skills-body { grid-template-columns: 1fr; gap: 24px; padding: calc(var(--top) + 24px) var(--gutter) 48px; align-items: start; }
+  .skill-chart { width: min(100%, 420px); }
+  .skill-label text { font-size: 6.4px; }
+  .skill-tip { width: min(240px, 70vw); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel.is-active .skill-wedge .fill { animation: none; }
 }

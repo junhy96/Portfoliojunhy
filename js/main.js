@@ -1,6 +1,7 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090606';
-import { PdfViewer } from './pdf-viewer.js?v=202611090606';
-import { initAnalytics } from './analytics.js?v=202611090606';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090617';
+import { PdfViewer } from './pdf-viewer.js?v=202611090617';
+import { renderSkillChart } from './skills.js?v=202611090617';
+import { initAnalytics } from './analytics.js?v=202611090617';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -62,6 +63,8 @@ function render({ settings: s, projects }) {
     nameEnLines: (s.nameEn || '').trim().split(/\s+/).join('\n'),
     initials: (s.nameEn || s.nameKo || '').trim().split(/\s+/).map((w) => w[0]).join('').slice(0, 3).toUpperCase(),
     year: new Date().getFullYear(),
+    skillsHeading: s.skillsHeading || 'Skills',
+    skillsIntro: s.skillsIntro || '',
   };
   $$('[data-bind]').forEach((n) => (n.textContent = binds[n.dataset.bind] ?? ''));
   $$('[data-bind-href="mailto"]').forEach((n) => {
@@ -95,6 +98,8 @@ function render({ settings: s, projects }) {
     const fn = lists[node.dataset.list];
     if (fn) node.replaceChildren(...fn(node.dataset.variant, node));
   });
+
+  renderSkillChart($('#skill-chart'), s.skillChart);
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
   $$('img.slot-img[data-img]').forEach((img) => {
@@ -297,7 +302,8 @@ async function boot() {
 
   stage.setMode(2, { instant: true }); // Editorial 색보정 (청록 회색)
 
-  const sectionImage = (key) => images[key] || {};
+  // Skills 사진이 없으면 About 사진을 씀
+  const sectionImage = (key) => (images[key]?.src ? images[key] : key === 'skills' ? images.about || {} : images[key] || {});
   const showSection = (opts) => {
     // 첫 화면은 이름이 오른쪽에 오도록 사진을 좌우 반전
     stage.flip = state.section === 'hero';
@@ -308,7 +314,7 @@ async function boot() {
   // 풀페이지 덱
   const navLinks = $$('.nav a');
   const dots = $$('.dots button');
-  const total = 4;
+  const total = $$('.panel').length;
   $('.pager-total').textContent = pad(total);
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;

@@ -9,6 +9,10 @@
 
 Editorial 스타일 하나로 운영합니다. 왼쪽 세로 레일, 01/04 카운터, 첫 화면 오른쪽의 큰 이름, 하단 유리 띠(최근 작업)가 있어요. About·Works는 간결한 구성을 Editorial 색·글꼴로 보여줍니다. 사이트가 열릴 때 큰 PORTFOLIO 글자가 펼쳐지며 나타납니다.
 
+## 스킬 차트 (03 · Skills)
+
+둥근 조각 하나가 스킬 하나예요. 숙련도 100이면 조각이 가득 차고, 조각에 마우스를 올리면(휴대폰은 탭) 살짝 커지면서 옆 말풍선에 숙련도와 설명이 나와요. 관리자 페이지 **사이트 설정 → 03 · Skills**에서 스킬 이름·숙련도(0~100)·아이콘·설명을 추가·수정·정렬합니다. 6~10개가 가장 보기 좋아요. 아이콘은 Lucide(ISC 라이선스)에서 골라 `js/icons.js`에 담았습니다.
+
 ## 배포 방법 (처음 한 번)
 
 1. **저장소 만들기**: GitHub에서 New repository를 누릅니다.
@@ -94,6 +98,8 @@ index.html, css/, js/       공개 사이트
   js/morph.js               WebGL 모핑 (노이즈 변위 + 모노톤 보정)
   js/pdf-viewer.js          전체화면 PDF 뷰어 (pdf.js)
   js/analytics.js           접속 기록 (Supabase로 전송)
+  js/skills.js              스킬 차트 (둥근 조각 + 말풍선)
+  js/icons.js               스킬 아이콘 (Lucide)
 css/theme-editorial.css     Editorial 디자인 (style.css 위에 덮어씀)
 data/site.json              사이트 설정 + 포트폴리오 목록
 uploads/                    PDF·썸네일·사진 (uploads/seed = 샘플)

@@ -101,8 +101,64 @@
       "contact": {
         "src": "uploads/seed/photo-contact.jpg",
         "focusX": 0.5
+      },
+      "skills": {
+        "src": null,
+        "focusX": 0.5
       }
-    }
+    },
+    "skillsHeading": "Skills",
+    "skillsIntro": "숫자가 클수록 자신 있는 분야예요.\n100은 혼자서 처음부터 끝까지 맡을 수 있는 수준입니다.",
+    "skillChart": [
+      {
+        "name": "시스템 기획",
+        "level": 90,
+        "icon": "system",
+        "desc": "전투·성장·경제 같은 시스템의 규칙과 수치를 처음부터 설계하고 문서로 정리할 수 있어요."
+      },
+      {
+        "name": "기획서 작성",
+        "level": 95,
+        "icon": "doc",
+        "desc": "개발자·아트와 바로 소통할 수 있는 기획서를 빠르게 쓰고, 변경 이력을 관리해요."
+      },
+      {
+        "name": "레벨 디자인",
+        "level": 85,
+        "icon": "level",
+        "desc": "난이도 곡선과 동선을 설계하고, 플레이테스트 데이터로 레벨을 다듬을 수 있어요."
+      },
+      {
+        "name": "밸런싱",
+        "level": 80,
+        "icon": "balance",
+        "desc": "데이터 테이블로 수치를 설계하고 시뮬레이션으로 검증해요."
+      },
+      {
+        "name": "전투 설계",
+        "level": 75,
+        "icon": "combat",
+        "desc": "패링·스태미나 같은 전투 규칙과 무기별 특성을 설계해 본 경험이 있어요."
+      },
+      {
+        "name": "Excel",
+        "level": 85,
+        "icon": "excel",
+        "desc": "함수·피벗으로 밸런스 테이블과 시뮬레이션 시트를 만들어요."
+      },
+      {
+        "name": "Unity",
+        "level": 65,
+        "icon": "unity",
+        "desc": "프로토타입 씬을 직접 구성하고 간단한 스크립트로 아이디어를 검증해요."
+      },
+      {
+        "name": "UX 플로우",
+        "level": 60,
+        "icon": "ux",
+        "desc": "Figma로 화면 흐름과 와이어프레임을 그려 팀과 공유할 수 있어요."
+      }
+    ]
   },
   "projects": [
     {

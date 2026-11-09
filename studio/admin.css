@@ -314,3 +314,20 @@ table.visits th.num { text-align: right; }
 .linkmaker-out input { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--fg-2); }
 table.visits td.tag { color: var(--fg); font-weight: 600; }
 @media (max-width: 900px) { .linkmaker-row { grid-template-columns: 1fr; } }
+
+/* 스킬 차트 편집기 */
+.skill-editor { display: grid; gap: 8px; }
+.skill-row { display: grid; grid-template-columns: 170px minmax(120px, 1fr) 150px minmax(160px, 2fr) auto; gap: 8px; align-items: center; }
+.skill-row.head { padding: 0 2px; }
+.skill-icon-cell { display: flex; align-items: center; gap: 8px; }
+.skill-icon-preview { display: grid; place-items: center; width: 34px; height: 38px; flex: none; border: 1px solid var(--line-2); border-radius: 8px; color: var(--fg); }
+.skill-icon-select { flex: 1; min-width: 0; height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
+.skill-level-cell { display: grid; gap: 4px; }
+.skill-level-bar { display: block; height: 4px; border-radius: 2px; background: var(--card-2); position: relative; overflow: hidden; }
+.skill-level-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w, 0); background: var(--fg); border-radius: 2px; }
+.skill-editor .rep-add { justify-self: start; }
+@media (max-width: 900px) {
+  .skill-row { grid-template-columns: 1fr 1fr; }
+  .skill-row.head { display: none; }
+  .skill-row > input:nth-of-type(2) { grid-column: 1 / -1; }
+}
