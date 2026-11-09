@@ -1,13 +1,14 @@
 /**
- * Works — 문서 종류 필터 + 한 화면에 들어가는 만큼씩 넘기기
- * - 카드 비율(그림 16:10 + 아래 제목줄)은 그대로 두고, 화면 크기에 맞춰 한 묶음 개수를 정함 (보통 PC 4×2 = 8개)
- * - 카드(li)는 main.js가 모두 그려 두고, 여기서는 보일 카드만 고름 (data-index는 그대로라 클릭·모핑 동작 유지)
- * - 한 묶음보다 많으면 휠·방향키로 다음 묶음, 마지막 묶음에서 더 내리면 다음 페이지로 (main.js Deck이 wheel/page를 먼저 물어봄)
- * - 휴대폰은 묶음 없이 목록 전체를 위아래로 스크롤
+ * Works — 문서 종류 필터 + 가로로 이어지는 카드 목록
+ * - 처음에는 카드가 화면 가득(보통 4열 × 2줄 + 오른쪽에 다음 열이 살짝) 보이고,
+ *   휠을 내리거나 마우스로 끌면 타임라인처럼 옆으로 밀려남. 끝까지 가면 다음 페이지로 (main.js Deck이 wheel/page를 먼저 물어봄)
+ * - 카드 비율은 초안 그대로(그림 16:10 + 아래 제목줄), 화면 높이에 들어가는 만큼 줄 수를 정함
+ * - 카드(li)는 main.js가 모두 그려 두고, 여기서는 필터로 보일 카드만 고름 (data-index는 그대로라 클릭·모핑 동작 유지)
+ * - 휴대폰은 위아래로 스크롤되는 한 줄 목록
  */
 const META_H = 106; // 카드 아래 글 높이 기본값 (실제 카드로 다시 잼)
+const PEEK = 0.35; // 오른쪽에 살짝 보이는 다음 열 (열 너비 대비)
 const mobile = () => matchMedia('(max-width: 820px)').matches;
-const pad = (n) => String(n).padStart(2, '0');
 // slide-in-bck 9방향 (가운데·위·아래·왼쪽·오른쪽·대각선 4곳) 중 무작위
 const DIRS = [[0, 0, 600], [0, -1, 700], [0, 1, 700], [-1, 0, 700], [1, 0, 700], [-1, -1, 700], [1, -1, 700], [-1, 1, 700], [1, 1, 700]];
 export function scatter(n) {
@@ -44,82 +45,121 @@ export function initWorks(panel, projects, docTypes = []) {
     return b;
   };
   chips.append(chip('전체', '', items.length), ...order.map((t) => chip(t, t, counts.get(t))));
-  const pager = el('div', 'works-pager small');
+  // 오른쪽: 진행 막대 + 좌우 버튼 (넘칠 때만)
+  const nav = el('div', 'works-pager small');
+  const prog = el('span', 'works-progress');
+  const fill = el('i');
+  prog.append(fill);
   const prev = el('button', 'works-pager-btn', '‹');
   const next = el('button', 'works-pager-btn', '›');
   prev.type = next.type = 'button';
-  prev.setAttribute('aria-label', '이전 묶음');
-  next.setAttribute('aria-label', '다음 묶음');
-  const label = el('span', 'works-pager-label');
-  pager.append(label, prev, next);
-  bar.replaceChildren(chips, pager);
+  prev.setAttribute('aria-label', '왼쪽으로');
+  next.setAttribute('aria-label', '오른쪽으로');
+  nav.append(prog, prev, next);
+  bar.replaceChildren(chips, nav);
   if (!items.length) bar.hidden = true;
 
   let filter = '';
-  let page = 0;
-  let lastFlip = 0;
+  let step = 300; // 열 하나 폭 + 간격
+  let cur = 0;
+  let target = 0;
+  let raf = 0;
+  let snapTimer = 0;
+  let lastDir = 1;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 가로로 갈 수 있는 끝: 카드 배치로 계산 (날아오는 애니메이션 중엔 scrollWidth가 잠깐 커지므로 쓰지 않음)
+  let contentW = 0;
+  const max = () => (mobile() ? 0 : Math.max(0, contentW - grid.clientWidth));
   const shown = () => items.filter((li) => !filter || typeOf(li) === filter);
-  // 한 묶음 개수: 열 수 × 화면 높이에 들어가는 줄 수
-  // 넓은 화면은 4열과 5열 중 한 화면에 더 많이 들어가는 쪽을 고름 (높이가 낮은 노트북은 보통 5열)
-  const perPage = () => {
-    grid.style.gridTemplateColumns = '';
+
+  // 열 너비·줄 수: 4열(좁으면 3열) + 다음 열이 살짝, 줄 수는 높이에 맞춤
+  const layout = () => {
+    if (mobile()) {
+      grid.style.removeProperty('--colw');
+      grid.style.removeProperty('--rows');
+      return;
+    }
     const cs = getComputedStyle(grid);
     const colGap = parseFloat(cs.columnGap) || 0;
     const rowGap = parseFloat(cs.rowGap) || 0;
-    // 카드 아래 글 높이: 보이는 카드 하나로 잼
     const probe = items.find((li) => li.offsetHeight > 0)?.querySelector('.card-meta');
     const metaH = probe ? probe.offsetHeight + parseFloat(getComputedStyle(probe).marginTop || 0) + 2 : META_H;
-    const fit = (cols) => {
-      const colW = (grid.clientWidth - (cols - 1) * colGap) / cols;
-      return cols * Math.max(1, Math.floor((grid.clientHeight + rowGap) / ((colW * 10) / 16 + metaH + rowGap)));
-    };
-    const base = cs.gridTemplateColumns.split(' ').filter(Boolean).length || 1;
-    if (base < 4) return fit(base);
-    const four = fit(4), five = fit(5);
-    if (five > four) {
-      grid.style.gridTemplateColumns = 'repeat(5, minmax(0, 1fr))';
-      return five;
+    const W = grid.clientWidth;
+    const cols = W >= 1000 ? 4 : 3;
+    const n = shown().length;
+    const H = grid.clientHeight;
+    let colW = (W - cols * colGap) / (cols + PEEK);
+    let rows = Math.max(1, Math.floor((H + rowGap) / ((colW * 10) / 16 + metaH + rowGap)));
+    // 카드를 조금(최대 18%)만 줄이면 한 줄 더 들어가면 그렇게 함
+    const more = rows + 1;
+    const colW2 = ((H - (more - 1) * rowGap) / more - metaH) * 1.6;
+    if (n > cols * rows && colW2 >= colW * 0.82) {
+      rows = more;
+      colW = colW2;
     }
-    return four;
+    // 다 들어가면 오른쪽 여백 없이 꽉 채움
+    if (n <= cols * rows) colW = (W - (cols - 1) * colGap - parseFloat(cs.paddingRight || 0)) / cols;
+    rows = Math.max(1, Math.min(rows, Math.ceil(n / cols)));
+    grid.style.setProperty('--colw', colW + 'px');
+    grid.style.setProperty('--rows', rows);
+    step = colW + colGap;
+    const colsTotal = Math.ceil(n / rows);
+    contentW = colsTotal * colW + Math.max(0, colsTotal - 1) * colGap + (parseFloat(cs.paddingRight) || 0);
   };
-  let per = 8;
-  const pages = () => (mobile() ? 1 : Math.max(1, Math.ceil(shown().length / per)));
 
-  const draw = (dir = 0) => {
-    if (!mobile()) {
-      const first = page * per;
-      per = perPage();
-      page = Math.floor(first / per);
+  const paint = () => {
+    const m = max();
+    grid.classList.toggle('fade-l', cur > 2);
+    grid.classList.toggle('fade-r', cur < m - 2);
+    nav.hidden = m < 2 || mobile();
+    fill.style.width = (m ? ((cur + grid.clientWidth) / contentW) * 100 : 100) + '%';
+    prev.disabled = cur <= 2;
+    next.disabled = cur >= m - 2;
+  };
+  const frame = () => {
+    raf = 0;
+    target = Math.max(0, Math.min(max(), target));
+    if (Math.abs(target - cur) > 0.5) {
+      cur += reduce ? target - cur : (target - cur) * 0.14;
+      grid.scrollLeft = cur;
+      raf = requestAnimationFrame(frame);
+    } else {
+      cur = target;
+      grid.scrollLeft = cur;
     }
+    paint();
+  };
+  const kick = () => !raf && (raf = requestAnimationFrame(frame));
+  // 멈추면 굴린 방향의 다음 열에 맞춤
+  const snapSoon = () => {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(() => {
+      const k = lastDir > 0 ? Math.ceil((target - 24) / step) : Math.floor((target + 24) / step);
+      target = Math.max(0, Math.min(max(), k * step));
+      kick();
+    }, 140);
+  };
+  const go = (x) => {
+    target = Math.max(0, Math.min(max(), x));
+    kick();
+  };
+
+  const show = () => {
     const list = shown();
-    const n = pages();
-    page = Math.max(0, Math.min(n - 1, page));
-    const from = mobile() ? 0 : page * per;
-    const to = mobile() ? list.length : from + per;
     items.forEach((li) => {
-      li.hidden = true;
+      li.hidden = !list.includes(li);
       li.classList.remove('is-show');
     });
-    list.slice(from, to).forEach((li, k) => {
-      li.hidden = false;
-      li.style.setProperty('--k', k);
+    layout();
+    list.forEach((li, k) => {
+      li.style.setProperty('--k', Math.min(k, 10));
       scatter(li);
-      void li.offsetWidth; // 다시 나타나는 애니메이션
+      void li.offsetWidth; // 다시 날아오는 애니메이션
       li.classList.add('is-show');
     });
-    label.textContent = `${pad(page + 1)} / ${pad(n)}`;
-    pager.hidden = n < 2;
-    prev.disabled = page === 0;
-    next.disabled = page >= n - 1;
-    grid.scrollTop = 0;
-  };
-  const flip = (dir) => {
-    const n = pages();
-    if ((dir > 0 && page >= n - 1) || (dir < 0 && page <= 0)) return false;
-    page += dir;
-    lastFlip = performance.now();
-    draw(dir);
-    return true;
+    cur = target = 0;
+    grid.scrollLeft = 0;
+    paint();
   };
 
   chips.addEventListener('click', (e) => {
@@ -127,33 +167,98 @@ export function initWorks(panel, projects, docTypes = []) {
     if (!b) return;
     filter = b.dataset.value;
     chips.querySelectorAll('.works-chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    page = 0;
-    draw();
+    show();
   });
-  prev.addEventListener('click', () => flip(-1));
-  next.addEventListener('click', () => flip(1));
-  matchMedia('(max-width: 820px)').addEventListener('change', () => draw());
+  const pageW = () => Math.max(step, Math.floor(grid.clientWidth / step) * step);
+  prev.addEventListener('click', () => go(target - pageW()));
+  next.addEventListener('click', () => go(target + pageW()));
+
+  // 손가락·트랙패드로 직접 옆으로 밀었을 때
+  grid.addEventListener('scroll', () => {
+    if (grid.scrollLeft > max() + 1) {
+      grid.scrollLeft = max(); // 애니메이션 중 늘어난 영역으로는 못 가게
+      return;
+    }
+    if (Math.abs(grid.scrollLeft - cur) > 2) {
+      lastDir = Math.sign(grid.scrollLeft - cur) || lastDir;
+      cur = target = grid.scrollLeft;
+      if (!mobile()) snapSoon();
+    }
+    paint();
+  }, { passive: true });
+
+  // 마우스로 끌어서 옆으로 (조금이라도 끌었으면 카드 클릭은 무시)
+  let drag = null;
+  grid.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0 || mobile() || max() < 2) return;
+    drag = { x: e.clientX, start: target, moved: false };
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved && Math.abs(dx) < 6) return;
+    if (!drag.moved) grid.classList.add('is-dragging');
+    drag.moved = true;
+    lastDir = dx < 0 ? 1 : -1;
+    cur = target = Math.max(0, Math.min(max(), drag.start - dx));
+    grid.scrollLeft = cur;
+    paint();
+  });
+  window.addEventListener('pointerup', () => {
+    if (!drag) return;
+    if (drag.moved) {
+      grid.classList.remove('is-dragging');
+      // 끌고 난 직후의 클릭(카드 열기)은 막음
+      const stop = (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      };
+      window.addEventListener('click', stop, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 0);
+      snapSoon();
+    }
+    drag = null;
+  });
+
   let rt;
   window.addEventListener('resize', () => {
     clearTimeout(rt);
-    rt = setTimeout(() => draw(), 200);
+    rt = setTimeout(() => {
+      layout();
+      go(target);
+      paint();
+    }, 200);
   });
-  draw();
+  matchMedia('(max-width: 820px)').addEventListener('change', () => show());
+  show();
 
-  // Deck 연결: 휠·방향키로 묶음 넘기기
+  // Deck 연결: 휠·방향키를 옆으로 미는 데 씀. 끝에 닿았고 화면도 다 따라왔으면 false → 이전/다음 페이지
   panel._h = {
     wheel(dy) {
       if (mobile()) return false;
-      if (performance.now() - lastFlip < 650) return true; // 한 번 굴림에 여러 묶음이 넘어가지 않게
-      return flip(Math.sign(dy));
+      const m = max();
+      if ((dy > 0 && target >= m - 1) || (dy < 0 && target <= 1)) return Math.abs(target - cur) > 40;
+      lastDir = Math.sign(dy);
+      go(target + dy * 1.1);
+      snapSoon();
+      return true;
     },
     page(dir) {
-      return mobile() ? false : flip(dir);
+      if (mobile()) return false;
+      const m = max();
+      if ((dir > 0 && target >= m - 1) || (dir < 0 && target <= 1)) return Math.abs(target - cur) > 40;
+      lastDir = dir;
+      go(target + dir * step);
+      return true;
     },
     activate(on, fromEnd) {
       if (!on) return;
-      page = fromEnd ? pages() - 1 : 0;
-      draw();
+      show();
+      if (fromEnd) {
+        cur = target = max();
+        grid.scrollLeft = cur;
+        paint();
+      }
     },
   };
 }
