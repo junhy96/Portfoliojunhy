@@ -70,19 +70,19 @@
     },
     "images": {
       "hero": {
-        "src": "uploads/seed/photo-hero.jpg",
-        "focusX": 0.7
+        "src": "uploads/preview/photo-hero.jpg",
+        "focusX": 0.62
       },
       "about": {
-        "src": "uploads/seed/photo-about.jpg",
-        "focusX": 0.72
+        "src": "uploads/preview/photo-about.jpg",
+        "focusX": 0.66
       },
       "works": {
         "src": "uploads/seed/photo-works.jpg",
         "focusX": 0.6
       },
       "contact": {
-        "src": "uploads/seed/photo-contact.jpg",
+        "src": "uploads/preview/photo-contact.jpg",
         "focusX": 0.5
       },
       "skills": {
