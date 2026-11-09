@@ -32,8 +32,9 @@ html[data-theme="editorial"] body[data-section="works"].is-previewing .shade-ful
 html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .25; }
 html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .8; }
 html[data-theme="editorial"] body[data-section="timeline"] .shade-full { opacity: .84; transition: opacity 1.2s ease; }
-/* 보고 있는 연혁 항목에 배경 사진이 있으면 사진이 더 보이게 */
-html[data-theme="editorial"] body[data-section="timeline"].tl-photo .shade-full { opacity: .5; }
+/* 연혁 항목의 배경 사진: 어둡게 눌러서(dimmed) 글씨가 잘 읽히게. 사진 윤곽만 은은하게 보임 */
+html[data-theme="editorial"] body[data-section="timeline"].tl-photo .shade-full { opacity: .74; }
+html[data-theme="editorial"] body[data-section="timeline"].tl-photo .shade-bottom { opacity: 1; background: linear-gradient(0deg, rgba(14,22,22,.9), rgba(14,22,22,0) 55%); }
 html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity: .3; }
 
 /* 왼쪽 세로 레일 */
