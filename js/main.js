@@ -1,6 +1,11 @@
 import { MorphStage, FallbackStage } from './morph.js';
 import { PdfViewer } from './pdf-viewer.js';
 import { paintPixelArt } from './pixel-art.js';
+import { initAnalytics } from './analytics.js';
+
+// 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
+const EMBED = new URLSearchParams(location.search).has('embed');
+if (EMBED) document.documentElement.classList.add('is-embed');
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -339,7 +344,7 @@ async function boot() {
     hostCanvas();
   };
   applyTheme([fromUrl, canSwitch ? saved : null, settings.theme, 'mono'].find((t) => t in THEMES), false);
-  switcher.hidden = !canSwitch && !(fromUrl in THEMES);
+  switcher.hidden = EMBED || (!canSwitch && !(fromUrl in THEMES));
   switcher.addEventListener('click', (e) => {
     const b = e.target.closest('[data-theme-set]');
     if (!b || b.dataset.themeSet === state.theme) return;
@@ -425,6 +430,7 @@ async function boot() {
   const start = Math.max(0, $$('.panel').findIndex((p) => '#' + p.id === location.hash));
   state.section = $$('.panel')[start].dataset.key;
   await Promise.race([stage.load ? stage.load(sectionImage(state.section).src) : Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
+  initAnalytics(settings.analytics);
   deck.go(start, { animate: false });
   requestAnimationFrame(() => document.body.classList.add('is-ready'));
 }

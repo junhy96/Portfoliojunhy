@@ -53,6 +53,7 @@
       <div class="app-brand"><strong>Studio</strong><span id="repo-label"></span></div>
       <nav class="tabs" role="tablist">
         <button class="tab is-active" data-view="board" role="tab">포트폴리오 게시판</button>
+        <button class="tab" data-view="stats" role="tab">접속 통계</button>
         <button class="tab" data-view="settings" role="tab">사이트 설정</button>
       </nav>
       <div class="app-actions">
@@ -176,6 +177,122 @@
         </form>
       </section>
 
+      <!-- 접속 통계 -->
+      <section class="view" id="view-stats" hidden>
+        <div class="view-head">
+          <div>
+            <h2>접속 통계</h2>
+            <p class="muted" id="stats-sub">방문자 수, 접속 시간, 많이 본 섹션과 PDF, 클릭 위치를 봅니다. 시간은 이 컴퓨터의 시간대 기준입니다.</p>
+          </div>
+          <div class="toolbar" id="stats-toolbar" hidden>
+            <div class="seg" id="stats-range" role="group" aria-label="기간">
+              <button data-days="7" aria-pressed="true">7일</button><button data-days="30">30일</button><button data-days="90">90일</button>
+            </div>
+            <button class="btn" id="stats-refresh">새로고침</button>
+          </div>
+        </div>
+
+        <!-- 처음 설정 안내 -->
+        <div class="card stats-setup" id="stats-setup" hidden>
+          <h3>처음 한 번만 설정하면 됩니다</h3>
+          <ol class="steps">
+            <li><a href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase</a>에 가입하고 <b>New project</b>로 프로젝트를 만듭니다. 무료 플랜이면 충분합니다.</li>
+            <li>왼쪽 메뉴 <b>Authentication → Users → Add user</b>로 통계를 볼 관리자 계정(이메일·비밀번호)을 만듭니다.</li>
+            <li><b>SQL Editor</b>에 아래 내용을 붙여넣고, 맨 아래 이메일을 2번에서 만든 이메일로 바꾼 뒤 <b>Run</b>을 누릅니다.
+              <div class="sql-box"><textarea id="stats-sql" readonly rows="8" spellcheck="false"></textarea><button type="button" class="btn sm" id="stats-sql-copy">복사</button></div>
+            </li>
+            <li><b>Project Settings → API Keys</b>에서 <b>Project URL</b>과 <b>Publishable key</b>(또는 anon key)를 복사해 <b>사이트 설정 → 접속 통계</b> 칸에 넣고 저장합니다.</li>
+          </ol>
+          <button class="btn primary" type="button" data-goto="settings">사이트 설정으로 이동</button>
+        </div>
+
+        <!-- 통계 로그인 -->
+        <form class="card stats-login" id="stats-login" hidden>
+          <h3>통계 보기 로그인</h3>
+          <p class="muted sm">Supabase에서 만든 관리자 계정으로 로그인하세요. 방문 기록은 이 계정만 볼 수 있습니다.</p>
+          <label class="field"><span>이메일</span><input name="email" type="email" autocomplete="username" required /></label>
+          <label class="field"><span>비밀번호</span><input name="password" type="password" autocomplete="current-password" required /></label>
+          <p class="form-error" id="stats-login-error" role="alert"></p>
+          <button class="btn primary" type="submit">로그인</button>
+        </form>
+
+        <!-- 대시보드 -->
+        <div class="stats" id="stats-body" hidden>
+          <div class="tiles" id="stats-tiles"></div>
+
+          <div class="stats-row wide">
+            <div class="card chart-card">
+              <div class="chart-head"><h3>일별 방문자</h3><p class="muted sm" id="daily-note"></p></div>
+              <div class="chart" id="chart-daily"></div>
+            </div>
+            <div class="card chart-card">
+              <div class="chart-head"><h3>기기</h3></div>
+              <div id="chart-device"></div>
+              <div class="chart-head sub"><h3>유입 경로</h3></div>
+              <ol class="rank" id="list-referrer"></ol>
+            </div>
+          </div>
+
+          <div class="stats-row wide">
+            <div class="card chart-card">
+              <div class="chart-head"><h3>요일 · 시간대별 방문</h3><p class="muted sm">칸이 밝을수록 그 시간에 많이 들어왔어요</p></div>
+              <div class="chart" id="chart-hours"></div>
+            </div>
+            <div class="card chart-card">
+              <div class="chart-head"><h3>섹션 도달</h3><p class="muted sm">방문 중 각 섹션까지 본 비율</p></div>
+              <ol class="rank" id="list-sections"></ol>
+              <div class="chart-head sub"><h3>많이 연 PDF</h3></div>
+              <ol class="rank" id="list-pdfs"></ol>
+            </div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="chart-head">
+              <h3>클릭 히트맵</h3>
+              <div class="heat-controls">
+                <div class="seg" id="heat-section" role="group" aria-label="섹션">
+                  <button data-v="hero" aria-pressed="true">Home</button><button data-v="about">About</button><button data-v="works">Works</button><button data-v="contact">Contact</button>
+                </div>
+                <div class="seg" id="heat-theme" role="group" aria-label="스타일">
+                  <button data-v="mono">Mono</button><button data-v="pixel">Pixel</button><button data-v="editorial">Editorial</button>
+                </div>
+                <div class="seg" id="heat-device" role="group" aria-label="기기">
+                  <button data-v="desktop" aria-pressed="true">PC</button><button data-v="mobile">모바일</button>
+                </div>
+              </div>
+            </div>
+            <div class="heat-wrap">
+              <div class="heat-stage" id="heat-stage">
+                <iframe id="heat-frame" title="사이트 미리보기" tabindex="-1" loading="lazy"></iframe>
+                <canvas id="heat-canvas"></canvas>
+              </div>
+              <div class="heat-side">
+                <p class="heat-count" id="heat-count"></p>
+                <h4 class="muted sm">많이 누른 곳</h4>
+                <ol class="rank" id="list-targets"></ol>
+              </div>
+            </div>
+          </div>
+
+          <div class="card chart-card">
+            <div class="chart-head"><h3>최근 방문</h3><p class="muted sm">최근 30건</p></div>
+            <div class="table-wrap">
+              <table class="visits">
+                <thead><tr><th>시간</th><th>기기</th><th>유입</th><th>본 섹션</th><th>연 PDF</th><th class="num">클릭</th></tr></thead>
+                <tbody id="table-visits"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="stats-foot">
+            <label class="switch"><input type="checkbox" id="stats-notrack" /><i></i><span>이 브라우저의 방문은 집계에서 빼기</span></label>
+            <span class="muted sm" id="stats-who"></span>
+            <button class="btn ghost sm" id="stats-logout">통계 로그아웃</button>
+          </div>
+        </div>
+        <div class="stats-tip" id="stats-tip" role="tooltip" hidden></div>
+      </section>
+
       <!-- 사이트 설정 -->
       <section class="view" id="view-settings" hidden>
         <div class="view-head">
@@ -243,6 +360,15 @@
           </div>
 
           <div class="card">
+            <h3>접속 통계 (Supabase)</h3>
+            <p class="muted sm">비워두면 방문 기록을 남기지 않습니다. 설정 방법은 ‘접속 통계’ 탭에 있어요. 두 값은 공개되어도 괜찮은 값입니다.</p>
+            <div class="row-2">
+              <label class="field"><span>Project URL</span><input name="anaUrl" placeholder="https://xxxx.supabase.co" spellcheck="false" autocomplete="off" /></label>
+              <label class="field"><span>Publishable key <small>(또는 anon key)</small></span><input name="anaKey" placeholder="sb_publishable_…" spellcheck="false" autocomplete="off" /></label>
+            </div>
+          </div>
+
+          <div class="card">
             <h3>섹션 배경 사진</h3>
             <p class="muted sm">섹션이 바뀔 때 이 사진들 사이로 모핑됩니다. 사이트에서는 흑백(모노톤)으로 보정됩니다. ‘피사체 위치’는 화면이 좁아져 사진이 잘릴 때 어느 쪽을 남길지 정합니다.</p>
             <div class="slots" id="image-slots"></div>
@@ -267,5 +393,6 @@
   <script src="../vendor/pdfjs/pdf.min.js"></script>
   <script src="github.js"></script>
   <script src="admin.js"></script>
+  <script src="stats.js"></script>
 </body>
 </html>

@@ -49,6 +49,29 @@
 ### 처음에 바꿀 것
 - **사이트 설정**에서 이름, 소개 문구, 연락처, 섹션 배경 사진 4장을 바꿉니다. 지금 들어 있는 실루엣 사진과 샘플 글 3개는 예시입니다.
 
+## 접속 통계 (Supabase)
+
+관리자 페이지 **접속 통계** 탭에서 다음을 볼 수 있습니다.
+- 방문자·방문·페이지뷰·PDF 열람 수 (이전 기간 대비)
+- 일별 방문자, 요일 × 시간대별 방문
+- 기기와 유입 경로, 섹션 도달률, 많이 연 PDF
+- 섹션·스타일·기기별 클릭 히트맵
+- 최근 방문 목록
+
+기록은 무료 DB 서비스 Supabase에 저장됩니다. 처음 한 번만 아래처럼 설정하세요. 관리자 페이지의 접속 통계 탭에도 같은 안내가 있습니다.
+
+1. https://supabase.com 에 가입하고 새 프로젝트를 만듭니다.
+2. **Authentication → Users → Add user**에서 통계를 볼 관리자 계정(이메일·비밀번호)을 만듭니다.
+3. **SQL Editor**에 `supabase/analytics.sql` 내용을 붙여넣습니다. 맨 아래 이메일을 2번에서 만든 이메일로 바꾼 뒤 **Run**을 누릅니다.
+4. **Project Settings → API Keys**에서 Project URL과 Publishable key(또는 anon key)를 복사합니다. 관리자 페이지 **사이트 설정 → 접속 통계**에 넣고 저장하세요.
+
+**기록 방식**
+- 이름·IP 같은 개인정보는 저장하지 않습니다. 브라우저마다 만든 무작위 ID, 기기 종류, 유입 사이트 주소, 본 섹션, 클릭 위치(화면 비율), 연 PDF 제목만 남깁니다.
+- 브라우저의 추적 거부(Do Not Track) 설정을 켠 방문자는 기록하지 않습니다.
+- 관리자 페이지를 연 브라우저도 기록하지 않습니다. 이 설정은 통계 화면 아래 스위치로 바꿀 수 있어요.
+- 방문자는 기록을 남기기만 할 수 있고, 기록을 읽는 건 `admins`에 등록된 계정만 가능합니다.
+- Supabase 무료 프로젝트는 일주일 넘게 아무 요청이 없으면 일시정지될 수 있습니다. 그럴 땐 Supabase 대시보드에서 다시 켜면 됩니다.
+
 ## 제한 사항
 
 - **PDF 용량**: 파일당 최대 90MB입니다. 사이트에서 빨리 열리도록 40MB 이하를 권장합니다.
@@ -73,10 +96,12 @@ index.html, css/, js/       공개 사이트
   js/morph.js               WebGL 모핑 (노이즈 변위 + 모노톤 보정)
   js/pdf-viewer.js          전체화면 PDF 뷰어 (pdf.js)
   js/pixel-art.js           픽셀 캐릭터·아이콘 (Pixel 스타일)
+  js/analytics.js           접속 기록 (Supabase로 전송)
 css/theme-*.css             스타일별 디자인 (pixel, editorial)
 data/site.json              사이트 설정 + 포트폴리오 목록
 uploads/                    PDF·썸네일·사진 (uploads/seed = 샘플)
-studio/                     관리자 페이지 (github.js = 저장소 저장 로직)
+studio/                     관리자 페이지 (github.js = 저장소 저장, stats.js = 접속 통계)
+supabase/analytics.sql      접속 통계용 Supabase 설정 SQL
 vendor/                     pdf.js, 갈무리 도트 폰트 (Pretendard는 CDN)
 .nojekyll                   GitHub Pages가 파일을 그대로 쓰도록 하는 설정
 ```

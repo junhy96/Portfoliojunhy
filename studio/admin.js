@@ -153,6 +153,9 @@
     (f.repo.value ? f.token : f.repo).focus();
   }
   async function connect(cfg) {
+    try {
+      if (localStorage.getItem('pf-notrack') === null) localStorage.setItem('pf-notrack', '1');
+    } catch {}
     store = new GitHubStore(cfg);
     await store.verify();
     db = await store.readData();
@@ -203,10 +206,15 @@
     $$('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.view === name || (name === 'editor' && t.dataset.view === 'board')));
     if (name === 'settings') fillSettings();
     if (name === 'board') renderBoard();
+    if (name === 'stats') window.StudioStats?.open(db.settings?.analytics, db.settings?.theme);
     window.scrollTo(0, 0);
     return true;
   }
   $$('.tab').forEach((t) => t.addEventListener('click', () => switchView(t.dataset.view)));
+  document.addEventListener('click', (e) => {
+    const g = e.target.closest('[data-goto]');
+    if (g) switchView(g.dataset.goto);
+  });
   window.addEventListener('beforeunload', (e) => {
     if (dirty || sync.dataset.state === 'saving') {
       e.preventDefault();
@@ -609,6 +617,8 @@
     f.contactHeading.value = s.contact?.heading || '';
     f.email.value = s.contact?.email || '';
     f.contactMessage.value = s.contact?.message || '';
+    f.anaUrl.value = s.analytics?.url || '';
+    f.anaKey.value = s.analytics?.key || '';
     const theme = ['mono', 'pixel', 'editorial'].includes(s.theme) ? s.theme : 'mono';
     $$('input[name=theme]', f).forEach((r) => (r.checked = r.value === theme));
     f.themeSwitcher.checked = s.themeSwitcher !== false;
@@ -663,6 +673,7 @@
     $$('#image-slots input[type=range]').forEach((r) => (focus[r.dataset.slot] = Number(r.value)));
     const files = Object.entries(slotFiles).map(([slot, blob]) => ({ slot, path: `uploads/site-${slot}-${uid()}.${extOf(blob)}`, blob }));
     const values = {
+      analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
       theme: ($$('input[name=theme]', f).find((r) => r.checked) || {}).value || 'mono',
       themeSwitcher: f.themeSwitcher.checked,
       siteTitle: f.siteTitle.value.trim(),

@@ -423,3 +423,7 @@ html.theme-swapping .theme-veil { opacity: 1; }
   .ts-label { display: none; }
   .theme-switch button { padding: 4px 8px; }
 }
+
+/* 관리자 클릭 히트맵 미리보기 (?embed): 로더·등장 애니메이션 없이 바로 */
+html.is-embed .loader { display: none; }
+html.is-embed .reveal, html.is-embed .hero-meta div { transition: none !important; }
