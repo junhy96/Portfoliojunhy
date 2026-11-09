@@ -1,6 +1,6 @@
-import { MorphStage, FallbackStage } from './morph.js';
-import { PdfViewer } from './pdf-viewer.js';
-import { initAnalytics } from './analytics.js';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090542';
+import { PdfViewer } from './pdf-viewer.js?v=202611090542';
+import { initAnalytics } from './analytics.js?v=202611090542';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
