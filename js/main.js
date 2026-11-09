@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611090814';
-import { PdfViewer } from './pdf-viewer.js?v=202611090814';
-import { renderSkillChart } from './skills.js?v=202611090814';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611090814';
-import { initWorks, scatter } from './works.js?v=202611090814';
-import { initAnalytics } from './analytics.js?v=202611090814';
+import { MorphStage, FallbackStage } from './morph.js?v=202611090820';
+import { PdfViewer } from './pdf-viewer.js?v=202611090820';
+import { renderSkillChart } from './skills.js?v=202611090820';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611090820';
+import { initWorks } from './works.js?v=202611090820';
+import { initAnalytics } from './analytics.js?v=202611090820';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -395,8 +395,6 @@ async function boot() {
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;
     document.body.dataset.section = state.section;
-    // 이번에 들어온 섹션의 내용마다 날아올 방향·시간차를 새로 뽑음
-    panel.querySelectorAll('.reveal').forEach(scatter);
     document.body.classList.remove('is-previewing', 'tl-photo');
     tlShown = null;
     navLinks.forEach((a, k) => a.classList.toggle('is-active', k === i));

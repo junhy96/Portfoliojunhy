@@ -144,19 +144,21 @@ export function initWorks(panel, projects, docTypes = []) {
     kick();
   };
 
-  const show = () => {
+  // animate: Works 페이지에 들어올 때·필터를 바꿀 때만 카드가 날아옴 (처음 준비할 때는 그냥 둠)
+  const show = (animate = true) => {
     const list = shown();
     items.forEach((li) => {
       li.hidden = !list.includes(li);
       li.classList.remove('is-show');
     });
     layout();
-    list.forEach((li, k) => {
-      li.style.setProperty('--k', Math.min(k, 10));
-      scatter(li);
-      void li.offsetWidth; // 다시 날아오는 애니메이션
-      li.classList.add('is-show');
-    });
+    if (animate)
+      list.forEach((li, k) => {
+        li.style.setProperty('--k', Math.min(k, 10));
+        scatter(li);
+        void li.offsetWidth; // 다시 날아오는 애니메이션
+        li.classList.add('is-show');
+      });
     cur = target = 0;
     grid.scrollLeft = 0;
     paint();
@@ -229,8 +231,8 @@ export function initWorks(panel, projects, docTypes = []) {
       paint();
     }, 200);
   });
-  matchMedia('(max-width: 820px)').addEventListener('change', () => show());
-  show();
+  matchMedia('(max-width: 820px)').addEventListener('change', () => show(false));
+  show(false);
 
   // Deck 연결: 휠·방향키를 옆으로 미는 데 씀. 끝에 닿았고 화면도 다 따라왔으면 false → 이전/다음 페이지
   panel._h = {
