@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101453';
-import { PdfViewer } from './pdf-viewer.js?v=202611101453';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101453';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101453';
-import { initWorks } from './works.js?v=202611101453';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101453';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101522';
+import { PdfViewer } from './pdf-viewer.js?v=202611101522';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101522';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101522';
+import { initWorks } from './works.js?v=202611101522';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101522';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -309,7 +309,9 @@ class Deck {
     this.lastDir = dir;
     if (fresh) this.gestureUsed = false;
     // 쉬지 않고 계속 세게 굴리는 중이면(관성 꼬리가 아니면) 넘김이 끝난 뒤 한 칸 더
-    if (this.gestureUsed && now - (this.stepAt || 0) > 1100 && Math.abs(dy) >= 30) this.gestureUsed = false;
+    // (타임라인에서는 하지 않음: 트랙패드 관성·무한 휠 한 번에 연혁이 3~4칸씩 넘어가던 문제. 손을 뗐다 다시 굴려야 다음 항목)
+    const onTimeline = this.panels[this.index].id === 'timeline';
+    if (!onTimeline && this.gestureUsed && now - (this.stepAt || 0) > 1100 && Math.abs(dy) >= 30) this.gestureUsed = false;
     if (this.gestureUsed) return;
     // 넘어가는 중에는 막되, 반대 방향으로 새로 굴리면 바로 되돌아감
     const reverse = fresh && this.navDir && dir !== this.navDir;

@@ -213,6 +213,7 @@ export class PdfViewer {
     );
     box.hidden = !this.gallery.length;
     $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
+    box.scrollTop = 0;
     const shorts = /youtube\.com\/shorts\//i.test(this.project?.video || '');
     $('viewer-video').classList.toggle('has-gallery', !!this.gallery.length);
     $('viewer-video').classList.toggle('is-shorts', shorts && !!this.gallery.length);
