@@ -17,5 +17,7 @@ def bump(path, patterns):
 
 bump('index.html', [r'(href="css/style\.css)', r'(href="css/theme-editorial\.css)', r'(src="js/main\.js)', r'(src="js/icons\.js)'])
 bump('js/main.js', [r"(from '\./morph\.js)", r"(from '\./pdf-viewer\.js)", r"(from '\./analytics\.js)", r"(from '\./skills\.js)", r"(from '\./timeline\.js)", r"(from '\./works\.js)"])
+bump('print.html', [r'(href="css/print\.css)', r'(src="js/print\.js)', r'(src="js/icons\.js)'])
+bump('js/print.js', [r"(from '\./timeline\.js)", r"(from '\./analytics\.js)"])
 bump('studio/index.html', [r'(href="admin\.css)', r'(src="github\.js)', r'(src="admin\.js)', r'(src="stats\.js)', r'(src="\.\./js/icons\.js)'])
 print('version', V)

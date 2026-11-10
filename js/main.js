@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101412';
-import { PdfViewer } from './pdf-viewer.js?v=202611101412';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101412';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101412';
-import { initWorks } from './works.js?v=202611101412';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101412';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101430';
+import { PdfViewer } from './pdf-viewer.js?v=202611101430';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101430';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101430';
+import { initWorks } from './works.js?v=202611101430';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101430';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -180,6 +180,8 @@ function render({ settings: s, projects }) {
   renderSkillChart($('#skill-chart'), s.skillChart);
   renderToolBars($('#tool-bars'), (s.skillChart || []).filter((x) => x.group === 'tool'));
   initWorks($('#works'), projects, s.docTypes || []);
+  const hjWorks = $('#hj-works');
+  if (hjWorks) hjWorks.textContent = `작업 ${projects.length}건`;
   renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
@@ -538,8 +540,25 @@ async function boot() {
     railPages.replaceChildren(el('i', { className: 'rail-track' }, el('i', { className: 'rail-fill' })), el('div', { className: 'rail-steps' }, ...railSteps), railName);
     railPages.style.setProperty('--n', total);
   }
+  // 인쇄 · PDF: 지금 보는 페이지 내용만 (링크 프리셋으로 들어왔으면 그 프리셋 그대로)
+  const PRINT = { hero: ['resume', '이력서 PDF'], about: ['resume', '이력서 PDF'], contact: ['resume', '이력서 PDF'], timeline: ['timeline', '연혁 PDF'], skills: ['skills', '스킬 PDF'], works: ['works', '작업 목록 PDF'] };
+  const printHref = (part) => {
+    const q = new URLSearchParams({ part });
+    if (document.documentElement.dataset.link) q.set('from', document.documentElement.dataset.link);
+    return 'print.html?' + q;
+  };
+  $$('[data-print]').forEach((a) => (a.href = printHref(a.dataset.print)));
+  const printBtn = $('#print-btn');
+  const setPrint = (key) => {
+    const [part, label] = PRINT[key] || PRINT.hero;
+    if (!printBtn) return;
+    printBtn.href = printHref(part);
+    $('#print-label').textContent = label;
+    printBtn.setAttribute('aria-label', `${label} — 새 창에서 인쇄하거나 PDF로 저장`);
+  };
   const deck = new Deck($('#deck'), (i, panel) => {
     state.section = panel.dataset.key;
+    setPrint(state.section);
     document.body.dataset.section = state.section;
     document.body.classList.remove('is-previewing', 'tl-photo');
     if (tlShown) stage.setMode(TONE_MODE()); // 타임라인을 떠나면 원래 색감으로

@@ -128,6 +128,18 @@ export class PdfViewer {
     const media = yt || this.gallery.length;
     $('viewer-tabs').hidden = !(media && project.pdf);
     this.root.querySelector('.vtab[data-act="tab-video"]').textContent = yt ? '영상' : '화면';
+    // 인쇄 · PDF: 기획서가 있으면 그 PDF를, 없으면 이 작업 요약(설명 · 소개 이미지 · 링크)을 새 창에서
+    const pr = $('viewer-print');
+    if (project.pdf) {
+      pr.href = project.pdf;
+      pr.textContent = '인쇄용 PDF ↗';
+    } else {
+      const q = new URLSearchParams({ part: 'work', id: project.id || '' });
+      if (document.documentElement.dataset.link) q.set('from', document.documentElement.dataset.link);
+      pr.href = 'print.html?' + q;
+      pr.textContent = '인쇄 · PDF';
+    }
+    pr.hidden = !project.pdf && !project.id;
     // 직접 만든 툴·사이트: 위쪽에 '사이트 열기' (새 탭)
     const site = $('viewer-site');
     const link = /^https?:\/\//i.test(project.link || '') ? project.link : '';
