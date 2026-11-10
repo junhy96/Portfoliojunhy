@@ -740,3 +740,6 @@ html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity:
   .m-pages { flex: none; white-space: nowrap; }
 }
 @media (max-width: 400px) { .brand-role { display: none; } }
+
+/* 연혁 항목 사진(어두운 컬러): 사진 색이 살아 보이게 위 막은 조금만 */
+html[data-theme="editorial"] body[data-section="timeline"].tl-photo .shade-full { opacity: .35; }

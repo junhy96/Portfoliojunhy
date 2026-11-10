@@ -422,6 +422,7 @@ body.viewer-open .topbar, body.viewer-open .pager, body.viewer-open .scroll-hint
 /* WebGL을 못 쓰는 환경에서의 스타일별 사진 보정 */
 .stage-fallback[data-mode="2"] img { filter: grayscale(.55) sepia(.2) hue-rotate(130deg) brightness(.85) !important; }
 .stage-fallback[data-mode="3"] img { filter: grayscale(1) brightness(.85) !important; }
+.stage-fallback[data-mode="4"] img { filter: saturate(.85) brightness(.6) !important; }
 
 
 /* 관리자 클릭 히트맵 미리보기 (?embed): 로더·등장 애니메이션 없이 바로 */

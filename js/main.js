@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100604';
-import { PdfViewer } from './pdf-viewer.js?v=202611100604';
-import { renderSkillChart } from './skills.js?v=202611100604';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100604';
-import { initWorks } from './works.js?v=202611100604';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100604';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100606';
+import { PdfViewer } from './pdf-viewer.js?v=202611100606';
+import { renderSkillChart } from './skills.js?v=202611100606';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100606';
+import { initWorks } from './works.js?v=202611100606';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100606';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -461,6 +461,8 @@ async function boot() {
       document.body.classList.toggle('tl-photo', !!src);
       if (src === tlShown) return;
       tlShown = src;
+      // 연혁 항목 사진은 흑백이 아닌 어두운 컬러로, 사진이 없는 항목은 원래 색감으로
+      stage.setMode(src ? 4 : TONE_MODE());
       if (src) stage.show(src, it.focusX ?? 0.5, { duration: 1200 });
       else showSection({ duration: 1200 });
     }, 260);
@@ -512,6 +514,7 @@ async function boot() {
     state.section = panel.dataset.key;
     document.body.dataset.section = state.section;
     document.body.classList.remove('is-previewing', 'tl-photo');
+    if (tlShown) stage.setMode(TONE_MODE()); // 타임라인을 떠나면 원래 색감으로
     tlShown = null;
     navLinks.forEach((a, k) => a.classList.toggle('is-active', k === i));
     dots.forEach((d, k) => d.classList.toggle('is-active', k === i));
