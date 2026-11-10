@@ -40,6 +40,8 @@ export class PdfViewer {
     this.session = 0;
 
     this.root.addEventListener('click', (e) => {
+      const g = e.target.closest('.vg-item');
+      if (g) return this.showLight(Number(g.dataset.index));
       const btn = e.target.closest('[data-act]');
       if (!btn) return;
       const act = btn.dataset.act;
@@ -50,8 +52,22 @@ export class PdfViewer {
       if (act === 'desc') this.toggleDesc();
       if (act === 'tab-pdf') this.setMode('pdf');
       if (act === 'tab-video') this.setMode('video');
+      if (act === 'light-close') this.closeLight();
+      if (act === 'light-prev') this.showLight(this.lightIndex - 1);
+      if (act === 'light-next') this.showLight(this.lightIndex + 1);
+    });
+    $('viewer-light').addEventListener('click', (e) => {
+      if (e.target.id === 'viewer-light') this.closeLight(); // 이미지 바깥(어두운 곳)을 누르면 닫힘
     });
     this.root.addEventListener('keydown', (e) => {
+      // 크게 보기 중: Esc는 크게 보기만 닫고, ← →로 넘김
+      if (!$('viewer-light').hidden) {
+        if (e.key === 'Escape') this.closeLight();
+        if (e.key === 'ArrowLeft') this.showLight(this.lightIndex - 1);
+        if (e.key === 'ArrowRight') this.showLight(this.lightIndex + 1);
+        e.stopPropagation();
+        return;
+      }
       if (e.key === 'Escape') this.close();
       if (this.mode === 'video') return e.key === 'Tab' && this._trapFocus(e);
       if (e.key === '+' || e.key === '=') this.setZoom(this.zoomIndex + 1);
@@ -106,7 +122,12 @@ export class PdfViewer {
 
     // 유튜브 영상: PDF와 둘 다 있으면 위쪽 탭으로 오감 (기획서 먼저), 영상만 있으면 바로 재생
     const yt = project._yt;
-    $('viewer-tabs').hidden = !(yt && project.pdf);
+    // 소개 이미지: 영상 아래(쇼츠면 옆)에 작은 이미지 줄, 누르면 크게
+    this.gallery = (Array.isArray(project.gallery) ? project.gallery : []).filter((g) => g && g.src);
+    this._renderGallery();
+    const media = yt || this.gallery.length;
+    $('viewer-tabs').hidden = !(media && project.pdf);
+    this.root.querySelector('.vtab[data-act="tab-video"]').textContent = yt ? '영상' : '화면';
     // 직접 만든 툴·사이트: 위쪽에 '사이트 열기' (새 탭)
     const site = $('viewer-site');
     const link = /^https?:\/\//i.test(project.link || '') ? project.link : '';
@@ -115,9 +136,9 @@ export class PdfViewer {
     const ytLink = $('viewer-yt');
     ytLink.hidden = !yt;
     if (yt) ytLink.href = `https://www.youtube.com/watch?v=${yt}`;
-    this.setMode(project.pdf || !yt ? 'pdf' : 'video');
+    this.setMode(project.pdf || !media ? 'pdf' : 'video');
     if (!project.pdf) {
-      if (!yt) this._noPdf(project);
+      if (!media) this._noPdf(project);
       return;
     }
     this.statusEl.textContent = '기획서를 불러오는 중…';
@@ -163,18 +184,65 @@ export class PdfViewer {
     this.descEl.hidden = false;
   }
 
+  _renderGallery() {
+    const box = $('viewer-gallery');
+    box.replaceChildren(
+      ...this.gallery.map((g, i) => {
+        const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' });
+        b.dataset.index = i;
+        b.setAttribute('role', 'listitem');
+        b.setAttribute('aria-label', `${g.caption || '소개 이미지 ' + (i + 1)} 크게 보기`);
+        b.append(Object.assign(document.createElement('img'), { src: g.src, alt: '', loading: 'lazy', decoding: 'async' }));
+        if (g.caption) b.append(Object.assign(document.createElement('span'), { textContent: g.caption }));
+        return b;
+      })
+    );
+    box.hidden = !this.gallery.length;
+    const shorts = /youtube\.com\/shorts\//i.test(this.project?.video || '');
+    $('viewer-video').classList.toggle('has-gallery', !!this.gallery.length);
+    $('viewer-video').classList.toggle('is-shorts', shorts && !!this.gallery.length);
+    $('viewer-video').classList.toggle('no-video', !this.project?._yt);
+    this.closeLight();
+  }
+
+  showLight(i) {
+    const n = this.gallery?.length || 0;
+    if (!n) return;
+    this.lightIndex = (i + n) % n;
+    const g = this.gallery[this.lightIndex];
+    const box = $('viewer-light');
+    $('viewer-light-img').src = g.src;
+    $('viewer-light-img').alt = g.caption || '';
+    $('viewer-light-cap').textContent = `${this.lightIndex + 1} / ${n}${g.caption ? '  ·  ' + g.caption : ''}`;
+    box.querySelectorAll('.prev, .next').forEach((b) => (b.hidden = n < 2));
+    if (box.hidden) {
+      this.lightOpener = document.activeElement;
+      box.hidden = false;
+      box.querySelector('.shut').focus({ preventScroll: true });
+    }
+  }
+
+  closeLight() {
+    const box = $('viewer-light');
+    if (box.hidden) return;
+    box.hidden = true;
+    $('viewer-light-img').removeAttribute('src');
+    this.lightOpener?.focus?.({ preventScroll: true });
+  }
+
   /** 'pdf' | 'video' — 영상 칸은 열 때만 iframe을 넣고, 닫거나 탭을 바꾸면 빼서 소리가 멈추게 */
   setMode(mode) {
     this.mode = mode;
     const yt = this.project?._yt;
-    const video = mode === 'video' && yt;
+    const video = mode === 'video' && (yt || this.gallery?.length);
     this.root.classList.toggle('is-video', !!video);
     $('viewer-video').hidden = !video;
     this.scroller.hidden = !!video;
     this.root.querySelectorAll('.vtab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.act === 'tab-' + mode)));
     const frame = $('viewer-frame');
     frame.classList.toggle('is-shorts', /youtube\.com\/shorts\//i.test(this.project?.video || ''));
-    if (video) {
+    frame.hidden = !yt;
+    if (video && yt) {
       if (!frame.firstChild) {
         const f = document.createElement('iframe');
         f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
@@ -190,6 +258,7 @@ export class PdfViewer {
   close() {
     if (!this.isOpen) return;
     this.session++;
+    this.closeLight();
     $('viewer-frame').replaceChildren();
     this.root.classList.remove('is-open');
     document.body.classList.remove('viewer-open');

@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611101006" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611101006" />
+  <link rel="stylesheet" href="css/style.css?v=202611101412" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611101412" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -225,14 +225,25 @@
         <ul class="chip-list small" id="viewer-tags"></ul>
       </div>
     </div>
-    <div class="viewer-video" id="viewer-video" hidden><div class="video-frame" id="viewer-frame"></div></div>
+    <div class="viewer-video" id="viewer-video" hidden>
+      <div class="video-frame" id="viewer-frame"></div>
+      <div class="vgallery" id="viewer-gallery" role="list" aria-label="소개 이미지" hidden></div>
+    </div>
+    <div class="vlight" id="viewer-light" role="dialog" aria-label="소개 이미지 크게 보기" hidden>
+      <figure class="vlight-fig"><img id="viewer-light-img" alt="" /><figcaption id="viewer-light-cap"></figcaption></figure>
+      <button class="vlight-btn prev" data-act="light-prev" aria-label="이전 이미지">‹</button>
+      <button class="vlight-btn next" data-act="light-next" aria-label="다음 이미지">›</button>
+      <button class="vlight-btn shut" data-act="light-close" aria-label="크게 보기 닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
     <div class="viewer-scroll" id="viewer-scroll" tabindex="0">
       <div class="viewer-pages" id="viewer-pages"></div>
       <p class="viewer-status small" id="viewer-status"></p>
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611101006"></script>
-  <script type="module" src="js/main.js?v=202611101006"></script>
+  <script src="js/icons.js?v=202611101412"></script>
+  <script type="module" src="js/main.js?v=202611101412"></script>
 </body>
 </html>

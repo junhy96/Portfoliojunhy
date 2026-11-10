@@ -7,7 +7,7 @@
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&display=swap" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611101006" />
+  <link rel="stylesheet" href="admin.css?v=202611101412" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -136,6 +136,14 @@
                 <span>사이트 주소 <small>직접 만든 툴·웹서비스라면 주소를 넣어 주세요. 사이트 팝업 위쪽에 ‘사이트 열기 ↗’가 생기고 카드에 ‘사이트’ 표시가 붙어요</small></span>
                 <input name="link" type="url" maxlength="300" placeholder="https://…" />
               </label>
+            </div>
+
+            <div class="card">
+              <h3>소개 이미지 <small class="muted">선택</small></h3>
+              <p class="muted sm">사이트 팝업에서 영상 아래(쇼츠면 옆)에 작은 이미지로 보이고, 누르면 크게 넘겨 볼 수 있어요. 한 줄 설명을 붙이고 ▲▼로 순서를 바꿔요.</p>
+              <ol class="gal-list" id="gal-list"></ol>
+              <button type="button" class="btn ghost sm" id="gal-add-btn">＋ 이미지 추가</button>
+              <input type="file" id="gal-file" accept="image/jpeg,image/png,image/webp" multiple hidden />
             </div>
 
             <div class="card">
@@ -520,9 +528,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611101006"></script>
-  <script src="github.js?v=202611101006"></script>
-  <script src="admin.js?v=202611101006"></script>
-  <script src="stats.js?v=202611101006"></script>
+  <script src="../js/icons.js?v=202611101412"></script>
+  <script src="github.js?v=202611101412"></script>
+  <script src="admin.js?v=202611101412"></script>
+  <script src="stats.js?v=202611101412"></script>
 </body>
 </html>

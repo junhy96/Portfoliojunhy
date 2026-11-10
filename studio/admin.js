@@ -426,11 +426,61 @@
     form.docType.value = cur;
   }
 
+  /* 소개 이미지 목록 (사이트 팝업의 영상 아래 이미지 줄) */
+  function renderGal() {
+    const list = $('#gal-list');
+    const items = state.gallery || [];
+    list.replaceChildren(
+      ...items.map((g, i) => {
+        const cap = h('input', { type: 'text', maxLength: 80, value: g.caption, placeholder: '한 줄 설명 (예: 벙 지도 · 벙이 열린 동네)' });
+        cap.addEventListener('input', () => {
+          g.caption = cap.value;
+          dirty = true;
+        });
+        const mv = (d) => {
+          const j = i + d;
+          if (j < 0 || j >= items.length) return;
+          [items[i], items[j]] = [items[j], items[i]];
+          dirty = true;
+          renderGal();
+        };
+        const up = h('button', { type: 'button', className: 'icon-btn', title: '앞으로', textContent: '▲', disabled: i === 0 });
+        const down = h('button', { type: 'button', className: 'icon-btn', title: '뒤로', textContent: '▼', disabled: i === items.length - 1 });
+        const del = h('button', { type: 'button', className: 'icon-btn danger', title: '빼기', textContent: '✕' });
+        up.onclick = () => mv(-1);
+        down.onclick = () => mv(1);
+        del.onclick = () => {
+          if (g.url) URL.revokeObjectURL(g.url);
+          items.splice(i, 1);
+          dirty = true;
+          renderGal();
+        };
+        return h('li', { className: 'gal-row' }, g.blob ? h('img', { src: g.url, alt: '' }) : img(g.path), cap, h('div', { className: 'acts' }, up, down, del));
+      })
+    );
+    list.hidden = !items.length;
+  }
+  $('#gal-add-btn').addEventListener('click', () => $('#gal-file').click());
+  $('#gal-file').addEventListener('change', async (e) => {
+    const files = [...e.target.files];
+    e.target.value = '';
+    for (const f of files) {
+      if (!/^image\//.test(f.type)) continue;
+      const blob = await resizeImage(f, 2000, 0.85);
+      state.gallery.push({ blob, url: URL.createObjectURL(blob), caption: '' });
+    }
+    dirty = true;
+    renderGal();
+  });
+
   async function openEditor(p) {
     if (!(await switchView('editor'))) return;
     editing = p;
     form.reset();
     Object.assign(state, { pdfFile: null, removePdf: false, options: [], selected: null, loadingPages: false });
+    // 소개 이미지: 이미 올린 것은 path, 새로 고른 것은 blob
+    state.gallery = (p?.gallery || []).filter((g) => g?.src).map((g) => ({ path: g.src, caption: g.caption || '' }));
+    renderGal();
     $('#editor-title').textContent = p ? '포트폴리오 수정' : '새 포트폴리오 등록';
     $('#save-post').textContent = p ? '수정 완료' : '게시하기';
     fillDocTypes('');
@@ -636,6 +686,14 @@
     } else if (state.removePdf) {
       Object.assign(fileFields, { pdf: null, pdfName: null, pdfSize: null });
     }
+    // 소개 이미지: 새로 고른 것만 올리고, 순서·설명은 그대로 저장
+    const gallery = (state.gallery || []).map((g) => {
+      if (!g.blob) return { src: g.path, caption: g.caption.trim() };
+      const path = `uploads/${id}-${uid()}-g.${extOf(g.blob)}`;
+      files.push({ path, blob: g.blob });
+      return { src: path, caption: g.caption.trim() };
+    });
+    fields.gallery = gallery.length ? gallery : undefined;
     const sel = state.options.find((o) => o.key === state.selected);
     if (sel && sel.kind !== 'current') {
       const path = `uploads/${id}-${uid()}-thumb.${extOf(sel.blob)}`;
