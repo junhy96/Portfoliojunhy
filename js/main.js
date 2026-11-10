@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100642';
-import { PdfViewer } from './pdf-viewer.js?v=202611100642';
-import { renderSkillChart } from './skills.js?v=202611100642';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100642';
-import { initWorks } from './works.js?v=202611100642';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100642';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100646';
+import { PdfViewer } from './pdf-viewer.js?v=202611100646';
+import { renderSkillChart } from './skills.js?v=202611100646';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100646';
+import { initWorks } from './works.js?v=202611100646';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100646';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -238,7 +238,10 @@ class Deck {
     this.index = i;
     this.navDir = Math.sign(i - prev); // 마지막으로 넘어간 방향
     this.navTime = performance.now();
-    this.lockUntil = this.navTime + 600;
+    // 1↔2페이지는 배경이 같으니, 내용이 스크롤되듯 길고 부드럽게 이어 내려감 (글이 사라졌다 다시 나타나지 않음)
+    const flow = Math.max(prev, i) <= 1 && prev !== i;
+    document.body.classList.toggle('is-flow', flow);
+    this.lockUntil = this.navTime + (flow ? 950 : 600);
     this._apply(animate);
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
