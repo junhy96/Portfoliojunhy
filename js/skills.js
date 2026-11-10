@@ -273,3 +273,119 @@ export function renderSkillChart(root, skills) {
   });
   draw(tabDefs.length ? tabDefs[0][0] : groups[0]?.[0] || 'all');
 }
+
+
+/**
+ * 툴 숙련도 — 가로 게이지 막대 (2페이지)
+ * - 아이콘 · 이름 · 막대(#90DE93) · 숫자. 페이지에 들어오면 막대가 왼쪽부터 차오름
+ * - 마우스를 올리면(휴대폰은 탭) 스킬 차트와 같은 말풍선
+ */
+export function renderToolBars(root, tools) {
+  if (!root) return;
+  const list = (tools || []).filter((s) => s && String(s.name || '').trim()).map((s) => ({ ...s, level: clamp(s.level) }));
+  root.replaceChildren();
+  root.hidden = !list.length;
+  if (!list.length) return;
+  const rows = document.createElement('ol');
+  rows.className = 'tb-list';
+  const tip = document.createElement('div');
+  tip.className = 'skill-tip';
+  tip.setAttribute('role', 'tooltip');
+  list.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.className = 'tb-row';
+    li.tabIndex = 0;
+    li.style.setProperty('--i', i);
+    li.style.setProperty('--w', s.level + '%');
+    li.setAttribute('aria-label', `${s.name}, 숙련도 ${s.level} / 100, ${levelLabel(s.level)}${s.desc ? '. ' + s.desc : ''}`);
+    const icon = document.createElement('span');
+    icon.className = 'tb-icon';
+    icon.innerHTML = window.skillIconSvg ? window.skillIconSvg(s.icon, 20) : '';
+    const name = document.createElement('span');
+    name.className = 'tb-name';
+    name.textContent = s.name;
+    const bar = document.createElement('span');
+    bar.className = 'tb-bar';
+    bar.append(document.createElement('i'));
+    const val = document.createElement('span');
+    val.className = 'tb-val';
+    val.textContent = s.level;
+    li.append(icon, name, bar, val);
+    li.dataset.index = i;
+    rows.append(li);
+  });
+  root.append(rows, tip);
+
+  let current = null;
+  const show = (li) => {
+    if (current === li) return;
+    hide();
+    current = li;
+    li.classList.add('is-on');
+    const s = list[li.dataset.index];
+    tip.innerHTML = '';
+    const head = document.createElement('div');
+    head.className = 'tip-head';
+    head.innerHTML = window.skillIconSvg ? window.skillIconSvg(s.icon, 18) : '';
+    const nm = document.createElement('b');
+    nm.textContent = s.name;
+    head.append(nm);
+    const score = document.createElement('p');
+    score.className = 'tip-score';
+    score.innerHTML = `<span>${s.level}</span> / 100 · ${levelLabel(s.level)}`;
+    const meter = document.createElement('i');
+    meter.className = 'tip-meter';
+    meter.style.setProperty('--w', s.level + '%');
+    tip.append(head, score, meter);
+    if (s.desc) {
+      const d = document.createElement('p');
+      d.className = 'tip-desc';
+      d.textContent = s.desc;
+      tip.append(d);
+    }
+    // 아이콘 왼쪽에 말풍선 (화면이 좁으면 행 아래)
+    tip.classList.add('show');
+    const rb = root.getBoundingClientRect();
+    const ib = li.querySelector('.tb-icon').getBoundingClientRect();
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const narrow = window.innerWidth <= 820;
+    let x, y;
+    if (narrow) {
+      x = Math.max(0, Math.min(ib.left - rb.left, rb.width - tw));
+      y = li.getBoundingClientRect().bottom - rb.top + 8;
+      tip.classList.remove('to-left');
+      tip.classList.add('to-down');
+    } else {
+      x = ib.left - rb.left - tw - 16;
+      y = ib.top - rb.top + ib.height / 2 - th / 2;
+      tip.classList.add('to-left');
+      tip.classList.remove('to-down');
+      if (rb.left + x < 8) {
+        x = ib.right - rb.left + 16;
+        tip.classList.remove('to-left');
+      }
+    }
+    y = Math.max(-rb.top + 72, Math.min(y, window.innerHeight - rb.top - th - 16));
+    tip.style.transform = `translate(${x}px, ${y}px)`;
+    tip.style.setProperty('--tail-y', Math.max(16, Math.min(th - 16, ib.top - rb.top + ib.height / 2 - y)) + 'px');
+  };
+  const hide = () => {
+    current?.classList.remove('is-on');
+    current = null;
+    tip.classList.remove('show');
+  };
+  rows.querySelectorAll('.tb-row').forEach((li) => {
+    li.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && show(li));
+    li.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && hide());
+    li.addEventListener('focus', () => show(li));
+    li.addEventListener('blur', hide);
+    li.addEventListener('pointerdown', () => (li.wasOpen = current === li));
+    li.addEventListener('click', (e) => {
+      if (e.pointerType !== 'mouse' && li.wasOpen) hide();
+      else show(li);
+    });
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (current && !root.contains(e.target)) hide();
+  });
+}

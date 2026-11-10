@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100725';
-import { PdfViewer } from './pdf-viewer.js?v=202611100725';
-import { renderSkillChart } from './skills.js?v=202611100725';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100725';
-import { initWorks } from './works.js?v=202611100725';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100725';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100732';
+import { PdfViewer } from './pdf-viewer.js?v=202611100732';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611100732';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100732';
+import { initWorks } from './works.js?v=202611100732';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100732';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -169,6 +169,7 @@ function render({ settings: s, projects }) {
   });
 
   renderSkillChart($('#skill-chart'), s.skillChart);
+  renderToolBars($('#tool-bars'), (s.skillChart || []).filter((x) => x.group === 'tool'));
   initWorks($('#works'), projects, s.docTypes || []);
   renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
