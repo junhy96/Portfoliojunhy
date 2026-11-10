@@ -850,13 +850,13 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 @media (prefers-reduced-motion: reduce) { html[data-theme="editorial"] .deck { transition-duration: .45s; } }
 
 /* ===================== 스킬 차트: 레퍼런스 색감 · 차오름 · 마우스 올리면 커짐 ===================== */
-.skill-chart { --pt: #93d65a; --pt-hi: #b6f07c; }
+.skill-chart { --pt: #90de93; --pt-hi: #b4ecb6; } /* 레퍼런스 색 #90DE93, 마우스를 올리면 한 톤 밝게 */
 .skill-grid .grid-bg { fill: #232323; }
 .skill-grid .grid-ring { stroke: rgba(244, 244, 239, .07); stroke-width: .45; }
 .skill-grid .grid-ring.is-half { stroke: rgba(244, 244, 239, .14); }
 .skill-grid .grid-ring.is-outer { stroke: rgba(244, 244, 239, .3); stroke-width: .7; }
 .skill-grid .grid-spoke { stroke: rgba(244, 244, 239, .08); }
-.skill-grid-top circle, .skill-grid-top line { stroke: rgba(20, 30, 14, .5); stroke-width: .45; }
+.skill-grid-top circle, .skill-grid-top line { stroke: rgba(16, 40, 20, .45); stroke-width: .45; }
 .skill-grid .grid-num { fill: rgba(244, 244, 239, .5); }
 /* 조각: 선명한 연두, 꽉 찬 색 */
 .skill-wedge .fill { fill: var(--pt); fill-opacity: 1; transition: fill .18s; }
