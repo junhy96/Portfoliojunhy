@@ -5,24 +5,24 @@
       "key": "sb_publishable_kkojQbJumy-YLuj16fvD5w_hCW0LKz9"
     },
     "forceDesktop": false,
-    "siteTitle": "전현영 — Game Designer Portfolio",
+    "siteTitle": "전현영 — 전투 기획자 포트폴리오",
     "nameKo": "전현영",
     "nameEn": "Jeon Hyun Young",
-    "role": "Game Designer",
-    "eyebrow": "Game Designer Portfolio — 2026",
-    "intro": "플레이어의 선택이 의미를 갖는 순간을 설계합니다.\n시스템 기획과 레벨 디자인을 중심으로, 숫자와 감정 사이의 균형을 찾는 게임 기획자입니다.",
+    "role": "Combat Game Designer",
+    "eyebrow": "Combat Game Designer Portfolio",
+    "intro": "재미를 감으로 두지 않고, 수치와 구조로 증명하는 전투 기획자입니다.\n신규부터 라이브까지, 던전·몬스터·전투 콘텐츠를 기획해 왔습니다.",
     "meta": [
       {
         "label": "Focus",
-        "value": "System · Level Design"
+        "value": "전투 · 콘텐츠 · 시스템 기획"
       },
       {
         "label": "Tools",
-        "value": "Unity · Unreal · Excel"
+        "value": "UE5 · Unity · Lua · Excel"
       },
       {
-        "label": "Based in",
-        "value": "Seoul, KR"
+        "label": "Experience",
+        "value": "네오플 · 레드닷 게임즈 · KOG"
       },
       {
         "label": "Status",
@@ -31,22 +31,28 @@
     ],
     "about": {
       "heading": "About Me",
-      "bio": "플레이 데이터와 플레이어의 감정을 함께 읽는 기획자가 되고 싶습니다.\n전투·경제 시스템 설계와 밸런싱, 퍼즐 레벨 디자인 프로젝트를 진행했고, 문서와 프로토타입으로 아이디어를 빠르게 검증하는 방식을 좋아합니다.",
+      "bio": "게임을 직접 만들며 전투 · 레벨 · 시스템 기획을 설계하고 구현해 왔습니다.\n문서로 정한 규칙이 실제로 어떻게 굴러가는지 확인하는 과정을 중요하게 봅니다.\n재미를 만들고, 근거로 증명하며, 배운 것은 즉각적으로 활용하는 기획자입니다.",
       "skills": [
-        "시스템 기획",
-        "레벨 디자인",
-        "밸런싱 · 데이터 테이블",
-        "전투 설계",
-        "UX 플로우",
-        "기획서 작성"
+        "전투 콘텐츠 기획",
+        "몬스터 · 패턴 기획",
+        "던전 · 시스템 기획",
+        "전투 밸런스 기획",
+        "라이브 · 이벤트 기획",
+        "기획서 · 시스템 명세서 작성"
       ],
       "tools": [
-        "Unity",
         "Unreal Engine",
+        "Unity",
+        "Lua",
+        "Python",
+        "MySQL",
         "Excel",
-        "Notion",
+        "PowerPoint",
         "Figma",
-        "Jira"
+        "Confluence",
+        "Jira",
+        "SVN",
+        "Git"
       ]
     },
     "worksIntro": "직접 기획하고 문서화한 프로젝트들입니다.\n항목을 클릭하면 기획서 PDF를 바로 볼 수 있습니다.",
@@ -60,71 +66,58 @@
       "기타"
     ],
     "timelineHeading": "Timeline",
-    "timelineIntro": "교육과 인턴십, 프로젝트로 이어 온 길이에요.",
+    "timelineIntro": "신규부터 라이브까지, 다양한 프로젝트를 경험해 왔어요.",
     "timeline": [
       {
+        "id": "twvniyjd0",
         "type": "교육",
-        "period": "2019.03 — 2023.02",
-        "title": "○○대학교 게임콘텐츠학과 졸업",
-        "org": "학사",
-        "desc": "게임 기획·레벨 디자인 전공 과목 이수, 졸업 작품으로 퍼즐 게임 기획",
-        "tasks": [
-          "게임 기획론·레벨 디자인 전공 과목 이수",
-          "졸업 작품 퍼즐 게임 기획·레벨 12종 제작",
-          "학과 게임잼 운영진"
-        ],
-        "id": "tp2pyvix4"
+        "period": "2015 — 2022",
+        "title": "국립 한경대학교 졸업",
+        "org": "식품생물공학과",
+        "desc": "",
+        "tasks": []
       },
       {
-        "type": "인턴십",
-        "period": "2023.07 — 2023.12",
-        "title": "○○게임즈 기획 인턴",
-        "org": "라이브 서비스팀",
-        "desc": "이벤트 기획서 작성과 보상 테이블 정리, 패치 노트 검수를 맡았어요",
+        "id": "t9pm4zcs4",
+        "type": "경력",
+        "period": "2024.02 — 2024.06",
+        "title": "KOG · 그랜드체이스 클래식",
+        "org": "전투 · 라이브 기획",
+        "desc": "그랜드체이스 클래식의 라이브 운영과 펫 전투를 기획했어요.",
         "tasks": [
-          "주간 이벤트 기획서 작성 (8건)",
-          "보상 테이블 정리와 수치 검수",
-          "패치 노트 작성·QA 체크리스트 관리"
-        ],
-        "id": "t8k0n4e28"
+          "시즌 패스 개선",
+          "신규 전직 시스템 초안 제안",
+          "신규 펫 스킬 기획 · 컨셉 및 대사 기획",
+          "전투 밸런스 기획"
+        ]
       },
       {
-        "type": "프로젝트",
-        "period": "2026",
-        "title": "인디 팀 ‘Ashen Tide’ 전투 기획",
-        "org": "",
-        "desc": "전투 시스템 · 무기 밸런스 설계",
+        "id": "tuc2jvtb8",
+        "type": "경력",
+        "period": "2024.09 — 2024.12",
+        "title": "레드닷 게임즈 · 짐승 친구들 키우기",
+        "org": "기획 총괄 · ‘용사가 돌아왔다’ 전투 기반 설계",
+        "desc": "짐승 친구들 키우기 시스템 기획을 총괄하고, 용사가 돌아왔다의 전투 기반을 설계했어요.",
         "tasks": [
-          "패링·스태미나 전투 규칙 설계",
-          "무기 12종 특성과 수치 밸런싱",
-          "전투 플레이테스트 피드백 정리"
-        ],
-        "id": "t99hxprmu"
+          "우주 경찰서 지령서 · 별자리 시스템 기획",
+          "길드 대항전 콘텐츠 · 시스템 기획",
+          "크리스마스 이벤트 기획",
+          "프리셋 시스템 기획",
+          "용사가 돌아왔다 전투 기반 설계"
+        ]
       },
       {
-        "type": "수상",
-        "period": "2025",
-        "title": "게임잼 우수상",
-        "org": "",
-        "desc": "퍼즐 게임 ‘Lumen Trail’ 레벨 디자인",
+        "id": "t0eh77hll",
+        "type": "경력",
+        "period": "2025.01 — 2025.07",
+        "title": "네오플 · 던전앤파이터",
+        "org": "콘텐츠 기획팀 · 전투 콘텐츠 기획",
+        "desc": "던전앤파이터의 던전과 몬스터 패턴을 기획하고 제작했어요.",
         "tasks": [
-          "48시간 팀 게임잼 기획 담당",
-          "퍼즐 레벨 8종 설계와 난이도 곡선 조정"
-        ],
-        "id": "ttj4fvm2h"
-      },
-      {
-        "type": "교육",
-        "period": "2024",
-        "title": "게임 기획 아카데미 수료",
-        "org": "",
-        "desc": "시스템 기획 과정",
-        "tasks": [
-          "시스템 기획서 작성 실습",
-          "Excel 밸런스 시뮬레이션 시트 제작",
-          "팀 프로젝트 기획 리드"
-        ],
-        "id": "tspp77e4o"
+          "이내 여명 작전 콘텐츠 기획",
+          "몬스터 기획 · 제작 (오작동하는 미스트 골렘, 울려 퍼지는 카코포네)",
+          "던전 시스템 기획"
+        ]
       }
     ],
     "skillsHeading": "Skills",
@@ -211,7 +204,7 @@
     "contact": {
       "heading": "Thank You",
       "message": "함께 재미를 만들 팀을 찾고 있습니다.\n편하게 연락 주세요.",
-      "email": "hello@example.com",
+      "email": "junhy96@naver.com",
       "links": [
         {
           "label": "Notion",
