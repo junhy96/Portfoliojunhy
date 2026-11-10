@@ -353,7 +353,7 @@
       ],
       "summary": "대화 내보내기 파일 하나로 오픈톡방의 활동·멤버·벙을 한눈에 정리하는 웹서비스. 기획부터 배포까지 1인 개발",
       "description": "300개 넘게 쌓인 카톡방 메시지를 언제 다 확인하냐는 운영진의 불편에서 출발했습니다. 대화 내보내기 파일만 올리면 가장 붐빈 날·시간, 누가 무슨 말을 했는지, 멤버 지역 지도, 벙이 열린 동네, 벙 캘린더, 자주 나온 단어를 한 화면에 보여줍니다. 대화 원문은 서버로 보내지 않고 브라우저 안에서만 분석합니다.\n벙 일정·인원 DB에서는 멤버가 벙을 열고 참가·대기·취소하며, 남은 자리에 여러 명이 동시에 신청해도 정원을 넘지 않도록 서버에서 막습니다.\nVanilla JS · Cloudflare Pages · Supabase(카카오 로그인, RLS)로 1인 개발했고, Playwright 테스트로 화면과 동시 신청을 검증했습니다.",
-      "thumb": "uploads/works/obung-home.jpg",
+      "thumb": "uploads/works/obung-core.jpg",
       "pdf": null,
       "docType": "툴 제작",
       "link": "https://obung.pages.dev/",
