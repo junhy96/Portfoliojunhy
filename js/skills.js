@@ -288,6 +288,7 @@ export function renderToolBars(root, tools) {
   if (!list.length) return;
   const rows = document.createElement('ol');
   rows.className = 'tb-list';
+  rows.style.setProperty('--rows', Math.ceil(list.length / 2)); // 두 칸일 때 위에서 아래로 채움 (목록 순서 = 세로 순서)
   const tip = document.createElement('div');
   tip.className = 'skill-tip';
   tip.setAttribute('role', 'tooltip');

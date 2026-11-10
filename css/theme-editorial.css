@@ -1228,3 +1228,9 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
 .viewer-desc p { white-space: pre-line; }
 /* 뷰어에 펼친 주요 업무: 넓은 화면은 두 칸으로 짧게 */
 @media (min-width: 1100px) { .viewer-desc-inner { max-width: 1200px; } }
+/* 스킬 · 툴 말풍선: 설명이 길어져 조금 넓게 */
+.skill-tip { width: 320px; }
+.skill-tip .tip-desc { line-height: 1.6; }
+@media (max-width: 820px) { .skill-tip { width: min(300px, 82vw); } }
+/* About 툴 목록: 두 칸이면 왼쪽 칸을 위에서 아래로 먼저 채움 (Unreal 바로 밑에 Claude Code) */
+@media (min-width: 1101px) { .tb-list { grid-auto-flow: column; grid-template-rows: repeat(var(--rows, 7), auto); } }
