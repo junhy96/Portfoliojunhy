@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100713';
-import { PdfViewer } from './pdf-viewer.js?v=202611100713';
-import { renderSkillChart } from './skills.js?v=202611100713';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100713';
-import { initWorks } from './works.js?v=202611100713';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100713';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100725';
+import { PdfViewer } from './pdf-viewer.js?v=202611100725';
+import { renderSkillChart } from './skills.js?v=202611100725';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100725';
+import { initWorks } from './works.js?v=202611100725';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100725';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -272,6 +272,15 @@ class Deck {
   }
   _onWheel(e) {
     if (!this.enabled || e.ctrlKey) return;
+    // 열림 화면(PORTFOLIO)이 끝나기 전에는 움직이지 않음 — 로딩 중 굴린 휠 때문에 다른 페이지에서 시작하던 문제
+    if (!document.body.classList.contains('is-ready')) {
+      // 로딩 중에 시작한 굴림은 다 쓴 것으로 표시해, 화면이 뜬 직후 이어지는 휠로 넘어가지 않게
+      this.lastWheel = performance.now();
+      this.lastDir = Math.sign(e.deltaY) || this.lastDir;
+      this.gestureUsed = true;
+      this.stepAt = this.lastWheel;
+      return e.preventDefault();
+    }
     const dy = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : 0;
     const dir = Math.sign(dy);
     if (!dir) return;
@@ -281,32 +290,33 @@ class Deck {
       return;
     }
     e.preventDefault();
-    // 새로 굴리기 시작한 휠인지(관성 꼬리가 아닌지): 잠깐 멈췄다 굴렸거나, 더 세게 굴렸거나, 방향을 바꿨으면 새 동작
-    const strong = Math.abs(dy) > this.lastDelta * 1.25 || now - this.lastWheel > 180 || dir !== this.lastDir;
-    this.lastDelta = Math.abs(dy);
+    // 한 번의 '굴림'(제스처) = 한 칸 이동. 휠 이벤트가 0.2초 넘게 끊겼거나 방향이 바뀌면 새 굴림.
+    // 트랙패드 관성처럼 2초 가까이 이어지는 이벤트도 한 굴림으로 보고, 한 번만 넘김 (여러 페이지를 건너뛰던 문제)
+    const fresh = now - this.lastWheel > 200 || dir !== this.lastDir;
     this.lastWheel = now;
     this.lastDir = dir;
-    // 넘어가는 중(1초)에는 휠을 막되, 반대 방향으로 새로 굴리면 바로 되돌아감 (내리다가 마음 바꿔 올릴 때 걸리지 않게)
-    const reverse = strong && this.navDir && dir !== this.navDir;
+    if (fresh) this.gestureUsed = false;
+    // 쉬지 않고 계속 세게 굴리는 중이면(관성 꼬리가 아니면) 넘김이 끝난 뒤 한 칸 더
+    if (this.gestureUsed && now - (this.stepAt || 0) > 1100 && Math.abs(dy) >= 30) this.gestureUsed = false;
+    if (this.gestureUsed) return;
+    // 넘어가는 중에는 막되, 반대 방향으로 새로 굴리면 바로 되돌아감
+    const reverse = fresh && this.navDir && dir !== this.navDir;
     if (now < this.lockUntil && !reverse) return;
-    if (!strong && now - this.navTime < 1000) return; // 트랙패드 관성 무시
-    // 휠(위아래)은 페이지 이동. 단, 타임라인은 항목이 적어 휠로 한 항목씩 지나가고, 끝에 닿으면 다음·이전 페이지로
-    // (Works의 옆 이동은 ← → 키·화살표 버튼·끌기·트랙패드 가로 밀기로)
-    const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
-    if (tl) {
-      if (!tl.wheel(dy)) this.go(this.index + dir, { step: true });
-      return;
-    }
     if (now - this.innerScrollAt < 450) {
       // 목록 끝에 닿은 뒤에도 계속 굴리는 중이면 넘어가지 않음 → 잠깐 멈췄다가 다시 굴리면 다음 섹션
       this.innerScrollAt = now;
       return;
     }
-    if (Math.abs(dy) < 4) return;
+    this.gestureUsed = true;
+    this.stepAt = now;
+    // 타임라인은 굴릴 때마다 연혁 한 항목씩, 끝에 닿으면 다음·이전 페이지로
+    const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
+    if (tl && tl.page(dir)) return;
     this.go(this.index + dir, { step: true });
   }
   _onKey(e) {
     if (!this.enabled || e.altKey || e.metaKey || e.ctrlKey) return;
+    if (!document.body.classList.contains('is-ready')) return;
     if (e.target.closest?.('input, textarea, select, [contenteditable]')) return;
     const map = { ArrowDown: 1, PageDown: 1, ' ': 1, ArrowUp: -1, PageUp: -1 };
     if (e.key === 'Home') return e.preventDefault(), this.go(0);
@@ -341,7 +351,7 @@ class Deck {
       if (!inner && !hs && e.cancelable) e.preventDefault();
     }, { passive: false });
     window.addEventListener('touchend', (e) => {
-      if (!this.enabled || inner) return;
+      if (!this.enabled || inner || !document.body.classList.contains('is-ready')) return;
       const dy = y0 - e.changedTouches[0].clientY;
       const dx = x0 - e.changedTouches[0].clientX;
       if (hs && Math.abs(dx) > Math.abs(dy)) return;
