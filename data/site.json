@@ -496,8 +496,8 @@
     {
       "id": "w-dressroom",
       "title": "드레스 룸 UI 시스템",
-      "subtitle": "지정 인벤토리 개선 창작 기획",
-      "category": "MMORPG",
+      "subtitle": "메이플스토리 · 지정 인벤토리 개선 창작 기획",
+      "category": "2D MMORPG",
       "year": "2023",
       "tags": [
         "UI·UX",
@@ -508,7 +508,7 @@
       "description": "치장 아이템 획득이 늘며 생긴 보관·검색 불편을 해결하기 위해 지정 인벤토리를 드레스 룸으로 개선했습니다.\n획득·잠금·정렬 규칙과 세트·등급 필터, 모니터·검색·필터·인벤토리 모듈별 UI 명세를 작성했습니다.",
       "thumb": "uploads/works/dressroom.jpg",
       "pdf": "uploads/works/dressroom.pdf",
-      "pdfName": "드레스룸_UI시스템_기획서.pdf",
+      "pdfName": "메이플스토리_드레스룸_UI시스템_기획서.pdf",
       "pdfSize": 3183832,
       "docType": "시스템·UI 기획",
       "visible": true,
