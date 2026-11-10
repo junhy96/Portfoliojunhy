@@ -61,6 +61,18 @@
     setTimeout(() => ($('#stats-sql-copy').textContent = '복사'), 1500);
   });
 
+  $('#dwell-sql-copy')?.addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    try {
+      const sql = await (await fetch(ROOT + 'supabase/analytics-dwell.sql', { cache: 'no-store' })).text();
+      await navigator.clipboard.writeText(sql);
+      btn.textContent = '복사됨';
+    } catch {
+      btn.textContent = '복사 실패 — supabase/analytics-dwell.sql 파일을 열어 복사해주세요';
+    }
+    setTimeout(() => (btn.textContent = 'SQL 복사'), 2500);
+  });
+
   /* ---------------- Supabase 로그인 ---------------- */
   const base = () => cfg.url.replace(/\/+$/, '');
   function loadAuth() {
@@ -136,9 +148,22 @@
   });
 
   /* ---------------- 데이터 ---------------- */
+  // 체류 시간 칸(dur·page·pages)이 아직 없는 Supabase면 그 칸 없이 다시 받아옴
+  let dwellReady = true;
   async function fetchSince(since) {
-    const rows = [];
     const cols = 'created_at,visitor,session,type,section,theme,x,y,target,device,referrer';
+    try {
+      const rows = await fetchRows(since, cols + ',dur,page,pages');
+      dwellReady = true;
+      return rows;
+    } catch (err) {
+      if (!/\(400\)/.test(err.message)) throw err;
+      dwellReady = false;
+      return fetchRows(since, cols);
+    }
+  }
+  async function fetchRows(since, cols) {
+    const rows = [];
     for (let offset = 0; offset < 60000; offset += 1000) {
       const page = await api(`/rest/v1/events?select=${cols}&created_at=gte.${encodeURIComponent(since)}&order=created_at.asc&limit=1000&offset=${offset}`);
       rows.push(...page);
@@ -193,6 +218,28 @@
       pdf: rows.filter((e) => e.type === 'pdf').length,
     };
   }
+  // 체류 시간: 61 → '1분 1초'
+  const fmtDur = (sec) => {
+    sec = Math.round(sec || 0);
+    if (sec < 60) return `${sec}초`;
+    if (sec < 3600) return `${Math.floor(sec / 60)}분${sec % 60 ? ` ${sec % 60}초` : ''}`;
+    return `${Math.floor(sec / 3600)}시간${Math.floor((sec % 3600) / 60) ? ` ${Math.floor((sec % 3600) / 60)}분` : ''}`;
+  };
+  // 방문(세션) × 기획서마다 체류 시간 합 · 가장 뒤로 넘긴 쪽
+  function readsOf(rows) {
+    const m = new Map();
+    rows.filter((e) => e.type === 'read' && e.target).forEach((e) => {
+      const k = e.session + '\u0000' + e.target;
+      if (!m.has(k)) m.set(k, { session: e.session, title: e.target, sec: 0, page: 0, pages: 0 });
+      const r = m.get(k);
+      r.sec += e.dur || 0;
+      r.page = Math.max(r.page, e.page || 0);
+      r.pages = Math.max(r.pages, e.pages || 0);
+    });
+    return [...m.values()];
+  }
+  const readKey = (session, title) => session + '\u0000' + title;
+
   const countBy = (rows, key) => {
     const m = new Map();
     rows.forEach((r) => {
@@ -213,6 +260,7 @@
     renderHours(cur);
     renderSections(cur);
     renderPdfs(cur);
+    renderDwell(cur);
     renderHeat();
     renderSources(cur);
     renderVisits(cur);
@@ -397,10 +445,62 @@
     rankList($('#list-pdfs'), countBy(cur.filter((e) => e.type === 'pdf' && e.target), 'target').slice(0, 8), 0, (v) => `${fmt(v)}회`);
   }
 
+  function renderDwell(cur) {
+    const tbody = $('#table-dwell');
+    const note = $('#dwell-setup');
+    note.hidden = dwellReady;
+    if (!dwellReady) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 6, className: 'muted', textContent: '체류 시간 칸이 아직 없어요. 위 안내대로 SQL을 한 번 실행하면 그때부터 쌓여요' })));
+    const reads = readsOf(cur);
+    // 연 횟수는 'pdf'(연 기록) 기준, 체류는 'read' 기준
+    const opens = new Map();
+    cur.filter((e) => e.type === 'pdf' && e.target).forEach((e) => {
+      if (!opens.has(e.target)) opens.set(e.target, new Set());
+      opens.get(e.target).add(e.session);
+    });
+    const by = new Map();
+    reads.forEach((r) => {
+      if (!by.has(r.title)) by.set(r.title, { sessions: new Set(), readers: new Set(), sec: 0, depth: [], done: 0 });
+      const g = by.get(r.title);
+      g.sessions.add(r.session);
+      g.readers.add(r.session);
+      g.sec += r.sec;
+      if (r.pages) {
+        g.depth.push(Math.min(1, r.page / r.pages));
+        if (r.page >= r.pages) g.done++;
+      }
+    });
+    opens.forEach((set, title) => {
+      if (!by.has(title)) by.set(title, { sessions: new Set(), readers: new Set(), sec: 0, depth: [], done: 0 });
+      set.forEach((s) => by.get(title).sessions.add(s));
+    });
+    const rows = [...by.entries()].sort((a, b) => b[1].sec - a[1].sec || b[1].sessions.size - a[1].sessions.size);
+    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 6, className: 'muted', textContent: '아직 기록이 없어요. 사이트에서 기획서를 열어 보면 그때부터 쌓여요' })));
+    const max = Math.max(1, ...rows.map(([, g]) => g.sec));
+    tbody.replaceChildren(
+      ...rows.map(([title, g]) => {
+        const n = g.sessions.size;
+        const depth = g.depth.length ? Math.round((g.depth.reduce((a, b) => a + b, 0) / g.depth.length) * 100) : null;
+        const bar = h('i', { className: 'dwell-bar' });
+        bar.style.setProperty('--w', (g.sec / max) * 100 + '%');
+        return h(
+          'tr', {},
+          h('td', { className: 'dwell-title', textContent: title, title }),
+          h('td', { className: 'num', textContent: fmt(n) }),
+          // 평균은 체류 기록이 있는 방문만으로 (체류 기록을 모으기 전에 연 방문은 빼고)
+          h('td', { className: 'num strong', textContent: g.readers.size && g.sec ? fmtDur(g.sec / g.readers.size) : '—' }),
+          h('td', { className: 'dwell-total' }, h('span', { className: 'num', textContent: g.sec ? fmtDur(g.sec) : '—' }), bar),
+          h('td', { className: 'num', textContent: depth == null ? '—' : `${depth}%` }),
+          h('td', { className: 'num', textContent: g.depth.length ? `${fmt(g.done)} / ${fmt(g.depth.length)}` : '—' })
+        );
+      })
+    );
+  }
+
   function renderVisits(cur) {
+    const readTime = new Map(readsOf(cur).map((r) => [readKey(r.session, r.title), r.sec]));
     const bySession = new Map();
     cur.forEach((e) => {
-      if (!bySession.has(e.session)) bySession.set(e.session, { t: e.t, device: null, ref: null, tag: null, sections: [], pdfs: [], clicks: 0 });
+      if (!bySession.has(e.session)) bySession.set(e.session, { id: e.session, t: e.t, device: null, ref: null, tag: null, sections: [], pdfs: [], clicks: 0 });
       const s = bySession.get(e.session);
       if (e.type === 'view') Object.assign(s, { t: e.t, device: e.device, ref: e.referrer, tag: e.target });
       if (e.type === 'section' && !s.sections.includes(e.section)) s.sections.push(e.section);
@@ -421,7 +521,7 @@
           h('td', { textContent: dev[s.device] || '—' }),
           h('td', { textContent: s.ref || '직접 방문' }),
           h('td', { textContent: s.sections.map((k) => label[k] || k).join(' → ') || '—' }),
-          h('td', { textContent: s.pdfs.join(', ') || '—' }),
+          h('td', { textContent: s.pdfs.map((t) => (readTime.get(readKey(s.id, t)) ? `${t} (${fmtDur(readTime.get(readKey(s.id, t)))})` : t)).join(', ') || '—' }),
           h('td', { className: 'num', textContent: fmt(s.clicks) })
         )
       )
@@ -434,7 +534,7 @@
     cur.filter((e) => e.type === 'view' && e.target).forEach((e) => tagOf.set(e.session, e.target));
     const groups = new Map();
     tagOf.forEach((tag, session) => {
-      if (!groups.has(tag)) groups.set(tag, { visitors: new Set(), sessions: new Set(), pdf: 0, pdfs: new Set(), last: null });
+      if (!groups.has(tag)) groups.set(tag, { visitors: new Set(), sessions: new Set(), pdf: 0, pdfs: new Set(), sec: 0, read: new Map(), last: null });
       groups.get(tag).sessions.add(session);
     });
     cur.forEach((e) => {
@@ -449,10 +549,14 @@
         g.pdf++;
         if (e.target) g.pdfs.add(e.target);
       }
+      if (e.type === 'read' && e.target) {
+        g.sec += e.dur || 0;
+        g.read.set(e.target, (g.read.get(e.target) || 0) + (e.dur || 0));
+      }
     });
     const rows = [...groups.entries()].sort((a, b) => b[1].last - a[1].last);
     const tbody = $('#table-sources');
-    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 6, className: 'muted', textContent: '아직 꼬리표 링크로 들어온 방문이 없어요. 위 ‘지원처별 링크 만들기’로 링크를 만들어 지원서에 넣어보세요' })));
+    if (!rows.length) return tbody.replaceChildren(h('tr', {}, h('td', { colSpan: 7, className: 'muted', textContent: '아직 꼬리표 링크로 들어온 방문이 없어요. 위 ‘지원처별 링크 만들기’로 링크를 만들어 지원서에 넣어보세요' })));
     tbody.replaceChildren(
       ...rows.map(([tag, g]) =>
         h(
@@ -461,7 +565,8 @@
           h('td', { className: 'num', textContent: fmt(g.visitors.size) }),
           h('td', { className: 'num', textContent: fmt(g.sessions.size) }),
           h('td', { className: 'num', textContent: fmt(g.pdf) }),
-          h('td', { textContent: [...g.pdfs].join(', ') || '—' }),
+          h('td', { className: 'num', textContent: dwellReady && g.sec ? fmtDur(g.sec) : '—' }),
+          h('td', { textContent: [...g.pdfs].map((t) => (g.read.get(t) ? `${t} (${fmtDur(g.read.get(t))})` : t)).join(', ') || '—' }),
           h('td', { className: 'num', textContent: `${g.last.getMonth() + 1}.${g.last.getDate()} ${pad(g.last.getHours())}:${pad(g.last.getMinutes())}` })
         )
       )

@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611100822" />
+  <link rel="stylesheet" href="admin.css?v=202611100829" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -298,7 +298,7 @@
             <div class="chart-head"><h3>지원처별 방문</h3><p class="muted sm">?from= 꼬리표 링크로 들어온 방문</p></div>
             <div class="table-wrap">
               <table class="visits sources">
-                <thead><tr><th>지원처</th><th class="num">방문자</th><th class="num">방문</th><th class="num">PDF 열람</th><th>연 PDF</th><th>마지막 방문</th></tr></thead>
+                <thead><tr><th>지원처</th><th class="num">방문자</th><th class="num">방문</th><th class="num">PDF 열람</th><th class="num">PDF 체류</th><th>연 PDF (본 시간)</th><th>마지막 방문</th></tr></thead>
                 <tbody id="table-sources"></tbody>
               </table>
             </div>
@@ -331,6 +331,20 @@
           </div>
 
           <div class="card chart-card">
+            <div class="chart-head"><h3>기획서별 체류 시간</h3><p class="muted sm">기획서를 연 동안 실제로 본 시간이에요. 다른 탭으로 가거나 2분 넘게 조작이 없으면 세지 않아요 (영상은 그냥 봐도 셈)</p></div>
+            <div class="dwell-setup" id="dwell-setup" hidden>
+              <p>체류 시간을 모으려면 Supabase에 칸을 하나 더 만들어야 해요. <b>Supabase 대시보드 → SQL Editor → New query</b>에 아래 버튼으로 복사한 SQL을 붙여넣고 <b>Run</b>을 한 번 눌러주세요. 기존 기록은 그대로 남아요.</p>
+              <button class="btn sm" type="button" id="dwell-sql-copy">SQL 복사</button>
+            </div>
+            <div class="table-wrap">
+              <table class="visits dwell">
+                <thead><tr><th>기획서</th><th class="num">연 방문</th><th class="num">평균 체류</th><th>총 체류</th><th class="num">평균 읽은 쪽</th><th class="num">끝까지 본 방문</th></tr></thead>
+                <tbody id="table-dwell"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card chart-card">
             <div class="chart-head">
               <h3>클릭 히트맵</h3>
               <div class="heat-controls">
@@ -359,7 +373,7 @@
             <div class="chart-head"><h3>최근 방문</h3><p class="muted sm">최근 30건</p></div>
             <div class="table-wrap">
               <table class="visits">
-                <thead><tr><th>시간</th><th>지원처</th><th>기기</th><th>유입</th><th>본 섹션</th><th>연 PDF</th><th class="num">클릭</th></tr></thead>
+                <thead><tr><th>시간</th><th>지원처</th><th>기기</th><th>유입</th><th>본 섹션</th><th>연 PDF (본 시간)</th><th class="num">클릭</th></tr></thead>
                 <tbody id="table-visits"></tbody>
               </table>
             </div>
@@ -495,9 +509,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611100822"></script>
-  <script src="github.js?v=202611100822"></script>
-  <script src="admin.js?v=202611100822"></script>
-  <script src="stats.js?v=202611100822"></script>
+  <script src="../js/icons.js?v=202611100829"></script>
+  <script src="github.js?v=202611100829"></script>
+  <script src="admin.js?v=202611100829"></script>
+  <script src="stats.js?v=202611100829"></script>
 </body>
 </html>

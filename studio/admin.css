@@ -430,3 +430,15 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 .tone-swatch { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--line-2); }
 .tone-swatch.teal { background: linear-gradient(135deg, #3d4a4a, #1b2424); }
 .tone-swatch.mono { background: linear-gradient(135deg, #4a4a4a, #1c1c1c); }
+
+/* ---------- 기획서별 체류 시간 ---------- */
+.dwell-setup { display: flex; align-items: center; gap: 16px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--card-2); font-size: 13px; line-height: 1.6; color: var(--fg-2); }
+.dwell-setup p { margin: 0; flex: 1; }
+.dwell-setup b { color: var(--fg); }
+table.dwell td.dwell-title { max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+table.dwell td.strong { color: var(--fg); font-weight: 600; }
+table.dwell td.dwell-total { min-width: 160px; }
+table.dwell td.dwell-total .num { display: block; text-align: left; color: var(--fg); }
+.dwell-bar { display: block; margin-top: 4px; height: 4px; border-radius: 2px; background: var(--card-2); position: relative; overflow: hidden; }
+.dwell-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w, 0); background: #3987e5; border-radius: 2px; }
+@media (max-width: 720px) { .dwell-setup { flex-direction: column; align-items: flex-start; } }

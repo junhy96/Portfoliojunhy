@@ -28,9 +28,17 @@ const icon = (type) =>
 
 // "2024.03 — 2024.08" → 정렬용 202403, 연도 2024
 const startOf = (p) => {
-  const m = String(p || '').match(/(\d{4})(?:\D{1,3}(\d{1,2}))?/);
+  const m = String(p || '').match(/(\d{4})(?:\D{1,3}(\d{1,2})(?!\d))?/);
   return m ? Number(m[1]) * 100 + Number(m[2] || 0) : 0;
 };
+// 끝 날짜: "2015 — 2022" → 202200
+const endOf = (p) => {
+  const all = [...String(p || '').matchAll(/(\d{4})(?:\D{1,3}(\d{1,2})(?!\d))?/g)];
+  const m = all[all.length - 1];
+  return m ? Number(m[1]) * 100 + Number(m[2] || 0) : 0;
+};
+// 졸업·수료는 기간의 끝(졸업한 해)에 놓음. 나머지는 시작한 때
+const keyOf = (x) => (/졸업|수료/.test(String(x.title || '')) ? endOf(x.period) : startOf(x.period));
 const tasksOf = (x) => (Array.isArray(x.tasks) ? x.tasks : String(x.tasks || '').split('\n')).map((t) => String(t).trim()).filter(Boolean);
 
 /** 옛 데이터(about.experience: period/title/desc)도 그대로 받음 */
@@ -38,7 +46,7 @@ export function timelineItems(s) {
   const raw = Array.isArray(s.timeline) ? s.timeline : s.about?.experience || [];
   return raw
     .filter((x) => x && (x.title || x.period))
-    .map((x, i) => ({ ...x, type: ICON[x.type] ? x.type : x.type ? '기타' : '', tasks: tasksOf(x), _k: startOf(x.period), _i: i }))
+    .map((x, i) => ({ ...x, type: ICON[x.type] ? x.type : x.type ? '기타' : '', tasks: tasksOf(x), _k: keyOf(x), _i: i }))
     .sort((a, b) => a._k - b._k || a._i - b._i);
 }
 

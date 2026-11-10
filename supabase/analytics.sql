@@ -25,6 +25,14 @@ create table if not exists public.events (
 );
 create index if not exists events_created_at_idx on public.events (created_at);
 
+-- 기획서별 체류 시간 (type 'read': 기획서를 연 동안 실제로 본 초 · 가장 뒤로 넘긴 쪽 · 전체 쪽)
+-- 예전에 이 파일을 실행했다면 supabase/analytics-dwell.sql 만 한 번 더 실행하면 됩니다
+alter table public.events add column if not exists dur   int check (dur between 0 and 7200);
+alter table public.events add column if not exists page  int check (page between 0 and 5000);
+alter table public.events add column if not exists pages int check (pages between 0 and 5000);
+alter table public.events drop constraint if exists events_type_check;
+alter table public.events add constraint events_type_check check (type in ('view', 'section', 'click', 'pdf', 'read'));
+
 -- 통계를 볼 수 있는 관리자 이메일 목록
 create table if not exists public.admins (
   email text primary key

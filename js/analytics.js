@@ -128,5 +128,81 @@ export function initAnalytics(cfg) {
     new MutationObserver(() => {
       if (!viewer.hidden) push({ type: 'pdf', target: (document.getElementById('viewer-title')?.textContent || '').slice(0, 120) });
     }).observe(viewer, { attributes: true, attributeFilter: ['hidden'] });
+    trackReading(viewer, cfg, endpoint, { visitor, session, device });
   }
+}
+
+/**
+ * 기획서별 체류 시간 (type 'read')
+ * - 뷰어를 연 동안 1초씩 셈. 탭이 가려져 있거나, 2분 넘게 아무 조작이 없으면 세지 않음 (영상 탭은 조작 없이 봐도 셈)
+ * - 뷰어를 닫을 때·탭을 가릴 때·페이지를 떠날 때 그동안 센 시간을 한 줄로 보냄 (관리자 화면에서 합산)
+ * - 어디까지 읽었는지(가장 뒤로 넘긴 쪽 / 전체 쪽)도 함께
+ * - Supabase에 체류 시간 칸(dur·page·pages)이 아직 없으면 조용히 그만둠 (다른 기록에는 영향 없음)
+ */
+const READ_COLUMNS = [...COLUMNS, 'dur', 'page', 'pages'];
+const IDLE_MS = 120000;
+function trackReading(viewer, cfg, endpoint, base) {
+  let off = false;
+  let cur = null; // { title, sec, page, pages }
+  let lastActive = Date.now();
+  const outbox = [];
+
+  const send = () => {
+    if (off || !outbox.length) return;
+    const rows = outbox.splice(0);
+    fetch(endpoint, {
+      method: 'POST',
+      keepalive: true,
+      headers: { apikey: cfg.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(rows),
+    })
+      .then((r) => {
+        if (!r.ok) off = true; // 칸이 없거나 막힘 → 이번 방문에서는 그만
+      })
+      .catch(() => {});
+  };
+  const emit = () => {
+    if (!cur || cur.sec < 1) return;
+    const full = { ...base, type: 'read', theme: document.documentElement.dataset.theme || null, section: 'works', vw: innerWidth, vh: innerHeight, target: cur.title, dur: Math.min(cur.sec, 7200), page: cur.page || null, pages: cur.pages || null };
+    outbox.push(Object.fromEntries(READ_COLUMNS.map((c) => [c, full[c] ?? null])));
+    cur.sec = 0;
+    send();
+  };
+
+  // 쪽 번호: 뷰어 위쪽 "3 / 16"
+  const pageEl = document.getElementById('viewer-page');
+  if (pageEl)
+    new MutationObserver(() => {
+      const m = pageEl.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if (cur && m) {
+        cur.page = Math.max(cur.page || 0, Number(m[1]));
+        cur.pages = Number(m[2]);
+      }
+    }).observe(pageEl, { childList: true, characterData: true, subtree: true });
+
+  // 뷰어가 열려 있는 동안(is-open)만. 닫자마자 다른 기획서를 열어도 기획서마다 따로 셈
+  new MutationObserver(() => {
+    const open = !viewer.hidden && viewer.classList.contains('is-open');
+    const title = (document.getElementById('viewer-title')?.textContent || '').slice(0, 120);
+    if (open && (!cur || cur.title !== title)) {
+      emit();
+      cur = { title, sec: 0, page: 0, pages: 0 };
+      lastActive = Date.now();
+    } else if (!open && cur) {
+      emit();
+      cur = null;
+    }
+  }).observe(viewer, { attributes: true, attributeFilter: ['hidden', 'class'] });
+
+  const active = () => (lastActive = Date.now());
+  ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((t) => addEventListener(t, active, { capture: true, passive: true }));
+  viewer.addEventListener('scroll', active, { capture: true, passive: true });
+
+  setInterval(() => {
+    if (!cur || document.visibilityState !== 'visible') return;
+    const video = !document.getElementById('viewer-video')?.hidden;
+    if (video || Date.now() - lastActive < IDLE_MS) cur.sec++;
+  }, 1000);
+  addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && emit());
+  addEventListener('pagehide', emit);
 }
