@@ -918,3 +918,16 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 /* Works 카드: 밝은 표지(문서 PDF) 위에서도 번호·문서 종류가 읽히도록 위쪽에 어두운 그라데이션 */
 .works-grid .card-media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 64px; z-index: 1; pointer-events: none; background: linear-gradient(rgba(12, 12, 12, .72), rgba(12, 12, 12, 0)); }
 .works-grid .card-no, .works-grid .card-doc { z-index: 2; mix-blend-mode: normal; color: #f4f4ef; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+/* ===================== 타임라인 강조 색 (#90DE93, 스킬 차트와 같은 색) =====================
+   지금 보는 연도 · 진행 선 끝 · 보고 있는 항목의 점/선/기간/업무 표시에만 살짝 */
+.panel-timeline { --tl-pt: #90de93; }
+.tl-year.is-in.is-cur .tl-year-num { color: var(--tl-pt); }
+.tl-year-num { transition: opacity .5s ease, transform .6s var(--ease-out), color .4s ease; }
+.tl-year.is-cur .tl-tick { background: var(--tl-pt); }
+.tl-line-done { background: linear-gradient(90deg, rgba(144, 222, 147, .08), var(--tl-pt) 90%); }
+.tl-line-done::after { background: var(--tl-pt); box-shadow: 0 0 0 4px rgba(144, 222, 147, .18); }
+.tl-item.is-focus .tl-dot { background: var(--tl-pt); border-color: var(--tl-pt); box-shadow: 0 0 0 6px rgba(144, 222, 147, .16); }
+.tl-item.is-focus .tl-stem { background: var(--tl-pt); }
+.tl-item.is-focus .tl-card { border-left-color: var(--tl-pt); }
+.tl-item.is-focus .tl-period { color: var(--tl-pt); }
+.tl-item.is-focus .tl-tasks li::before { background: var(--tl-pt); }
