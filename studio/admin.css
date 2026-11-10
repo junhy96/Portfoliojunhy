@@ -536,3 +536,9 @@ body.no-select { user-select: none; -webkit-user-select: none; }
 .pr-step small { font-weight: 400; margin-left: 6px; }
 @media (max-width: 720px) { .pr-site { grid-template-columns: 1fr; } }
 .pr-site .field { margin-bottom: 12px; }
+.token-ask { display: grid; gap: 10px; width: min(460px, 86vw); }
+.token-ask input { height: 40px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: var(--bg); }
+.token-ask a { color: var(--accent); }
+#token-ask { width: min(500px, 90vw); padding: 24px; box-sizing: border-box; }
+#token-ask .token-ask { width: 100%; }
+#token-ask p { line-height: 1.6; word-break: keep-all; }

@@ -82,6 +82,28 @@
     sync.dataset.state = state;
     $('span', sync).textContent = text;
   }
+  /** 저장이 토큰 문제로 막혔을 때: 고치던 화면은 그대로 두고 새 토큰만 받음 */
+  function askToken(reason) {
+    let d = document.getElementById('token-ask');
+    if (!d) {
+      d = h('dialog', { id: 'token-ask', className: 'confirm' });
+      d.innerHTML = `<form method="dialog" class="token-ask">
+        <h3>GitHub 토큰을 바꿔 주세요</h3>
+        <p class="muted sm" id="token-ask-why"></p>
+        <p class="sm">고치던 내용은 그대로 있어요. 새 토큰을 넣으면 바로 다시 저장해요.<br>
+        <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">새 토큰 만들기 ↗</a> · Repository access: 이 저장소 · Contents: <b>Read and write</b></p>
+        <input type="password" id="token-ask-input" placeholder="github_pat_…" autocomplete="off" spellcheck="false" />
+        <div class="confirm-actions"><button class="btn ghost" value="cancel">취소</button><button class="btn primary" value="ok">이 토큰으로 저장</button></div>
+      </form>`;
+      document.body.append(d);
+    }
+    $('#token-ask-why', d).textContent = reason || '';
+    $('#token-ask-input', d).value = '';
+    d.returnValue = '';
+    d.showModal();
+    setTimeout(() => $('#token-ask-input', d).focus(), 50);
+    return new Promise((resolve) => d.addEventListener('close', () => resolve(d.returnValue === 'ok' ? $('#token-ask-input', d).value.trim() : ''), { once: true }));
+  }
   let chain = Promise.resolve();
   function save(message, mutate, files = [], onProgress) {
     const run = chain.then(async () => {
@@ -91,8 +113,26 @@
         watchDeploy(db.rev);
         return db;
       } catch (err) {
+        // 토큰 문제(만료 · 쓰기 권한 없음): 고치던 내용은 그대로 두고 새 토큰만 받아 한 번 더 저장
+        if (err.status === 401 || err.status === 403) {
+          const t = await askToken(err.message);
+          if (t) {
+            store.token = t;
+            try {
+              const cfg = loadCfg();
+              if (cfg) saveCfg({ ...cfg, token: t }, !!localStorage.getItem(CFG_KEY));
+            } catch {}
+            try {
+              db = await store.commit(message, mutate, files, onProgress);
+              watchDeploy(db.rev);
+              toast('새 토큰으로 저장했어요.');
+              return db;
+            } catch (err2) {
+              err = err2;
+            }
+          }
+        }
         setSync('error', '저장 실패');
-        if (err.status === 401) showLogin(err.message);
         throw err;
       }
     });
