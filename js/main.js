@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101430';
-import { PdfViewer } from './pdf-viewer.js?v=202611101430';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101430';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101430';
-import { initWorks } from './works.js?v=202611101430';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101430';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101440';
+import { PdfViewer } from './pdf-viewer.js?v=202611101440';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101440';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101440';
+import { initWorks } from './works.js?v=202611101440';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101440';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -319,11 +319,20 @@ class Deck {
       this.innerScrollAt = now;
       return;
     }
+    // 타임라인은 굴릴 때마다 연혁 한 항목씩, 끝에 닿으면 다음·이전 페이지로
+    // 앞 항목으로 가는 동안(0.7초)은 같은 방향 굴림을 받지 않음 — 휠을 빠르게 여러 칸 굴리면 2023 → 2025처럼 건너뛰던 문제
+    const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
+    if (tl && now < (this.tlLockUntil || 0) && dir === this.tlDir) {
+      this.gestureUsed = true;
+      return;
+    }
     this.gestureUsed = true;
     this.stepAt = now;
-    // 타임라인은 굴릴 때마다 연혁 한 항목씩, 끝에 닿으면 다음·이전 페이지로
-    const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
-    if (tl && tl.page(dir)) return;
+    if (tl && tl.page(dir)) {
+      this.tlLockUntil = now + 700;
+      this.tlDir = dir;
+      return;
+    }
     this.go(this.index + dir, { step: true });
   }
   _onKey(e) {
