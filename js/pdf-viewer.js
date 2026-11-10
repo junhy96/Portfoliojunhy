@@ -110,6 +110,10 @@ export class PdfViewer {
     this.descEl.hidden = true;
     this.root.querySelector('[data-act="desc"]').setAttribute('aria-expanded', 'false');
     this.root.querySelector('[data-act="desc"]').hidden = !(project.description || project.tags?.length);
+    if (project.showDesc && project.description) {
+      this.descEl.hidden = false;
+      this.root.querySelector('[data-act="desc"]').setAttribute('aria-expanded', 'true');
+    }
 
     this.zoomIndex = 2;
     $('viewer-zoom').textContent = '100%';

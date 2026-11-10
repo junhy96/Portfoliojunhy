@@ -96,7 +96,8 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     const inner = el('div', 'tl-more-inner');
     if (x.org) inner.append(el('p', 'tl-org', x.org));
     if (x.desc) inner.append(el('p', 'tl-desc', x.desc));
-    if (x.tasks.length) {
+    const hasWork = !!(x.work?.pdf && x.work.thumbs?.length);
+    if (x.tasks.length && !hasWork) {
       inner.append(el('p', 'tl-tasks-label', x.type === '교육' ? '배운 내용' : '주요 업무'));
       const ul = el('ul', 'tl-tasks');
       x.tasks.forEach((t, k) => {
@@ -110,7 +111,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     if (x.work?.pdf && x.work.thumbs?.length) {
       card.classList.add('has-work');
       const n = x.work.thumbs.length;
-      inner.append(el('p', 'tl-tasks-label tl-work-label', `업무 자료 · ${n}쪽`));
+      inner.append(el('p', 'tl-tasks-label tl-work-label', `업무 자료 · ${n}쪽 — 누르면 주요 업무와 함께 크게`));
       const row = el('div', 'tl-work');
       x.work.thumbs.forEach((src, k) => {
         const b = el('button', 'tl-work-page');
@@ -121,7 +122,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
         b.append(im);
         b.addEventListener('click', (e) => {
           e.stopPropagation();
-          window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener: b, doc: { id: 'tl-' + (x.id || k), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
+          window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener: b, doc: { id: 'tl-' + (x.id || k), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, showDesc: true, description: x.tasks.length ? '주요 업무\n' + x.tasks.map((t) => '– ' + t).join('\n') : '', pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
         });
         row.append(b);
       });

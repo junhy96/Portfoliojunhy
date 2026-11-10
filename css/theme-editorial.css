@@ -1209,3 +1209,22 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
   .hero-cv { margin-top: 14px; }
   .hero-jump { margin-top: 12px; }
 }
+
+/* 타임라인 업무 자료: 주요 업무 대신 쪽 미리보기를 크게 (세 장씩 두 줄) */
+.tl-card.has-work { max-width: 540px; }
+.tl-card.has-work .tl-work { display: grid; grid-template-columns: repeat(3, 156px); gap: 10px; margin-top: 8px; }
+.tl-card.has-work .tl-work-page { width: 100%; border-radius: 6px; }
+.tl-card.has-work .tl-work-label { margin-top: 14px; }
+@media (min-width: 821px) and (max-height: 820px) {
+  .tl-card.has-work .tl-work { grid-template-columns: repeat(3, 132px); gap: 8px; }
+}
+@media (min-width: 821px) and (max-height: 780px) {
+  .tl-card.has-work .tl-work { grid-template-columns: repeat(6, 84px); gap: 6px; }
+}
+@media (max-width: 820px) {
+  .tl-card.has-work .tl-work { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+}
+/* 뷰어 설명(주요 업무): 줄 바꿈 그대로 */
+.viewer-desc p { white-space: pre-line; }
+/* 뷰어에 펼친 주요 업무: 넓은 화면은 두 칸으로 짧게 */
+@media (min-width: 1100px) { .viewer-desc-inner { max-width: 1200px; } }
