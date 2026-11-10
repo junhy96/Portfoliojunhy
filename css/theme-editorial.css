@@ -939,3 +939,13 @@ html[data-theme="editorial"] .nav a::after { background: var(--pt-accent); }
 .rail-fill { background: var(--pt-accent); }
 .rail-fill::after { background: var(--pt-accent); box-shadow: 0 0 0 4px rgba(144, 222, 147, .18); }
 @media (max-width: 820px) { .m-bar i { background: var(--pt-accent); } }
+/* 강조 색 2: 왼쪽 레일 지금 번호·이름 · 왼쪽 위 이름 · Works 필터 선택 · 마지막 페이지 THANK */
+.rail-step.is-active { color: var(--pt-accent); }
+.rail-name { color: var(--pt-accent); }
+html[data-theme="editorial"] .brand strong { color: var(--pt-accent); }
+html[data-theme="editorial"] .brand .brand-role { color: var(--pt-accent); opacity: .72; }
+.works-chip[aria-pressed="true"] { color: var(--pt-accent); }
+.works-chip[aria-pressed="true"] em { color: var(--pt-accent); opacity: .8; }
+.works-chip[aria-pressed="true"]::after { background: var(--pt-accent); }
+.ed-giant .hl { color: var(--pt-accent); }
+@media (max-width: 820px) { .m-num { color: var(--pt-accent); } }

@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100812';
-import { PdfViewer } from './pdf-viewer.js?v=202611100812';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611100812';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100812';
-import { initWorks } from './works.js?v=202611100812';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100812';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100816';
+import { PdfViewer } from './pdf-viewer.js?v=202611100816';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611100816';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100816';
+import { initWorks } from './works.js?v=202611100816';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100816';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -115,6 +115,12 @@ function render({ settings: s, projects }) {
   if (years.length) binds.timelineRange = years[0] === years[years.length - 1] ? String(years[0]) : `${years[0]} — ${years[years.length - 1]}`;
   if (matchMedia('(hover: none)').matches) binds.worksIntro = String(binds.worksIntro || '').replace(/클릭하면/g, '누르면').replace(/클릭해/g, '눌러');
   $$('[data-bind]').forEach((n) => (n.textContent = binds[n.dataset.bind] ?? ''));
+  // 마지막 페이지 큰 제목: 첫 단어만 강조 색 (Thank You → THANK)
+  $$('[data-bind="contactHeading"]').forEach((n) => {
+    const [first, ...rest] = n.textContent.trim().split(/\s+/);
+    if (!first) return;
+    n.replaceChildren(Object.assign(document.createElement('span'), { className: 'hl', textContent: first }), rest.length ? ' ' + rest.join(' ') : '');
+  });
   $$('[data-bind-href="mailto"]').forEach((n) => {
     n.href = s.contact?.email ? `mailto:${s.contact.email}` : '#';
     n.hidden = !s.contact?.email;
