@@ -145,77 +145,147 @@
         "level": 90,
         "icon": "system",
         "desc": "전투·성장·경제 같은 시스템의 규칙과 수치를 처음부터 설계하고 문서로 정리할 수 있습니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "기획서 작성",
         "level": 95,
         "icon": "doc",
         "desc": "개발자·아트와 바로 소통할 수 있는 기획서를 빠르게 쓰고, 변경 이력을 관리합니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "레벨 디자인",
         "level": 85,
         "icon": "level",
         "desc": "난이도 곡선과 동선을 설계하고, 플레이테스트 데이터로 레벨을 다듬을 수 있습니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "밸런싱",
         "level": 80,
         "icon": "balance",
         "desc": "데이터 테이블로 수치를 설계하고 시뮬레이션으로 검증합니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "전투 설계",
         "level": 75,
         "icon": "combat",
         "desc": "패링·스태미나 같은 전투 규칙과 무기별 특성을 설계한 경험이 있습니다.",
-        "group": "hard"
-      },
-      {
-        "name": "Excel",
-        "level": 85,
-        "icon": "excel",
-        "desc": "함수·피벗으로 밸런스 테이블과 시뮬레이션 시트를 만듭니다.",
-        "group": "hard"
-      },
-      {
-        "name": "Unity",
-        "level": 65,
-        "icon": "unity",
-        "desc": "프로토타입 씬을 직접 구성하고 간단한 스크립트로 아이디어를 검증합니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "UX 플로우",
         "level": 60,
         "icon": "ux",
         "desc": "Figma로 화면 흐름과 와이어프레임을 그려 팀과 공유할 수 있습니다.",
-        "group": "hard"
+        "group": "plan"
       },
       {
         "name": "커뮤니케이션",
         "level": 85,
         "icon": "team",
         "desc": "개발·아트·QA와 기획 의도를 맞추고, 회의 내용을 바로 문서로 정리해 공유합니다.",
-        "group": "soft"
+        "group": "plan"
       },
       {
         "name": "협업·일정 관리",
         "level": 80,
         "icon": "schedule",
         "desc": "작업을 쪼개 일정을 잡고, 막히는 부분을 먼저 드러내 팀 속도를 맞춥니다.",
-        "group": "soft"
+        "group": "plan"
       },
       {
         "name": "발표",
         "level": 70,
         "icon": "present",
         "desc": "기획 의도와 근거를 짧은 자료로 정리해 설득력 있게 발표할 수 있습니다.",
-        "group": "soft"
+        "group": "plan"
+      },
+      {
+        "name": "Unreal Engine 5",
+        "level": 80,
+        "icon": "unreal",
+        "desc": "Blueprint · C++로 전투와 시스템을 직접 구현해 검증합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Unity",
+        "level": 40,
+        "icon": "unity",
+        "desc": "모바일 전투 기반 설계에 사용했습니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Lua Script",
+        "level": 60,
+        "icon": "lua",
+        "desc": "스킬 · 몬스터 패턴을 스크립트로 구현합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Python · VBA",
+        "level": 60,
+        "icon": "python",
+        "desc": "반복 작업을 자동화하는 스크립트를 만듭니다.",
+        "group": "tool"
+      },
+      {
+        "name": "MySQL",
+        "level": 60,
+        "icon": "mysql",
+        "desc": "DB 스키마를 설계하고 운용합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Excel",
+        "level": 100,
+        "icon": "excel",
+        "desc": "밸런스 시트를 설계하고 VBA로 자동화합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "PowerPoint",
+        "level": 100,
+        "icon": "powerpoint",
+        "desc": "제안서와 기획서를 작성합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Word",
+        "level": 80,
+        "icon": "word",
+        "desc": "시스템 명세서를 작성합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Figma",
+        "level": 60,
+        "icon": "figma",
+        "desc": "UI 와이어프레임을 그립니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Confluence",
+        "level": 80,
+        "icon": "confluence",
+        "desc": "기획서를 문서화하고 공유합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "Jira · Redmine",
+        "level": 80,
+        "icon": "jira",
+        "desc": "이슈를 등록하고 추적합니다.",
+        "group": "tool"
+      },
+      {
+        "name": "SVN · Git",
+        "level": 80,
+        "icon": "git",
+        "desc": "브랜치와 리비전을 관리합니다.",
+        "group": "tool"
       }
     ],
     "contact": {

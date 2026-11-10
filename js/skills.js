@@ -2,7 +2,8 @@
  * 스킬 차트 — 눈금 격자 위의 부채꼴 차트 (rose chart)
  * - 조각 하나 = 스킬 하나. 가운데에서 바깥(100)까지 숙련도만큼 포인트 색으로 차오름
  * - 동심원 눈금(20·40·60·80·100)과 조각 경계선, 스킬 이름·아이콘은 원 바깥에
- * - 위쪽 탭(하드 스킬 · 소프트 스킬 · 전체)으로 묶음 전환. 묶음이 하나뿐이면 탭은 숨김
+ * - 위쪽 탭(기획 스킬 · 툴 스킬 · 전체)으로 묶음 전환. 묶음이 하나뿐이면 탭은 숨김
+ * - 들어올 때·탭을 바꿀 때 조각이 가운데서부터 차오르고, 마우스를 올린 조각은 바깥으로 커짐
  * - 마우스를 올리면(휴대폰은 탭) 조각이 밝아지고 옆에 말풍선
  */
 const NS = 'http://www.w3.org/2000/svg';
@@ -10,7 +11,7 @@ const R = 100; // 바깥 반지름 (viewBox 단위)
 const R0 = 8; // 가운데 작은 구멍
 const GAP = 1.2; // 조각 사이 간격 (각도 대신 바깥 둘레 기준 거리)
 const LEVELS = [[90, '전문가'], [75, '능숙'], [55, '실무 가능'], [35, '기초'], [0, '입문']];
-const GROUPS = [['hard', '하드 스킬'], ['soft', '소프트 스킬']];
+const GROUPS = [['plan', '기획 스킬'], ['tool', '툴 스킬']];
 
 export const levelLabel = (v) => LEVELS.find(([min]) => v >= min)[1];
 const clamp = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
@@ -36,9 +37,9 @@ function sector(rIn, rOut, a0, a1) {
 // 이름이 길면 두 줄로
 function splitName(name) {
   const s = String(name).trim();
-  if (s.length <= 8) return [s];
+  if (s.length <= 9) return [s];
   const words = s.split(/\s+/);
-  if (words.length === 1) return [s.slice(0, Math.ceil(s.length / 2)), s.slice(Math.ceil(s.length / 2))];
+  if (words.length === 1) return [s]; // 한 단어(Confluence, PowerPoint 등)는 쪼개지 않음
   let best = [s];
   let diff = Infinity;
   for (let k = 1; k < words.length; k++) {
@@ -53,7 +54,7 @@ function splitName(name) {
 
 export function renderSkillChart(root, skills) {
   if (!root) return;
-  const all = (skills || []).filter((s) => s && String(s.name || '').trim()).slice(0, 12).map((s) => ({ ...s, level: clamp(s.level), group: s.group === 'soft' ? 'soft' : 'hard' }));
+  const all = (skills || []).filter((s) => s && String(s.name || '').trim()).slice(0, 24).map((s) => ({ ...s, level: clamp(s.level), group: s.group === 'tool' ? 'tool' : 'plan' }));
   root.replaceChildren();
   root.hidden = !all.length;
   if (!all.length) return;
@@ -99,7 +100,7 @@ export function renderSkillChart(root, skills) {
     // 눈금: 바탕 원 + 동심원 20·40·60·80·100 + 조각 경계선
     const grid = svg('g', { class: 'skill-grid' });
     grid.append(svg('circle', { class: 'grid-bg', r: R }));
-    [20, 40, 60, 80, 100].forEach((v) => grid.append(svg('circle', { class: 'grid-ring' + (v === 100 ? ' is-outer' : ''), r: rOf(v).toFixed(2) })));
+    [10, 20, 30, 40, 50, 60, 70, 80, 90, 100].forEach((v) => grid.append(svg('circle', { class: 'grid-ring' + (v === 100 ? ' is-outer' : v % 50 ? '' : ' is-half'), r: rOf(v).toFixed(2) })));
     for (let i = 0; i < n; i++) {
       const a = -Math.PI / 2 + (i - 0.5) * step;
       grid.append(svg('line', { class: 'grid-spoke', x1: 0, y1: 0, x2: (R * Math.cos(a)).toFixed(2), y2: (R * Math.sin(a)).toFixed(2) }));
@@ -114,15 +115,15 @@ export function renderSkillChart(root, skills) {
     chart.append(grid);
     // 채움 위에 한 번 더 그리는 어두운 눈금 (레퍼런스처럼 채운 조각 안에도 눈금이 보이게)
     const gridTop = svg('g', { class: 'skill-grid-top' });
-    [20, 40, 60, 80].forEach((v) => gridTop.append(svg('circle', { r: rOf(v).toFixed(2) })));
+    [10, 20, 30, 40, 50, 60, 70, 80, 90].forEach((v) => gridTop.append(svg('circle', { r: rOf(v).toFixed(2) })));
     for (let i = 0; i < n; i++) {
       const a = -Math.PI / 2 + (i - 0.5) * step;
       gridTop.append(svg('line', { x1: 0, y1: 0, x2: (R * Math.cos(a)).toFixed(2), y2: (R * Math.sin(a)).toFixed(2) }));
     }
 
     const labels = svg('g', { class: 'skill-labels' });
-    const nameSize = n > 9 ? 7.4 : 8.4;
-    const iconSize = n > 9 ? 9 : 10;
+    const nameSize = n > 14 ? 6.2 : n > 9 ? 7.4 : 8.4;
+    const iconSize = n > 14 ? 7.5 : n > 9 ? 9 : 10;
     list.forEach((s, i) => {
       const mid = -Math.PI / 2 + i * step;
       const a0 = mid - step / 2, a1 = mid + step / 2;
@@ -241,8 +242,14 @@ export function renderSkillChart(root, skills) {
   };
   tabs.addEventListener('click', (e) => {
     const b = e.target.closest('.skill-tab');
-    if (b) draw(b.dataset.group);
+    if (!b) return;
+    root.classList.add('is-tabbed');
+    draw(b.dataset.group);
   });
+  // 페이지에 다시 들어오면 처음처럼 천천히 차오르게
+  new MutationObserver(() => {
+    if (!root.closest('.panel')?.classList.contains('is-active')) root.classList.remove('is-tabbed');
+  }).observe(root.closest('.panel') || root, { attributes: true, attributeFilter: ['class'] });
   document.addEventListener('pointerdown', (e) => {
     if (current && !root.contains(e.target)) hide();
   });

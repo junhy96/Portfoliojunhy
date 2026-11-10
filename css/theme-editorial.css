@@ -848,3 +848,25 @@ html[data-theme="editorial"] .deck { transition: transform 1.1s cubic-bezier(.33
 .panel-hero .reveal, .panel-about .reveal { opacity: 1; transform: none; transition: none; }
 body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; }
 @media (prefers-reduced-motion: reduce) { html[data-theme="editorial"] .deck { transition-duration: .45s; } }
+
+/* ===================== 스킬 차트: 레퍼런스 색감 · 차오름 · 마우스 올리면 커짐 ===================== */
+.skill-chart { --pt: #93d65a; --pt-hi: #b6f07c; }
+.skill-grid .grid-bg { fill: #232323; }
+.skill-grid .grid-ring { stroke: rgba(244, 244, 239, .07); stroke-width: .45; }
+.skill-grid .grid-ring.is-half { stroke: rgba(244, 244, 239, .14); }
+.skill-grid .grid-ring.is-outer { stroke: rgba(244, 244, 239, .3); stroke-width: .7; }
+.skill-grid .grid-spoke { stroke: rgba(244, 244, 239, .08); }
+.skill-grid-top circle, .skill-grid-top line { stroke: rgba(20, 30, 14, .5); stroke-width: .45; }
+.skill-grid .grid-num { fill: rgba(244, 244, 239, .5); }
+/* 조각: 선명한 연두, 꽉 찬 색 */
+.skill-wedge .fill { fill: var(--pt); fill-opacity: 1; transition: fill .18s; }
+.skill-wedge:hover .fill, .skill-wedge.is-on .fill { fill: var(--pt-hi); fill-opacity: 1; }
+/* 마우스를 올리면 조각 전체가 바깥으로 커짐 */
+.skill-wedge { transform-box: view-box; transform-origin: 50% 50%; transition: transform .28s cubic-bezier(.22, 1, .36, 1); }
+.skill-wedge:hover, .skill-wedge.is-on { transform: scale(1.08); }
+.skill-wedge:hover .hit, .skill-wedge.is-on .hit { fill: rgba(244, 244, 239, .05); }
+.skill-label { transition: color .18s, fill .18s; }
+/* 들어올 때: 페이지가 다 넘어온 뒤(약 0.8초) 가운데서부터 하나씩 차오름. 탭을 바꿔도 다시 차오름 */
+.panel.is-active .skill-wedge .fill { animation: wedge-grow .9s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(750ms + var(--i, 0) * 60ms); }
+.skill-chart.is-tabbed .skill-wedge .fill { animation-delay: calc(60ms + var(--i, 0) * 45ms); }
+@media (prefers-reduced-motion: reduce) { .skill-wedge { transition: none; } .skill-wedge:hover, .skill-wedge.is-on { transform: none; } }
