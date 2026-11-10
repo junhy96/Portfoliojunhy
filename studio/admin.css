@@ -529,3 +529,10 @@ body.no-select { user-select: none; -webkit-user-select: none; }
 .gal-row img { width: 96px; height: 60px; object-fit: cover; object-position: top; border-radius: 5px; background: var(--bg); display: block; }
 .gal-row input { width: 100%; height: 34px; padding: 0 10px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--bg); }
 @media (max-width: 560px) { .gal-row { grid-template-columns: 72px 1fr; } .gal-row img { width: 72px; height: 46px; } .gal-row .acts { grid-column: 1 / -1; justify-content: flex-end; } }
+
+/* 링크 프리셋: 이 링크에서만 바꿀 문구 */
+.pr-site { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.pr-site .field:last-child { grid-column: 1 / -1; }
+.pr-step small { font-weight: 400; margin-left: 6px; }
+@media (max-width: 720px) { .pr-site { grid-template-columns: 1fr; } }
+.pr-site .field { margin-bottom: 12px; }

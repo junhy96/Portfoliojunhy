@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101522';
-import { PdfViewer } from './pdf-viewer.js?v=202611101522';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101522';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101522';
-import { initWorks } from './works.js?v=202611101522';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101522';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101528';
+import { PdfViewer } from './pdf-viewer.js?v=202611101528';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101528';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101528';
+import { initWorks } from './works.js?v=202611101528';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101528';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -404,6 +404,11 @@ function applyLinkPreset(data) {
   const hideW = new Set(preset.hide?.works || []);
   const hideT = new Set(preset.hide?.timeline || []);
   data.projects = data.projects.filter((p) => !hideW.has(p.id));
+  // 지원처마다 바꾸는 문구 (비어 있으면 사이트 설정 그대로)
+  const ov = preset.site || {};
+  if (ov.title) data.settings.siteTitle = ov.title;
+  if (ov.role) data.settings.role = ov.role;
+  if (ov.intro) data.settings.intro = ov.intro;
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
   document.documentElement.dataset.link = tag;
 }

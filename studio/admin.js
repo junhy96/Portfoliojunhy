@@ -918,14 +918,27 @@
               h('div', { className: 'pr-slot-head' }, h('b', { textContent: l.name || l.tag }), del),
               h('p', { className: 'pr-slot-tag', textContent: '?from=' + l.tag }),
               h('p', { className: 'pr-slot-stat', textContent: `기획서 ${w} · 경력 ${t}` }),
+              l.site?.title ? h('p', { className: 'pr-slot-tag', textContent: '탭: ' + l.site.title }) : null,
               h('div', { className: 'pr-slot-acts' }, copy, load)
             );
           })
         : [h('p', { className: 'muted sm pr-empty', textContent: '아직 프리셋이 없어요. 아래에서 첫 프리셋을 만들어 보세요.' })])
     );
   }
+  // 이 링크에서만 바꿀 문구: 빈칸에는 지금 사이트 설정 값을 흐리게 보여 줌
+  function prSite(site = {}) {
+    const s = db.settings || {};
+    const set = (id, v, ph) => {
+      $(id).value = v || '';
+      $(id).placeholder = ph ? `비우면 사이트 설정: ${String(ph).replace(/\n/g, ' ')}` : '비우면 사이트 설정 그대로';
+    };
+    set('#pr-site-title', site.title, s.siteTitle || `${s.nameKo || ''} — Portfolio`);
+    set('#pr-site-role', site.role, s.role);
+    set('#pr-site-intro', site.intro, s.intro);
+  }
   function prReset() {
     prEditing = null;
+    prSite();
     $('#pr-title').textContent = '새 프리셋 만들기';
     $('#pr-create').textContent = '프리셋 생성';
     $('#pr-reset').hidden = true;
@@ -938,6 +951,7 @@
   }
   function prLoad(l) {
     prEditing = l.tag;
+    prSite(l.site);
     $('#pr-title').textContent = `‘${l.name || l.tag}’ 고치기`;
     $('#pr-create').textContent = '프리셋 저장';
     $('#pr-reset').hidden = false;
@@ -999,7 +1013,9 @@
     if (!tag) return $('#pr-tag').focus(), toast('링크 이름표를 정해 주세요.', true);
     if ((db.settings?.links || []).some((l) => l.tag === tag && l.tag !== prEditing)) return $('#pr-tag').focus(), toast(`이름표 ‘${tag}’는 이미 다른 프리셋이 쓰고 있어요.`, true);
     const off = (kind) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => b.getAttribute('aria-pressed') !== 'true').map((b) => b.dataset.id);
-    const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') } };
+    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim() };
+    Object.keys(site).forEach((k) => !site[k] && delete site[k]);
+    const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}) };
     const btn = $('#pr-create');
     btn.disabled = true;
     const old = prEditing;

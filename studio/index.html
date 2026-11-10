@@ -5,9 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
+  <link rel="icon" href="../favicon.svg?v=2" type="image/svg+xml" />
+  <link rel="icon" href="../favicon.ico?v=2" sizes="32x32" />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&display=swap" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611101522" />
+  <link rel="stylesheet" href="admin.css?v=202611101528" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -246,7 +249,14 @@
             <label class="field"><span>링크 이름표 <small>주소에 보여요. 영문·숫자 권장</small></span><input id="pr-tag" maxlength="40" placeholder="예) nexon-combat" spellcheck="false" autocomplete="off" /></label>
           </div>
 
-          <p class="pr-step"><b>3</b> 프리셋을 만들고 링크를 복사하세요</p>
+          <p class="pr-step"><b>3</b> 이 링크에서만 바꿀 문구 <small class="muted">비우면 사이트 설정 그대로</small></p>
+          <div class="pr-site">
+            <label class="field"><span>브라우저 탭 제목 <small>크롬 탭·즐겨찾기에 보이는 이름</small></span><input id="pr-site-title" maxlength="120" /></label>
+            <label class="field"><span>직무 <small>이름 옆·첫 화면에 보이는 직무</small></span><input id="pr-site-role" maxlength="80" /></label>
+            <label class="field"><span>첫 화면 소개 문구 <small>줄바꿈 그대로</small></span><textarea id="pr-site-intro" rows="2" maxlength="1200"></textarea></label>
+          </div>
+
+          <p class="pr-step"><b>4</b> 프리셋을 만들고 링크를 복사하세요</p>
           <div class="pr-actions">
             <button type="button" class="btn primary" id="pr-create">프리셋 생성</button>
             <div class="pr-result" id="pr-result" hidden>
@@ -429,7 +439,7 @@
             </div>
             <label class="field"><span>소개 문구 <small>줄바꿈 그대로 표시</small></span><textarea name="intro" rows="3" maxlength="1200"></textarea></label>
             <div class="field"><span>오른쪽 정보 목록</span><div class="repeater" id="rep-meta"></div></div>
-            <label class="field"><span>브라우저 탭 제목</span><input name="siteTitle" maxlength="120" /></label>
+            <label class="field"><span>브라우저 탭 제목 <small>기본값이에요. 지원처마다 다르게 하려면 ‘링크 프리셋’에서 바꿔요</small></span><input name="siteTitle" maxlength="120" /></label>
           </div>
 
           <div class="card">
@@ -528,9 +538,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611101522"></script>
-  <script src="github.js?v=202611101522"></script>
-  <script src="admin.js?v=202611101522"></script>
-  <script src="stats.js?v=202611101522"></script>
+  <script src="../js/icons.js?v=202611101528"></script>
+  <script src="github.js?v=202611101528"></script>
+  <script src="admin.js?v=202611101528"></script>
+  <script src="stats.js?v=202611101528"></script>
 </body>
 </html>

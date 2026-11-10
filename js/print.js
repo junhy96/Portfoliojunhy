@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611101522';
-import { cleanTag } from './analytics.js?v=202611101522';
+import { timelineItems } from './timeline.js?v=202611101528';
+import { cleanTag } from './analytics.js?v=202611101528';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -37,6 +37,11 @@ function applyPreset(data) {
   const hideW = new Set(preset.hide?.works || []);
   const hideT = new Set(preset.hide?.timeline || []);
   data.projects = data.projects.filter((p) => !hideW.has(p.id));
+  // 지원처마다 바꾸는 문구 (비어 있으면 사이트 설정 그대로)
+  const ov = preset.site || {};
+  if (ov.title) data.settings.siteTitle = ov.title;
+  if (ov.role) data.settings.role = ov.role;
+  if (ov.intro) data.settings.intro = ov.intro;
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
 }
 
