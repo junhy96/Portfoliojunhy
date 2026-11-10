@@ -115,7 +115,6 @@ export function renderSkillChart(root, skills) {
     chart.append(grid);
     // 채움 위에 한 번 더 그리는 어두운 눈금 (레퍼런스처럼 채운 조각 안에도 눈금이 보이게)
     const gridTop = svg('g', { class: 'skill-grid-top' });
-    [10, 20, 30, 40, 50, 60, 70, 80, 90].forEach((v) => gridTop.append(svg('circle', { r: rOf(v).toFixed(2) })));
     for (let i = 0; i < n; i++) {
       const a = -Math.PI / 2 + (i - 0.5) * step;
       gridTop.append(svg('line', { x1: 0, y1: 0, x2: (R * Math.cos(a)).toFixed(2), y2: (R * Math.sin(a)).toFixed(2) }));
@@ -130,7 +129,19 @@ export function renderSkillChart(root, skills) {
       const g = svg('g', { class: 'skill-wedge', tabindex: '0', role: 'listitem', 'aria-label': `${s.name}, 숙련도 ${s.level} / 100, ${levelLabel(s.level)}${s.desc ? '. ' + s.desc : ''}` });
       g.style.setProperty('--i', i);
       g.append(svg('path', { class: 'hit', d: sector(R0, R, a0, a1) })); // 마우스가 닿는 영역 (조각 전체)
-      if (s.level > 0) g.append(svg('path', { class: 'fill', d: sector(R0, rOf(s.level), a0, a1) }));
+      if (s.level > 0) {
+        // 채움 + 그 위 눈금 호(10칸)를 한 묶음으로: 차오름·커짐이 함께 움직여 어긋나지 않음
+        const fg = svg('g', { class: 'fillg' });
+        fg.append(svg('path', { class: 'fill', d: sector(R0, rOf(s.level), a0, a1) }));
+        const gg = GAP / 2;
+        let rings = '';
+        for (let v = 10; v < s.level; v += 10) {
+          const r = rOf(v), d0 = a0 + gg / r, d1 = a1 - gg / r;
+          rings += `M${pt(r, d0)}A${r.toFixed(2)} ${r.toFixed(2)} 0 0 1 ${pt(r, d1)}`;
+        }
+        if (rings) fg.append(svg('path', { class: 'fill-rings', d: rings }));
+        g.append(fg);
+      }
       g.dataset.index = i;
       chart.append(g);
 
@@ -169,6 +180,12 @@ export function renderSkillChart(root, skills) {
     });
     chart.append(gridTop, labels);
     stage.prepend(chart);
+    const centerOrigin = (el) => {
+      const b = el.getBBox();
+      el.style.transformBox = 'fill-box';
+      el.style.transformOrigin = `${(-b.x).toFixed(2)}px ${(-b.y).toFixed(2)}px`;
+    };
+    chart.querySelectorAll('.skill-wedge, .fillg').forEach(centerOrigin);
 
     chart.querySelectorAll('.skill-wedge').forEach((g) => {
       g.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && show(g));
@@ -189,6 +206,7 @@ export function renderSkillChart(root, skills) {
     if (current === g) return;
     hide();
     current = g;
+    g.parentNode.insertBefore(g, chart.querySelector('.skill-grid-top'));
     g.classList.add('is-on');
     labelOf(g)?.classList.add('is-on');
     const s = list[g.dataset.index];

@@ -870,3 +870,11 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 .panel.is-active .skill-wedge .fill { animation: wedge-grow .9s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(750ms + var(--i, 0) * 60ms); }
 .skill-chart.is-tabbed .skill-wedge .fill { animation-delay: calc(60ms + var(--i, 0) * 45ms); }
 @media (prefers-reduced-motion: reduce) { .skill-wedge { transition: none; } .skill-wedge:hover, .skill-wedge.is-on { transform: none; } }
+
+/* 조각 안 눈금 호 · 차오름은 채움 묶음(.fillg) 단위로 */
+.skill-wedge .fill { transform: none; animation: none !important; }
+.skill-wedge .fill-rings { fill: none; stroke: rgba(16, 48, 22, .42); stroke-width: .45; pointer-events: none; }
+.skill-wedge { transform-box: fill-box; }
+.panel.is-active .skill-wedge .fillg { animation: wedge-grow .9s cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(750ms + var(--i, 0) * 60ms); }
+.skill-chart.is-tabbed .skill-wedge .fillg { animation-delay: calc(60ms + var(--i, 0) * 45ms); }
+@media (prefers-reduced-motion: reduce) { .panel.is-active .skill-wedge .fillg { animation: none; } }
