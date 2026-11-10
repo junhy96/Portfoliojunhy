@@ -172,6 +172,30 @@
         ],
         "image": "uploads/site/timeline-gamecanvas.jpg",
         "focusX": 0.45
+      },
+      {
+        "id": "tmrlife01",
+        "type": "경력",
+        "period": "2025.12 — 2026.07",
+        "title": "MR라이프 · 개발 팀장",
+        "org": "개발팀 · 팀장",
+        "desc": "",
+        "tasks": [
+          "마케팅 업체 인하우스 툴 개발",
+          "SQL을 활용한 자체 서버 운용 · 스키마 기획",
+          "C# .NET 서버 입력 툴 제작"
+        ]
+      },
+      {
+        "id": "talchera01",
+        "type": "경력",
+        "period": "2026.09 — 현재",
+        "title": "알체라 · Business Operator",
+        "org": "Business Operator",
+        "desc": "",
+        "tasks": [
+          "자율주행 FSD 학습"
+        ]
       }
     ],
     "skillsHeading": "Skills",
