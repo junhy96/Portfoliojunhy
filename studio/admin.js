@@ -905,7 +905,7 @@
   const ICONS = window.SKILL_ICONS || {};
   function skillEditor(items) {
     const box = $('#skill-editor');
-    const row = (it = { name: '', level: 70, icon: 'idea', desc: '' }) => {
+    const row = (it = { name: '', level: 70, icon: 'idea', desc: '', group: 'hard' }) => {
       const r = h('div', { className: 'skill-row' });
       const preview = h('span', { className: 'skill-icon-preview' });
       const opts = (logo) => Object.entries(ICONS).filter(([, v]) => !!(v.logo || v.made) === logo).sort((a, b) => (logo ? a[1].label.localeCompare(b[1].label, 'en', { sensitivity: 'base' }) : 0)).map(([k, v]) => h('option', { value: k, textContent: v.label, selected: k === it.icon }));
@@ -926,10 +926,13 @@
       up.onclick = () => { r.previousElementSibling?.classList.contains('skill-row') && box.insertBefore(r, r.previousElementSibling); dirty = true; };
       down.onclick = () => { r.nextElementSibling?.classList.contains('skill-row') && box.insertBefore(r.nextElementSibling, r); dirty = true; };
       del.onclick = () => { r.remove(); dirty = true; };
-      r.append(h('span', { className: 'skill-icon-cell' }, preview, icon), name, h('span', { className: 'skill-level-cell' }, level, bar), desc, h('span', { className: 'acts' }, up, down, del));
+      // 묶음: 사이트 스킬 차트 위 탭 (하드 스킬 / 소프트 스킬 / 전체)
+      const group = h('select', { className: 'skill-group-select', title: '묶음' }, h('option', { value: 'hard', textContent: '하드 스킬', selected: it.group !== 'soft' }), h('option', { value: 'soft', textContent: '소프트 스킬', selected: it.group === 'soft' }));
+      group.addEventListener('change', () => (dirty = true));
+      r.append(h('span', { className: 'skill-icon-cell' }, preview, icon), name, group, h('span', { className: 'skill-level-cell' }, level, bar), desc, h('span', { className: 'acts' }, up, down, del));
       return r;
     };
-    const head = h('div', { className: 'skill-row head muted sm' }, h('span', { textContent: '아이콘' }), h('span', { textContent: '스킬 이름' }), h('span', { textContent: '숙련도 (0~100)' }), h('span', { textContent: '설명' }), h('span'));
+    const head = h('div', { className: 'skill-row head muted sm' }, h('span', { textContent: '아이콘' }), h('span', { textContent: '스킬 이름' }), h('span', { textContent: '묶음' }), h('span', { textContent: '숙련도 (0~100)' }), h('span', { textContent: '설명' }), h('span'));
     const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 스킬 추가' });
     add.onclick = () => {
       if ($$('.skill-row:not(.head)', box).length >= 12) return toast('스킬은 12개까지 넣을 수 있어요.', true);
@@ -942,7 +945,7 @@
     return $$('#skill-editor .skill-row:not(.head)')
       .map((r) => {
         const [name, level, desc] = $$('input', r);
-        return { name: name.value.trim(), level: Math.max(0, Math.min(100, Math.round(Number(level.value) || 0))), icon: $('select', r).value, desc: desc.value.trim() };
+        return { name: name.value.trim(), level: Math.max(0, Math.min(100, Math.round(Number(level.value) || 0))), icon: $('.skill-icon-select', r).value, group: $('.skill-group-select', r).value, desc: desc.value.trim() };
       })
       .filter((s) => s.name);
   }

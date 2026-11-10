@@ -456,7 +456,7 @@ html[data-theme="editorial"] .panel .timeline-body {
   html[data-theme="editorial"] .ed-name { font-size: clamp(48px, 15vw, 64px); }
   html[data-theme="editorial"] .ed-giant { font-size: clamp(52px, 16vw, 72px); }
   html[data-theme="editorial"] .ed-latest > li:nth-child(n + 2) { display: none; }
-  .skills-body .skill-chart { width: min(100%, calc(var(--vh) - 370px)); min-width: 260px; }
+  .skills-body .skill-chart { width: min(100%, calc((var(--vh) - 330px) * 300 / 276)); min-width: 260px; }
   .timeline-body .section-title { font-size: 36px; }
   .tl-intro { display: none; }
   .tl-desc { -webkit-line-clamp: 2; margin-top: 6px; }
@@ -480,27 +480,44 @@ html[data-theme="editorial"] .panel .skills-body {
 }
 .skills-intro { margin-top: 24px; color: var(--fg-2); max-width: 28em; white-space: pre-line; }
 .skills-hint { margin-top: 16px; color: var(--fg-3); }
+/* 차트 칸: 위에 탭, 아래에 정사각형에 가까운 차트 (원 바깥 이름 자리까지 포함해 300×276) */
 .skill-chart {
-  position: relative; justify-self: center; aspect-ratio: 1;
-  width: min(calc(100vw - var(--rail) - var(--gutter) * 2 - 380px - 112px), calc(var(--vh) - var(--top) - 120px), 620px);
+  --pt: #b7e36a; /* 포인트 색: 숙련도 채움 */
+  position: relative; justify-self: center; display: flex; flex-direction: column; align-items: center; gap: 12px;
+  width: min(calc(100vw - var(--rail) - var(--gutter) * 2 - 380px - 112px), calc((var(--vh) - var(--top) - 150px) * 300 / 276), 700px);
 }
-.skill-chart > svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.skill-wedge { cursor: pointer; outline: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
-.skill-wedge .track { fill: #1c2828; stroke: #1c2828; stroke-width: 12; stroke-linejoin: round; opacity: .92; transition: fill .16s, stroke .16s; }
-.skill-wedge .fill { fill: url(#skill-fill); stroke: url(#skill-fill); stroke-width: 12; stroke-linejoin: round; transform-box: view-box; transform-origin: 50% 50%; transition: filter .16s; }
-.skill-wedge:hover, .skill-wedge.is-on, .skill-wedge:focus-visible { transform: scale(1.06); }
-.skill-wedge:hover .track, .skill-wedge.is-on .track { fill: #243333; stroke: #243333; }
-.skill-wedge:hover .fill, .skill-wedge.is-on .fill { filter: brightness(1.28); }
-.skill-wedge:focus-visible .track { stroke: rgba(244, 244, 239, .35); }
-.skill-label-wrap { pointer-events: none; transform-box: view-box; transform-origin: 50% 50%; transition: transform .22s cubic-bezier(0.22, 1, 0.36, 1); }
-.skill-label-wrap.is-on { transform: scale(1.06); }
-.skill-label { color: var(--fg-2); fill: var(--fg-2); }
+.skill-stage { position: relative; width: 100%; aspect-ratio: 300 / 276; }
+.skill-stage > svg { display: block; width: 100%; height: 100%; overflow: visible; }
+/* 탭: 하드 스킬 · 소프트 스킬 · 전체 */
+.skill-tabs { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: rgba(0, 0, 0, .25); }
+.skill-tab { height: 30px; padding: 0 14px; border: 0; border-radius: 7px; background: none; color: var(--fg-2); font-size: 13px; cursor: pointer; transition: background .2s, color .2s; }
+.skill-tab:hover { color: var(--fg); }
+.skill-tab[aria-selected="true"] { background: var(--fg); color: #1c1c1c; }
+/* 눈금 */
+.skill-grid .grid-bg { fill: rgba(255, 255, 255, .025); }
+.skill-grid .grid-ring { fill: none; stroke: rgba(244, 244, 239, .12); stroke-width: .5; }
+.skill-grid .grid-ring.is-outer { stroke: rgba(244, 244, 239, .28); stroke-width: .7; }
+.skill-grid .grid-spoke { stroke: rgba(244, 244, 239, .12); stroke-width: .5; }
+.skill-grid .grid-num { fill: var(--fg-3); font-size: 5.5px; font-variant-numeric: tabular-nums; }
+.skill-grid-top { pointer-events: none; }
+.skill-grid-top circle, .skill-grid-top line { fill: none; stroke: rgba(16, 16, 16, .45); stroke-width: .6; }
+.skill-tabs { margin-bottom: 8px; }
+/* 조각 */
+.skill-wedge { cursor: pointer; outline: none; }
+.skill-wedge .hit { fill: transparent; transition: fill .16s; }
+.skill-wedge:hover .hit, .skill-wedge.is-on .hit { fill: rgba(244, 244, 239, .06); }
+.skill-wedge .fill { fill: var(--pt); fill-opacity: .66; transform-box: view-box; transform-origin: 50% 50%; transition: fill-opacity .16s; }
+.skill-wedge:hover .fill, .skill-wedge.is-on .fill { fill-opacity: 1; }
+.skill-wedge:focus-visible .hit { stroke: var(--fg); stroke-width: .8; }
+/* 이름·아이콘 (원 바깥) */
+.skill-label { pointer-events: none; color: var(--fg-2); fill: var(--fg-2); transition: color .16s, fill .16s; }
 .skill-label text { font-family: var(--display); font-weight: 600; letter-spacing: 0; }
 .skill-label .skill-icon { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
-.skill-label.on-fill, .skill-label-wrap.is-on .skill-label { color: var(--fg); fill: var(--fg); }
-/* 섹션에 들어올 때 밝은 부분이 가운데서부터 차오름 */
-.panel.is-active .skill-wedge .fill { animation: wedge-grow .7s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(150ms + var(--i, 0) * 50ms); }
-@keyframes wedge-grow { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.skill-label.is-on { color: var(--fg); fill: var(--fg); }
+/* 섹션에 들어올 때 가운데서부터 차오름 */
+.panel.is-active .skill-wedge .fill { animation: wedge-grow .6s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(80ms + var(--i, 0) * 35ms); }
+@keyframes wedge-grow { from { transform: scale(0); } to { transform: scale(1); } }
+.tip-meter::after { background: var(--pt, var(--fg)) !important; }
 
 /* 말풍선 */
 .skill-tip {
@@ -527,8 +544,10 @@ html[data-theme="editorial"] .panel .skills-body {
 
 @media (max-width: 820px) {
   html[data-theme="editorial"] .panel .skills-body { grid-template-columns: 1fr; justify-content: stretch; gap: 24px; padding: calc(var(--top) + 24px) var(--gutter) 48px; align-items: start; }
-  .skill-chart { width: min(100%, 420px); }
-  .skill-label text { font-size: 6.4px; }
+  .skill-chart { width: min(100%, 460px); }
+  .skill-label text { font-size: 10px; }
+  .skill-stage { width: 84%; } /* 원 바깥 이름이 화면 밖으로 잘리지 않게 */
+  .skill-tab { height: 32px; padding: 0 12px; }
   .skill-tip { width: min(240px, 70vw); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -650,10 +669,6 @@ html[data-tone="mono"] .ed-more { background: rgba(28, 28, 28, .55); }
 html[data-tone="mono"] .ed-more:hover, html[data-tone="mono"] .card-open, html[data-tone="mono"] .vbtn:hover, html[data-tone="mono"] .vbtn[aria-expanded="true"] { color: #1c1c1c; }
 html[data-tone="mono"] .card-media { background: #262626; }
 html[data-tone="mono"] .tl-dot { background: #191919; }
-html[data-tone="mono"] .skill-wedge .track { fill: #222; stroke: #222; }
-html[data-tone="mono"] .skill-wedge:hover .track, html[data-tone="mono"] .skill-wedge.is-on .track { fill: #2b2b2b; stroke: #2b2b2b; }
-html[data-tone="mono"] #skill-fill stop:first-child { stop-color: #5c5c5c; }
-html[data-tone="mono"] #skill-fill stop:last-child { stop-color: #383838; }
 html[data-tone="mono"] .skill-tip { background: rgba(26, 26, 26, .94); }
 html[data-tone="mono"] .m-menu { background: rgba(18, 18, 18, .94); }
 html[data-tone="mono"] .rotate-tip { background: rgba(16, 16, 16, .88); }

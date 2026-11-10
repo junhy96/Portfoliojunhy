@@ -304,6 +304,69 @@ table.visits th.num { text-align: right; }
 .stats-setup .steps { list-style: decimal; }
 .stats-row.wide { align-items: start; }
 
+/* (되살림) 예전 커밋에서 실수로 빠졌던 관리자 스타일 */
+/* 지원처별 링크 */
+.linkmaker { margin-bottom: 16px; }
+.linkmaker-row { display: grid; grid-template-columns: minmax(200px, 1fr) 2fr; gap: 16px; align-items: end; }
+.linkmaker-out { display: flex; gap: 8px; }
+.linkmaker-out input { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--fg-2); }
+table.visits td.tag { color: var(--fg); font-weight: 600; }
+@media (max-width: 900px) { .linkmaker-row { grid-template-columns: 1fr; } }
+
+/* 스킬 차트 편집기 */
+.skill-editor { display: grid; gap: 8px; }
+.skill-row { display: grid; grid-template-columns: 170px minmax(120px, 1fr) 112px 150px minmax(160px, 2fr) auto; gap: 8px; align-items: center; }
+.skill-group-select { height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
+.skill-row.head { padding: 0 2px; }
+.skill-icon-cell { display: flex; align-items: center; gap: 8px; }
+.skill-icon-preview { display: grid; place-items: center; width: 34px; height: 38px; flex: none; border: 1px solid var(--line-2); border-radius: 8px; color: var(--fg); }
+.skill-icon-select { flex: 1; min-width: 0; height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
+.skill-level-cell { display: grid; gap: 4px; }
+.skill-level-bar { display: block; height: 4px; border-radius: 2px; background: var(--card-2); position: relative; overflow: hidden; }
+.skill-level-bar::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w, 0); background: var(--fg); border-radius: 2px; }
+.skill-editor .rep-add { justify-self: start; }
+@media (max-width: 900px) {
+  .skill-row { grid-template-columns: 1fr 1fr; }
+  .skill-row.head { display: none; }
+  .skill-row > input:nth-of-type(2) { grid-column: 1 / -1; }
+}
+
+/* 타임라인(연혁) 편집기 */
+.tl-editor { display: grid; gap: 10px; }
+.tl-row { display: grid; grid-template-columns: 132px 104px 180px 1fr 1fr 30px; gap: 8px; align-items: start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.tl-row select { height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
+.tl-row textarea { resize: vertical; }
+.tl-row textarea[data-key="desc"] { grid-column: 2 / 4; }
+.tl-row textarea[data-tasks] { grid-column: 4 / 6; }
+.tl-row .icon-btn { grid-column: 6; grid-row: 1; }
+.tl-photo-cell { grid-row: 1 / 3; display: grid; gap: 4px; }
+.tl-drop { min-height: 0; aspect-ratio: 4 / 3; padding: 0; }
+.tl-drop img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tl-drop .drop-empty { padding: 8px; font-size: 12px; }
+.tl-drop-clear { font-size: 12px; color: var(--fg-3); text-align: left; background: none; border: 0; padding: 2px 0; cursor: pointer; }
+.tl-drop-clear:hover { color: var(--fg); }
+.tl-editor .rep-add { justify-self: start; }
+@media (max-width: 900px) {
+  .tl-row { grid-template-columns: 1fr 1fr 30px; }
+  .tl-photo-cell { grid-row: auto; grid-column: 1 / 3; }
+  .tl-photo-cell .tl-drop { width: 160px; }
+  .tl-row > :nth-child(4), .tl-row > :nth-child(5), .tl-row textarea[data-key="desc"], .tl-row textarea[data-tasks] { grid-column: 1 / 3; }
+  .tl-row .icon-btn { grid-column: 3; grid-row: 1; }
+}
+
+/* 문서 종류 */
+.doc-type-select { height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
+.muted-badge { margin-left: 4px; opacity: .6; }
+
+/* 유튜브 */
+.yt-preview { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+.yt-preview img { width: 160px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line-2); }
+.yt-preview div { display: grid; gap: 4px; font-size: 13px; }
+.yt-preview a { color: var(--fg-2); }
+.yt-preview .warn { color: #e8a3a3; }
+.pdf-link.yt { display: block; margin-top: 2px; }
+
+
 /* 링크 프리셋 (게임 프리셋처럼: 고르기 → 이름 → 생성 → 링크 복사) */
 .linkish { background: none; border: 0; padding: 0; color: var(--fg-3); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .linkish:hover { color: var(--fg); }
