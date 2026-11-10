@@ -52,6 +52,7 @@ export class PdfViewer {
       if (act === 'desc') this.toggleDesc();
       if (act === 'tab-pdf') this.setMode('pdf');
       if (act === 'tab-video') this.setMode('video');
+      if (act === 'plan') this.setMode(this.mode === 'pdf' ? 'video' : 'pdf');
       if (act === 'light-close') this.closeLight();
       if (act === 'light-prev') this.showLight(this.lightIndex - 1);
       if (act === 'light-next') this.showLight(this.lightIndex + 1);
@@ -92,6 +93,7 @@ export class PdfViewer {
   }
 
   async open(project, opener, startPage = 1) {
+    this._planShown = false;
     this.opener = opener || document.activeElement;
     const session = ++this.session;
     this.project = project;
@@ -130,7 +132,11 @@ export class PdfViewer {
     this.gallery = (Array.isArray(project.gallery) ? project.gallery : []).filter((g) => g && g.src);
     this._renderGallery();
     const media = yt || this.gallery.length;
-    $('viewer-tabs').hidden = !(media && project.pdf);
+    // 영상·화면과 기획서가 둘 다 있으면: 처음엔 영상 + 화면 미리보기(기획 워크벤치와 같은 구성), 기획서는 위쪽 버튼으로
+    // (화면 미리보기가 없는 카드는 예전처럼 위쪽 '기획서 / 영상' 탭, 기획서 먼저)
+    const showcase = this.gallery.length > 0;
+    $('viewer-tabs').hidden = showcase || !(media && project.pdf);
+    $('viewer-plan').hidden = !(showcase && project.pdf);
     this.root.querySelector('.vtab[data-act="tab-video"]').textContent = yt ? '영상' : '화면';
     // 인쇄 · PDF: 기획서가 있으면 그 PDF를, 없으면 이 작업 요약(설명 · 소개 이미지 · 링크)을 새 창에서
     const pr = $('viewer-print');
@@ -152,7 +158,7 @@ export class PdfViewer {
     const ytLink = $('viewer-yt');
     ytLink.hidden = !yt;
     if (yt) ytLink.href = `https://www.youtube.com/watch?v=${yt}`;
-    this.setMode(project.pdf || !media ? 'pdf' : 'video');
+    this.setMode(showcase || (media && !project.pdf) ? 'video' : 'pdf');
     if (!project.pdf) {
       if (!media) this._noPdf(project);
       return;
@@ -260,6 +266,19 @@ export class PdfViewer {
     $('viewer-video').hidden = !video;
     this.scroller.hidden = !!video;
     this.root.querySelectorAll('.vtab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.act === 'tab-' + mode)));
+    const plan = $('viewer-plan');
+    if (plan) {
+      plan.textContent = mode === 'pdf' ? (this.project?._yt ? '← 영상 · 화면으로' : '← 화면으로') : '기획서 보기';
+      plan.classList.toggle('is-back', mode === 'pdf');
+    }
+    // 숨겨져 있던 기획서를 처음 펼치면 크기를 다시 재고 1쪽부터
+    if (mode === 'pdf' && this.doc)
+      requestAnimationFrame(() => {
+        this._layout(true);
+        if (!this._planShown) this.scroller.scrollTop = 0;
+        this._planShown = true;
+        this._updatePageIndicator();
+      });
     const frame = $('viewer-frame');
     frame.classList.toggle('is-shorts', /youtube\.com\/shorts\//i.test(this.project?.video || ''));
     frame.hidden = !yt;
