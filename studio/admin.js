@@ -114,6 +114,10 @@
         return db;
       } catch (err) {
         // 토큰 문제(만료 · 쓰기 권한 없음): 고치던 내용은 그대로 두고 새 토큰만 받아 한 번 더 저장
+        if (err.readonly) {
+          setSync('idle', '읽기 전용');
+          throw err;
+        }
         if (err.status === 401 || err.status === 403) {
           const t = await askToken(err.message);
           if (t) {
@@ -192,7 +196,45 @@
     $('#login-error').textContent = error;
     (f.repo.value ? f.token : f.repo).focus();
   }
+  /** 읽기 전용: 사이트에 올라가 있는 데이터를 그대로 읽고, 저장은 막음 */
+  class ReadOnlyStore {
+    constructor() {
+      Object.assign(this, { owner: '읽기 전용', repo: '', branch: '', token: '', readonly: true });
+    }
+    rawUrl(p) {
+      return ROOT + p;
+    }
+    async verify() {}
+    async readData() {
+      const res = await fetch(ROOT + 'data/site.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) throw new Error('사이트 데이터를 불러오지 못했어요.');
+      return res.json();
+    }
+    async commit() {
+      const e = new Error('읽기 전용으로 둘러보는 중이라 저장되지 않아요. 고치려면 오른쪽 위 ‘GitHub 연결’로 로그인하세요.');
+      e.readonly = true;
+      throw e;
+    }
+  }
+  $('#readonly-enter')?.addEventListener('click', async () => {
+    try {
+      store = new ReadOnlyStore();
+      db = await store.readData();
+      db.projects ||= [];
+      document.body.classList.add('is-readonly');
+      $('#repo-label').textContent = '읽기 전용 · 저장 안 됨';
+      $('#login').hidden = true;
+      $('#app').hidden = false;
+      setSync('idle', '읽기 전용');
+      renderBoard();
+      switchView('board', true);
+      window.StudioStats?.pulse(db.settings?.analytics);
+    } catch (err) {
+      $('#login-error').textContent = err.message;
+    }
+  });
   async function connect(cfg) {
+    document.body.classList.remove('is-readonly');
     try {
       if (localStorage.getItem('pf-notrack') === null) localStorage.setItem('pf-notrack', '1');
     } catch {}
@@ -228,6 +270,11 @@
     }
   });
   $('#logout').addEventListener('click', async () => {
+    if (store?.readonly) {
+      store = null;
+      document.body.classList.remove('is-readonly');
+      return showLogin();
+    }
     if (!(await confirmBox('이 브라우저에서 GitHub 연결을 해제할까요?\n저장된 토큰이 삭제됩니다.', '연결 해제'))) return;
     const cfg = loadCfg();
     try {

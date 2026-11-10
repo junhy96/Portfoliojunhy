@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101705';
-import { PdfViewer } from './pdf-viewer.js?v=202611101705';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101705';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101705';
-import { initWorks } from './works.js?v=202611101705';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101705';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101732';
+import { PdfViewer } from './pdf-viewer.js?v=202611101732';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101732';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101732';
+import { initWorks } from './works.js?v=202611101732';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101732';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -180,8 +180,6 @@ function render({ settings: s, projects }) {
   renderSkillChart($('#skill-chart'), s.skillChart);
   renderToolBars($('#tool-bars'), (s.skillChart || []).filter((x) => x.group === 'tool'));
   initWorks($('#works'), projects, s.docTypes || []);
-  const hjWorks = $('#hj-works');
-  if (hjWorks) hjWorks.textContent = `작업 ${projects.length}건`;
   renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)

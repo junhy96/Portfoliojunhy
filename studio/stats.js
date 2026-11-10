@@ -172,7 +172,71 @@
     return rows.map((r) => ({ ...r, t: new Date(r.created_at) }));
   }
 
+  /* ---------------- 로그인 없이 보는 예시 기록 ---------------- */
+  let demo = false;
+  async function demoRows() {
+    let site = { projects: [] };
+    try {
+      site = await (await fetch(ROOT + 'data/site.json', { cache: 'no-store' })).json();
+    } catch {}
+    const titles = (site.projects || []).filter((p) => p.visible !== false).map((p) => p.title);
+    let seed = 7;
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const pick = (a) => a[Math.floor(rnd() * a.length)];
+    const now = Date.now();
+    const rows = [];
+    const tags = [null, null, null, 'nexon', 'neople', 'krafton', 'smilegate'];
+    const refs = [null, null, 'linkedin.com', 'notion.so', 'saramin.co.kr', 'wanted.co.kr'];
+    const hero = [['05포트폴리오→', 0.5, 0.51], ['04툴 · 스킬→', 0.64, 0.51], ['03연혁→', 0.77, 0.51], ['PDF이력서↓', 0.9, 0.51], ['05Works', 0.76, 0.05]];
+    for (let s = 0; s < 120; s++) {
+      const t0 = now - rnd() * days * 2 * DAY;
+      const session = 'demo-s' + s;
+      const visitor = 'demo-v' + Math.floor(s * 0.8);
+      const device = rnd() < 0.72 ? 'desktop' : rnd() < 0.8 ? 'mobile' : 'tablet';
+      const base = { visitor, session, device, theme: 'editorial', x: null, y: null, target: null, referrer: null, dur: null, page: null, pages: null };
+      let t = t0;
+      const add = (o) => rows.push({ ...base, ...o, created_at: new Date((t += 2000 + rnd() * 20000)).toISOString() });
+      add({ type: 'view', section: 'hero', target: pick(tags), referrer: pick(refs) });
+      const depth = 1 + Math.floor(rnd() * 6);
+      ['hero', 'about', 'timeline', 'skills', 'works', 'contact'].slice(0, depth).forEach((sec) => add({ type: 'section', section: sec }));
+      for (let k = 0; k < 1 + Math.floor(rnd() * 3); k++) {
+        const [target, x, y] = pick(hero);
+        add({ type: 'click', section: 'hero', target, x: x + (rnd() - 0.5) * 0.06, y: y + (rnd() - 0.5) * 0.06 });
+      }
+      if (depth >= 5 && titles.length) {
+        for (let k = 0; k < 1 + Math.floor(rnd() * 3); k++) {
+          const ti = Math.min(titles.length - 1, Math.floor(Math.pow(rnd(), 1.8) * titles.length));
+          add({ type: 'click', section: 'works', target: '작업: ' + titles[ti], x: 0.2 + (ti % 4) * 0.2 + (rnd() - 0.5) * 0.05, y: 0.45 + (rnd() - 0.5) * 0.2 });
+          add({ type: 'pdf', section: 'works', target: titles[ti] });
+          const pages = 10 + Math.floor(rnd() * 30);
+          add({ type: 'read', section: 'works', target: titles[ti], dur: Math.round(20 + rnd() * rnd() * 400), page: Math.ceil(pages * (0.2 + rnd() * 0.8)), pages });
+        }
+      }
+    }
+    return rows.map((r) => ({ ...r, t: new Date(r.created_at) })).sort((a, b) => a.t - b.t);
+  }
+  $('#stats-demo').addEventListener('click', () => {
+    demo = true;
+    refresh();
+  });
+  $('#stats-demo-exit').addEventListener('click', () => {
+    demo = false;
+    $('#stats-demo-banner').hidden = true;
+    show(cfg ? 'login' : 'setup');
+  });
+
   async function refresh() {
+    $('#stats-demo-banner').hidden = !demo;
+    $('#stats-logout').hidden = demo;
+    if (demo) {
+      show('body');
+      dwellReady = true;
+      all = await demoRows();
+      $('#stats-who').textContent = '';
+      render();
+      $('#stats-sub').textContent = `예시 데이터 · 최근 ${days}일. 실제 방문 기록이 아니에요.`;
+      return;
+    }
     show('body');
     const btn = $('#stats-refresh');
     btn.disabled = true;
