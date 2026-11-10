@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611100301" />
+  <link rel="stylesheet" href="admin.css?v=202611100525" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -452,6 +452,13 @@
 
           <div class="card">
             <h3>보기 설정</h3>
+            <div class="field"><span>색감</span>
+              <div class="tone-pick">
+                <label><input type="radio" name="tone" value="teal" /><i class="tone-swatch teal"></i><span>청록 회색 <small>지금 기본</small></span></label>
+                <label><input type="radio" name="tone" value="mono" /><i class="tone-swatch mono"></i><span>모노톤 <small>색 없이 흑백</small></span></label>
+              </div>
+              <p class="muted sm">저장 전에 미리 보려면 <a id="tone-preview-teal" target="_blank" rel="noopener">청록 회색</a> · <a id="tone-preview-mono" target="_blank" rel="noopener">모노톤</a> 링크로 열어 보세요.</p>
+            </div>
             <label class="switch"><input type="checkbox" name="forceDesktop" /><i></i><span>휴대폰에서도 PC 화면으로 보이기</span></label>
             <p class="muted sm">켜면 면접관이 휴대폰으로 열어도 PC와 같은 화면(왼쪽 레일·가로 Works)이 나와요. 글씨가 작아지니, 가로로 돌려 보면 더 잘 보여요. 저장하고 1~2분 뒤 반영돼요.</p>
           </div>
@@ -488,9 +495,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611100301"></script>
-  <script src="github.js?v=202611100301"></script>
-  <script src="admin.js?v=202611100301"></script>
-  <script src="stats.js?v=202611100301"></script>
+  <script src="../js/icons.js?v=202611100525"></script>
+  <script src="github.js?v=202611100525"></script>
+  <script src="admin.js?v=202611100525"></script>
+  <script src="stats.js?v=202611100525"></script>
 </body>
 </html>

@@ -356,3 +356,14 @@ table.visits th.num { text-align: right; }
   .pr-tiles.is-list { grid-template-columns: 1fr; }
   .pr-result { min-width: 0; flex-basis: 100%; }
 }
+
+/* 색감 선택 */
+.tone-pick { display: flex; flex-wrap: wrap; gap: 8px; }
+.tone-pick label { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; border: 1px solid var(--line-2); border-radius: 10px; cursor: pointer; }
+.tone-pick input { position: absolute; opacity: 0; pointer-events: none; }
+.tone-pick label:has(input:checked) { border-color: var(--fg); }
+.tone-pick label:has(input:focus-visible) { outline: 2px solid var(--fg); outline-offset: 2px; }
+.tone-pick small { display: block; color: var(--fg-3); font-size: 11px; }
+.tone-swatch { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--line-2); }
+.tone-swatch.teal { background: linear-gradient(135deg, #3d4a4a, #1b2424); }
+.tone-swatch.mono { background: linear-gradient(135deg, #4a4a4a, #1c1c1c); }

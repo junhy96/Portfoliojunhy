@@ -968,6 +968,9 @@
     f.anaUrl.value = s.analytics?.url || '';
     f.anaKey.value = s.analytics?.key || '';
     f.forceDesktop.checked = !!s.forceDesktop;
+    sForm.querySelector(`[name="tone"][value="${s.tone === 'mono' ? 'mono' : 'teal'}"]`).checked = true;
+    $('#tone-preview-teal').href = SITE_ROOT + '?tone=teal';
+    $('#tone-preview-mono').href = SITE_ROOT + '?tone=mono';
     repeater($('#rep-meta'), s.meta || [], [['label', '항목 (예: Focus)'], ['value', '내용']], 'meta', '정보 추가');
     f.skillsHeading.value = s.skillsHeading || 'Skills';
     f.skillsIntro.value = s.skillsIntro || '';
@@ -1026,6 +1029,7 @@
     const values = {
       analytics: { url: f.anaUrl.value.trim().replace(/\/+$/, ''), key: f.anaKey.value.trim() },
       forceDesktop: f.forceDesktop.checked,
+      tone: sForm.querySelector('[name="tone"]:checked')?.value === 'mono' ? 'mono' : 'teal',
       siteTitle: f.siteTitle.value.trim(),
       nameKo: f.nameKo.value.trim(),
       nameEn: f.nameEn.value.trim(),

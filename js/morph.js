@@ -111,7 +111,7 @@ float grain(float amount) {
 float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
 float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
 
-// 스타일별 색보정  0 = Mono, 1 = Pixel, 2 = Editorial
+// 스타일별 색보정  0 = Mono, 1 = Pixel, 2 = Editorial(청록), 3 = Editorial(모노톤)
 vec3 shade(float mode, vec3 raw) {
   if (mode > 0.5 && mode < 1.5) {
     // Pixel: 평소엔 사진 그대로(따뜻한 톤). 이미지가 바뀌는 동안만 픽셀 블록으로 전환
@@ -134,6 +134,12 @@ vec3 shade(float mode, vec3 raw) {
     c = pow(max(c, 0.0), vec3(1.05));
     c *= vignette(0.52);
     c += grain(0.045);
+  } else if (mode > 2.5) {
+    c = vec3(l);                                       // Editorial 모노톤: 색 없이 회색만
+    c = mix(c, vec3(0.13), 0.14);                      // 매트한 블랙
+    c = (c - 0.5) * 1.06 + 0.5;
+    c *= vignette(0.3);
+    c += grain(0.03);
   } else {
     c = mix(vec3(l), c, 0.45);                         // 채도를 낮춘 청록 회색
     c *= vec3(0.80, 0.95, 0.93);

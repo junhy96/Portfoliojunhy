@@ -1,18 +1,27 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100301';
-import { PdfViewer } from './pdf-viewer.js?v=202611100301';
-import { renderSkillChart } from './skills.js?v=202611100301';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100301';
-import { initWorks } from './works.js?v=202611100301';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100301';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100525';
+import { PdfViewer } from './pdf-viewer.js?v=202611100525';
+import { renderSkillChart } from './skills.js?v=202611100525';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100525';
+import { initWorks } from './works.js?v=202611100525';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100525';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
 let onTimelineFocus = null; // 타임라인에서 보는 항목이 바뀔 때 (boot에서 채움)
+const TONE_MODE = () => (document.documentElement.dataset.tone === 'mono' ? 3 : 2); // 배경 사진 색보정: 2 청록 회색, 3 모노톤
 const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
 // 스타일은 Editorial 하나 (예전 페이지가 캐시에 남아 다른 스타일을 고르더라도 덮어씀)
 document.documentElement.dataset.theme = 'editorial';
+// 색감: 관리자 설정(tone) 또는 미리보기 주소 ?tone=mono|teal. 설정을 읽기 전에도 깜빡이지 않게 지난번 값을 먼저 씀
+const TONE_Q = new URLSearchParams(location.search).get('tone');
+const toneOf = (setting) => (TONE_Q === 'mono' || TONE_Q === 'teal' ? TONE_Q : setting === 'mono' ? 'mono' : 'teal');
+try {
+  document.documentElement.dataset.tone = toneOf(localStorage.getItem('pf-tone'));
+} catch {
+  document.documentElement.dataset.tone = toneOf();
+}
 try {
   localStorage.removeItem('pf-theme');
 } catch {}
@@ -389,6 +398,11 @@ async function boot() {
     data.projects.forEach((p) => (p._yt = ytId(p.video)));
     applyLinkPreset(data);
     forceDesktop(!!data.settings?.forceDesktop);
+    const tone = toneOf(data.settings?.tone);
+    document.documentElement.dataset.tone = tone;
+    try {
+      localStorage.setItem('pf-tone', data.settings?.tone === 'mono' ? 'mono' : 'teal');
+    } catch {}
   } catch (e) {
     $('.loader-name').textContent = '데이터를 불러오지 못했습니다.';
     $('.loader-bar').hidden = true;
@@ -405,7 +419,7 @@ async function boot() {
     const box = el('div', { className: 'stage-fallback' });
     document.body.prepend(box);
     const fb = new FallbackStage(box);
-    fb.setMode(2);
+    fb.setMode(TONE_MODE());
     return fb;
   };
   let stage;
@@ -424,7 +438,7 @@ async function boot() {
   }
   stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf), ...timelineItems(settings).map((x) => x.image).filter(Boolean)]);
 
-  stage.setMode(2, { instant: true }); // Editorial 색보정 (청록 회색)
+  stage.setMode(TONE_MODE(), { instant: true }); // Editorial 색보정 (청록 회색 또는 모노톤)
 
   // Timeline·Skills 사진이 없으면 About 사진을 씀
   const sectionImage = (key) => (images[key]?.src ? images[key] : key === 'skills' || key === 'timeline' ? images.about || {} : images[key] || {});
