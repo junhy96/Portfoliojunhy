@@ -657,3 +657,47 @@ html[data-tone="mono"] #skill-fill stop:last-child { stop-color: #383838; }
 html[data-tone="mono"] .skill-tip { background: rgba(26, 26, 26, .94); }
 html[data-tone="mono"] .m-menu { background: rgba(18, 18, 18, .94); }
 html[data-tone="mono"] .rotate-tip { background: rgba(16, 16, 16, .88); }
+
+/* ===================== 가독성 (실무 피드백 반영) =====================
+   - 회색 단계를 밝게: 보조 글자 80→88%, 흐린 글자 55→72%
+   - 본문 11pt(≈14.7px) → 16px, 정보성 작은 글자는 최소 12~13px */
+html[data-theme="editorial"] {
+  --fg-2: rgba(244, 244, 239, 0.88);
+  --fg-3: rgba(244, 244, 239, 0.72);
+  --fs-small: 16px;
+}
+html[data-theme="editorial"] body { line-height: 1.75; }
+.nav a span { font-size: 12px; }
+html[data-theme="editorial"] .label { font-size: 13px; }
+.rail-step { font-size: 12px; }
+.rail-name { font-size: 13px; }
+html[data-theme="editorial"] .ed-kicker { font-size: 13px; }
+html[data-theme="editorial"] .ed-post-head b { font-size: 16px; }
+html[data-theme="editorial"] .ed-post-head span, html[data-theme="editorial"] .ed-post-tags { font-size: 13px; }
+html[data-theme="editorial"] .ed-more { font-size: 13px; }
+.works-chip { font-size: 14px; color: var(--fg-2); }
+.works-chip em { font-size: 11px; }
+.card-doc { font-size: 12px; }
+.card-sample { font-size: 11px; opacity: .8; }
+.card-no, .card-open { font-size: 12px; }
+html[data-theme="editorial"] .works-grid .card-sub { font-size: 14px; color: var(--fg-2); }
+html[data-theme="editorial"] .works-grid .card-info { font-size: 13px; color: var(--fg-3); }
+.tl-type, .tl-period { font-size: 12.5px; }
+.tl-org { font-size: 14px; }
+.tl-desc { font-size: 15px; }
+.tl-tasks-label { font-size: 12px; letter-spacing: .02em; }
+.tl-tasks li { font-size: 15px; }
+.tip-desc { font-size: 15px; }
+.viewer-kicker { font-size: 12.5px; }
+@media (max-width: 820px) {
+  html[data-theme="editorial"] { --fs-small: 15px; }
+  .m-total, .m-name, .m-menu-no { font-size: 12px; }
+  html[data-theme="editorial"] .works-grid .card-doc { font-size: 11px; }
+  html[data-theme="editorial"] .works-grid .card-info { font-size: 12px; }
+  .tl-tasks li, .tl-desc { font-size: 14px; }
+}
+/* 글자를 키운 만큼 낮은 화면에서 About이 넘치지 않게 간격만 조금 줄임 */
+@media (min-width: 821px) and (max-height: 780px) {
+  html[data-theme="editorial"] .about-grid { margin-top: 28px; }
+  html[data-theme="editorial"] .skill-list li { padding: 2px 0; }
+}

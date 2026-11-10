@@ -224,7 +224,8 @@
         "focusX": 0.74
       }
     },
-    "links": []
+    "links": [],
+    "tone": "mono"
   },
   "projects": [
     {
