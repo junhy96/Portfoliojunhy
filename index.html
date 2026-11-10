@@ -17,8 +17,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611100618" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611100618" />
+  <link rel="stylesheet" href="css/style.css?v=202611100626" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611100626" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -84,18 +84,25 @@
 
     <!-- ============================== 02 ABOUT ============================== -->
     <section class="panel panel-about" id="about" data-key="about" aria-label="자기소개">
-      <!-- About·Works: 간결한 구성 (Editorial 색·글꼴) -->
-      <div class="panel-body layout layout-mono" data-scroll>
-        <div class="about-wrap">
+      <!-- 첫 화면과 같은 배경 위에서 경력·교육·스킬·툴을 한눈에 (이름이 있던 오른쪽 자리) -->
+      <div class="panel-body layout about-glance" data-scroll>
+        <div class="glance">
           <p class="section-no small reveal">02 — About</p>
-          <h2 class="section-title reveal" style="--d:1" data-bind="aboutHeading"></h2>
-          <p class="about-bio small reveal" style="--d:2" data-bind="bio"></p>
-          <div class="about-grid">
-            <div class="reveal" style="--d:3">
+          <h2 class="glance-title reveal" style="--d:1" data-bind="aboutHeading"></h2>
+          <div class="glance-grid">
+            <div class="g-career reveal" style="--d:2">
+              <h3 class="label small">Career</h3>
+              <ol class="glance-list small" data-list="career"></ol>
+            </div>
+            <div class="g-edu reveal" style="--d:3">
+              <h3 class="label small">Education</h3>
+              <ol class="glance-list small" data-list="education"></ol>
+            </div>
+            <div class="g-skills reveal" style="--d:3">
               <h3 class="label small">Skills</h3>
               <ul class="skill-list small" data-list="skills"></ul>
             </div>
-            <div class="reveal" style="--d:4">
+            <div class="g-tools reveal" style="--d:4">
               <h3 class="label small">Tools</h3>
               <ul class="tool-list small" data-list="tools"></ul>
             </div>
@@ -234,7 +241,7 @@
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611100618"></script>
-  <script type="module" src="js/main.js?v=202611100618"></script>
+  <script src="js/icons.js?v=202611100626"></script>
+  <script type="module" src="js/main.js?v=202611100626"></script>
 </body>
 </html>

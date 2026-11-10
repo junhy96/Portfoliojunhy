@@ -450,8 +450,6 @@ html.is-embed .works-grid > li { animation: none !important; }
 body.is-ready .panel.is-active :is(.ed-name, .section-title, .ed-giant) {
   animation: tracking-in-expand .45s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0s both;
 }
-/* 다시 온 방문자: 열림 화면 없이 바로 */
-html.is-revisit .loader { display: none; }
 html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .tracking-in-expand { animation: none; }

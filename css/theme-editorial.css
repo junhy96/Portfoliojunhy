@@ -23,7 +23,6 @@ html[data-theme="editorial"] .shade-side { background: linear-gradient(270deg, r
 html[data-theme="editorial"] .shade-bottom { background: linear-gradient(0deg, rgba(18,28,28,.75), rgba(18,28,28,0) 40%); }
 html[data-theme="editorial"] .shade-full { background: #142020; }
 html[data-theme="editorial"] body[data-section="contact"] .shade-side { opacity: .4; }
-html[data-theme="editorial"] body[data-section="about"] .shade-side,
 html[data-theme="editorial"] body[data-section="skills"] .shade-side,
 html[data-theme="editorial"] body[data-section="timeline"] .shade-side,
 html[data-theme="editorial"] body[data-section="works"] .shade-side { background: linear-gradient(90deg, rgba(18,28,28,.8) 0%, rgba(18,28,28,.35) 50%, rgba(18,28,28,0) 75%); opacity: 1; }
@@ -659,7 +658,6 @@ html[data-theme="editorial"][data-tone="mono"] { --bg: #1c1c1c; --glass: rgba(96
 html[data-tone="mono"] .shade-side { background: linear-gradient(270deg, rgba(20,20,20,.72) 0%, rgba(20,20,20,.3) 42%, rgba(20,20,20,0) 65%); }
 html[data-tone="mono"] .shade-bottom { background: linear-gradient(0deg, rgba(20,20,20,.75), rgba(20,20,20,0) 40%); }
 html[data-tone="mono"] .shade-full { background: #161616; }
-html[data-tone="mono"] body[data-section="about"] .shade-side,
 html[data-tone="mono"] body[data-section="skills"] .shade-side,
 html[data-tone="mono"] body[data-section="timeline"] .shade-side,
 html[data-tone="mono"] body[data-section="works"] .shade-side { background: linear-gradient(90deg, rgba(20,20,20,.8) 0%, rgba(20,20,20,.35) 50%, rgba(20,20,20,0) 75%); }
@@ -720,7 +718,7 @@ html[data-theme="editorial"] .works-grid .card-info { font-size: 13px; color: va
 /* ===================== 사진 어둡게 (글자 강조) =====================
    섹션마다 사진 위에 어두운 막을 한 겹 더: 인물은 은은하게, 글자는 또렷하게 */
 html[data-theme="editorial"] body[data-section="hero"] .shade-full { opacity: .38; }
-html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .52; }
+html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .38; } /* 첫 화면과 같게: 넘어갈 때 배경이 그대로 */
 html[data-theme="editorial"] body[data-section="timeline"] .shade-full { opacity: .86; }
 html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .84; }
 html[data-theme="editorial"] body[data-section="works"] .shade-full { opacity: .62; }
@@ -743,3 +741,75 @@ html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity:
 
 /* 연혁 항목 사진(어두운 컬러): 사진 색이 살아 보이게 위 막은 조금만 */
 html[data-theme="editorial"] body[data-section="timeline"].tl-photo .shade-full { opacity: .35; }
+
+/* ===================== 02 ABOUT: 한눈에 보기 =====================
+   첫 화면과 같은 배경. 이름이 있던 오른쪽 자리에 경력·교육·스킬·툴 */
+html[data-theme="editorial"] .panel .about-glance { padding: 0; overflow: hidden; }
+.glance {
+  position: absolute; right: var(--gutter); top: calc(var(--top) + 24px); bottom: 40px;
+  width: min(56vw, 820px); display: flex; flex-direction: column; justify-content: center;
+}
+.glance-title { margin: 8px 0 24px; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 4.4vw, 72px); line-height: .95; letter-spacing: -.03em; text-transform: uppercase; }
+.glance-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 28px 40px; }
+.g-career { grid-column: 1 / -1; }
+.glance .label { margin-bottom: 10px; padding-bottom: 8px; }
+.glance-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.glance-list li { display: grid; grid-template-columns: 148px 1fr; gap: 16px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.glance-list li:last-child { border-bottom: 0; }
+.glance-list time { color: var(--fg-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.glance-list strong { display: block; font-family: var(--display); font-weight: 600; color: var(--fg); }
+.glance-list span { display: block; color: var(--fg-3); font-size: 14px; }
+.g-career .glance-list { grid-template-columns: 1fr 1fr; column-gap: 32px; }
+.glance .skill-list li { padding: 3px 0; }
+.glance .tool-list { gap: 10px 20px; }
+@media (min-width: 821px) and (max-height: 820px) {
+  .glance-title { font-size: clamp(36px, 3.6vw, 56px); margin-bottom: 16px; }
+  .glance-grid { gap: 20px 36px; }
+  .glance-list li { padding: 4px 0; }
+}
+@media (max-width: 1100px) and (min-width: 821px) { .glance { width: min(62vw, 820px); } .g-career .glance-list { grid-template-columns: 1fr; } }
+@media (max-width: 820px) {
+  .glance { position: static; width: auto; padding: calc(var(--top) + 24px) var(--gutter) 48px; display: block; }
+  html[data-theme="editorial"] .panel .about-glance { overflow-y: auto; }
+  .glance-grid { grid-template-columns: 1fr; gap: 24px; }
+  .g-career .glance-list { grid-template-columns: 1fr; }
+  .glance-list li { grid-template-columns: 120px 1fr; gap: 12px; }
+}
+/* 첫 화면 소개 줄글: 문단 사이 여백 */
+html[data-theme="editorial"] .ed-intro { max-width: 34em; line-height: 1.75; }
+/* 첫 화면: 줄글이 들어간 만큼 이름을 줄이고 위로, 아래 Works 띠와 겹치지 않게 */
+html[data-theme="editorial"] .ed-hero-name { width: min(52vw, 760px); }
+html[data-theme="editorial"] .ed-hero-name .ed-name { font-size: clamp(52px, 5.6vw, 104px); margin: 8px 0 18px; }
+html[data-theme="editorial"] .ed-hero-name .ed-intro { font-size: 15px; line-height: 1.7; max-width: 46em; }
+@media (min-width: 821px) and (max-height: 880px) {
+  html[data-theme="editorial"] .ed-hero-name .ed-name { font-size: clamp(44px, 4.4vw, 76px); }
+  html[data-theme="editorial"] .ed-hero-name .ed-intro { font-size: 14px; line-height: 1.6; }
+  html[data-theme="editorial"] .ed-kicker { display: none; }
+}
+/* About 한눈에 보기: 한 화면에 들어오게 촘촘히 */
+.glance { top: calc(var(--top) + 8px); bottom: 24px; }
+.glance-title { font-size: clamp(32px, 3.2vw, 52px); margin: 4px 0 16px; }
+.glance-grid { gap: 18px 36px; }
+.glance .label { margin-bottom: 4px; padding-bottom: 6px; }
+.glance-list li { padding: 4px 0; grid-template-columns: 132px 1fr; }
+.glance-list span { font-size: 13px; }
+.glance .skill-list li { padding: 1px 0; }
+.glance .tool-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 16px; }
+.g-edu, .g-tools { grid-column: 1; }
+.g-skills { grid-column: 2; grid-row: 2 / span 2; }
+@media (min-width: 821px) and (max-height: 820px) {
+  .glance-title { font-size: 32px; margin-bottom: 10px; }
+  .glance .section-no { display: none; }
+  .glance-list li { padding: 2px 0; }
+  .glance-grid { gap: 12px 32px; }
+}
+@media (max-width: 820px) {
+  .g-edu, .g-tools, .g-skills { grid-column: auto; grid-row: auto; }
+  .glance .tool-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* 기간 칸이 넘쳐 제목과 겹치던 것: 기간은 제목 위 작은 줄로 */
+.glance-list li { grid-template-columns: 1fr; gap: 0; }
+.glance-list time { font-size: 12.5px; }
+.glance .tool-list li span:last-child { white-space: nowrap; }
+.glance .tool-list { grid-template-columns: repeat(3, max-content); column-gap: 24px; }
+@media (max-width: 820px) { .glance .tool-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

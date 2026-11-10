@@ -1,24 +1,15 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100618';
-import { PdfViewer } from './pdf-viewer.js?v=202611100618';
-import { renderSkillChart } from './skills.js?v=202611100618';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100618';
-import { initWorks } from './works.js?v=202611100618';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100618';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100626';
+import { PdfViewer } from './pdf-viewer.js?v=202611100626';
+import { renderSkillChart } from './skills.js?v=202611100626';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100626';
+import { initWorks } from './works.js?v=202611100626';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100626';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
 let onTimelineFocus = null; // 타임라인에서 보는 항목이 바뀔 때 (boot에서 채움)
 const TONE_MODE = () => (document.documentElement.dataset.tone === 'mono' ? 3 : 2); // 배경 사진 색보정: 2 청록 회색, 3 모노톤
-// 열리는 화면 최소 표시 시간: 첫 방문만 PORTFOLIO가 펼쳐질 만큼(0.7초), 다시 오면 기다리지 않음
-const SPLASH_MIN = (() => {
-  if (EMBED) return 0;
-  try {
-    if (localStorage.getItem('pf-seen')) return 0;
-    localStorage.setItem('pf-seen', '1');
-  } catch {}
-  return 700;
-})();
-if (!SPLASH_MIN) document.documentElement.classList.add('is-revisit');
+const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
 // 스타일은 Editorial 하나 (예전 페이지가 캐시에 남아 다른 스타일을 고르더라도 덮어씀)
@@ -141,6 +132,10 @@ function render({ settings: s, projects }) {
       }),
     skills: () => skills.map((t) => el('li', { textContent: t })),
     // 툴 이름으로 로고 찾기 (스킬 차트와 같은 아이콘 모음): 키나 이름이 같으면, 'Unreal Engine' → unreal 처럼
+    career: () =>
+      tl.filter((x) => x.type !== '교육').slice().reverse().map((x) => el('li', {}, el('time', { textContent: x.period || '' }), el('div', {}, el('strong', { textContent: x.title || '' }), x.org ? el('span', { textContent: x.org }) : null))),
+    education: () =>
+      tl.filter((x) => x.type === '교육').slice().reverse().map((x) => el('li', {}, el('time', { textContent: x.period || '' }), el('div', {}, el('strong', { textContent: x.title || '' }), x.org ? el('span', { textContent: x.org }) : null))),
     tools: () =>
       tools.map((t) => {
         const icons = window.SKILL_ICONS || {};
@@ -451,10 +446,11 @@ async function boot() {
   stage.setMode(TONE_MODE(), { instant: true }); // Editorial 색보정 (청록 회색 또는 모노톤)
 
   // Timeline·Skills 사진이 없으면 About 사진을 씀
-  const sectionImage = (key) => (images[key]?.src ? images[key] : key === 'skills' || key === 'timeline' ? images.about || {} : images[key] || {});
+  // About은 첫 화면 사진을 그대로 써서 1→2페이지 넘어갈 때 배경은 그대로, 글만 바뀜
+  const sectionImage = (key) => (key === 'about' ? images.hero || {} : images[key]?.src ? images[key] : key === 'skills' || key === 'timeline' ? images.about || {} : images[key] || {});
   const showSection = (opts) => {
     // 첫 화면은 이름이 오른쪽에 오도록 사진을 좌우 반전
-    stage.flip = state.section === 'hero';
+    stage.flip = state.section === 'hero' || state.section === 'about';
     const im = sectionImage(state.section);
     stage.show(im.src, im.focusX ?? 0.5, opts);
   };
