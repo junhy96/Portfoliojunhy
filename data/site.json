@@ -240,7 +240,7 @@
         "name": "Unity",
         "level": 70,
         "icon": "unity",
-        "group": "plan",
+        "group": "tool",
         "desc": ""
       }
     ],
@@ -679,5 +679,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794330874175
+  "rev": 1794331242252
 }
