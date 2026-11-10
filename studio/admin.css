@@ -344,3 +344,15 @@ table.visits th.num { text-align: right; }
 .pr-result.is-new { animation: pr-pop .5s ease both; }
 @keyframes pr-pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 #pr-url { color: var(--fg-2); }
+
+/* 휴대폰: 탭은 한 줄로 두고 옆으로 밀기, 링크 프리셋 카드는 두 개씩 */
+@media (max-width: 900px) {
+  .tabs { overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: none; white-space: nowrap; }
+  .pr-step { flex-wrap: wrap; }
+  .pr-step .muted { flex-basis: 100%; padding-left: 32px; }
+  .pr-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pr-tiles.is-list { grid-template-columns: 1fr; }
+  .pr-result { min-width: 0; flex-basis: 100%; }
+}
