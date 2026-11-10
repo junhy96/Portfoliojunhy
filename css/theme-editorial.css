@@ -377,7 +377,7 @@ html[data-theme="editorial"] .panel .timeline-body {
 .tl-year.is-in.is-cur .tl-year-num { opacity: 1; }
 
 /* 항목: 평소엔 구분·기간·제목만, 지금 보는 항목(.is-focus)은 앞으로 다가오며(slide-fwd) 업무 내용까지 펼침 */
-.tl-item { width: 420px; cursor: pointer; }
+.tl-item { width: 540px; cursor: pointer; }
 .tl-item.is-focus { cursor: default; }
 .tl-dot {
   position: absolute; left: -5px; top: calc(var(--ly) - 5px); width: 11px; height: 11px; border-radius: 50%;
@@ -389,7 +389,7 @@ html[data-theme="editorial"] .panel .timeline-body {
   transform: scaleY(0); transform-origin: bottom; transition: transform .4s var(--ease-out) .12s, background .3s;
 }
 .tl-card {
-  position: absolute; left: 0; bottom: calc(100% - var(--ly) + 34px); width: 380px; padding: 2px 0 2px 16px;
+  position: absolute; left: 0; bottom: calc(100% - var(--ly) + 34px); width: max-content; min-width: 300px; max-width: 500px; padding: 2px 0 2px 16px;
   border-left: 1px solid var(--line-2); transform-origin: 0 100%;
   opacity: 0; transform: perspective(600px) translateZ(0) translateY(12px);
   transition: opacity .5s ease .2s, transform .45s cubic-bezier(.25, .46, .45, .94), border-color .3s;
@@ -435,7 +435,7 @@ html[data-theme="editorial"] .panel .timeline-body {
   .tl { min-height: 440px; margin-top: 8px; --fade: 20px; }
   .tl-track { --ly: 76%; }
   .tl-item { width: 270px; }
-  .tl-card { width: 228px; }
+  .tl-card { width: 228px; min-width: 0; max-width: none; }
   .tl-year { width: 80px; }
   .tl-item.is-focus .tl-title { font-size: 19px; }
   .tl-desc { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }

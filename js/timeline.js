@@ -232,19 +232,21 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       return true;
     },
     /** 페이지에 들어오고 나갈 때. 아래 페이지에서 올라오면 끝에서 시작 */
-    activate(on) {
+    /** 페이지에 들어오고 나갈 때. 아래 페이지(Skills)에서 휠로 올라오면 마지막 항목부터 */
+    activate(on, fromEnd) {
       if (on === active) return;
       active = on;
       cancelAnimationFrame(raf);
       clearTimeout(snapTimer);
       raf = 0;
       if (on) {
-        cur = target = 0;
+        cur = target = fromEnd ? hi() : 0;
         root.scrollLeft = cur;
-        reveal = 0;
+        reveal = fromEnd ? cur : 0;
         for (const n of marks) n.classList.toggle('is-in', posOf(n) < reveal);
         lineDone.style.width = reveal + 'px';
         focus = -1;
+        if (fromEnd) setFocus(nodes.length - 1);
         // 페이지가 올라오는 동안 잠깐 기다렸다가 선을 그음
         setTimeout(kick, 350);
       } else {

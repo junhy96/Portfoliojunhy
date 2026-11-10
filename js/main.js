@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100612';
-import { PdfViewer } from './pdf-viewer.js?v=202611100612';
-import { renderSkillChart } from './skills.js?v=202611100612';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100612';
-import { initWorks } from './works.js?v=202611100612';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100612';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100618';
+import { PdfViewer } from './pdf-viewer.js?v=202611100618';
+import { renderSkillChart } from './skills.js?v=202611100618';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100618';
+import { initWorks } from './works.js?v=202611100618';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100618';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -248,7 +248,7 @@ class Deck {
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
       p.classList.toggle('is-active', k === i);
-      p._h?.activate(k === i); // 가로 목록(타임라인·Works): 들어오면 처음부터
+      p._h?.activate(k === i, step && i < prev); // 타임라인: 아래 페이지에서 한 칸 올라오면 마지막 항목부터
     });
     panel.querySelectorAll('[data-scroll]').forEach((s) => (s.scrollTop = 0));
     history.replaceState(null, '', '#' + panel.id);
@@ -292,7 +292,13 @@ class Deck {
     const reverse = strong && this.navDir && dir !== this.navDir;
     if (now < this.lockUntil && !reverse) return;
     if (!strong && now - this.navTime < 1000) return; // 트랙패드 관성 무시
-    // 휠(위아래)은 언제나 페이지 이동. 타임라인·Works의 옆 이동은 ← → 키·화살표 버튼·끌기·트랙패드 가로 밀기로
+    // 휠(위아래)은 페이지 이동. 단, 타임라인은 항목이 적어 휠로 한 항목씩 지나가고, 끝에 닿으면 다음·이전 페이지로
+    // (Works의 옆 이동은 ← → 키·화살표 버튼·끌기·트랙패드 가로 밀기로)
+    const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
+    if (tl) {
+      if (!tl.wheel(dy)) this.go(this.index + dir, { step: true });
+      return;
+    }
     if (now - this.innerScrollAt < 450) {
       // 목록 끝에 닿은 뒤에도 계속 굴리는 중이면 넘어가지 않음 → 잠깐 멈췄다가 다시 굴리면 다음 섹션
       this.innerScrollAt = now;
@@ -309,7 +315,7 @@ class Deck {
     if (e.key === 'End') return e.preventDefault(), this.go(this.panels.length - 1);
     const dir = map[e.key];
     const h = this.panels[this.index]._h;
-    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || 0;
+    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (this.panels[this.index].id === 'timeline' && !e.shiftKey ? dir : 0);
     if (h && hd && performance.now() > this.lockUntil - 400 && h.page(hd)) return e.preventDefault();
     if (!dir) return;
     if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1, { step: true });
@@ -343,6 +349,9 @@ class Deck {
       if (hs && Math.abs(dx) > Math.abs(dy)) return;
       const fast = performance.now() - t0 < 400;
       if (Math.abs(dy) > (fast ? 30 : 70) && performance.now() > this.lockUntil - 300) {
+        // 타임라인: 위아래로 밀어도 한 항목씩 넘기고, 끝이면 다음·이전 페이지
+        const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
+        if (tl && tl.page(Math.sign(dy))) return;
         this.go(this.index + Math.sign(dy), { step: true });
       }
     }, { passive: true });
