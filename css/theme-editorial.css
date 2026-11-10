@@ -915,3 +915,6 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
   .glance .glance-bio { font-size: 15px; line-height: 1.55; margin-bottom: 12px; }
   .glance .tb-row { padding: 4px 6px; }
 }
+/* Works 카드: 밝은 표지(문서 PDF) 위에서도 번호·문서 종류가 읽히도록 위쪽에 어두운 그라데이션 */
+.works-grid .card-media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 64px; z-index: 1; pointer-events: none; background: linear-gradient(rgba(12, 12, 12, .72), rgba(12, 12, 12, 0)); }
+.works-grid .card-no, .works-grid .card-doc { z-index: 2; mix-blend-mode: normal; color: #f4f4ef; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
