@@ -8,8 +8,8 @@
   const WEEK = ['월', '화', '수', '목', '금', '토', '일'];
   const SECTIONS = [['hero', 'Home', 'home'], ['about', 'About', 'about'], ['timeline', 'Timeline', 'timeline'], ['skills', 'Skills', 'skills'], ['works', 'Works', 'works'], ['contact', 'Contact', 'contact']];
   const DEVICES = [['desktop', 'PC'], ['tablet', '태블릿'], ['mobile', '모바일']];
-  // 차트 색: 크기 = 파랑 한 가지, 기기 비율만 구분용 3색 (어두운 배경용 단계)
-  const C = { bar: '#3987e5', grid: 'rgba(240,240,238,.08)', axis: '#85858b', cat: ['#3987e5', '#d95926', '#199e70'], zero: '#1c1c1c', lo: [24, 79, 149], hi: [134, 182, 239] };
+  // 차트 색: 크기 = 사이트 강조 색(연두) 한 가지, 기기 비율만 구분용 3색 (어두운 배경용 단계)
+  const C = { bar: '#90de93', grid: 'rgba(244,244,239,.08)', axis: '#85857f', cat: ['#90de93', '#d95926', '#3987e5'], zero: '#202020', lo: [34, 74, 40], hi: [168, 236, 171] }; // 사이트 강조 색 #90DE93 기준
 
   let cfg = null;
   let auth = null;
@@ -188,6 +188,7 @@
         }
       }
       render();
+      if (pulseCfg) pulse(); // 방금 로그인했다면 위쪽 방문자 수도 바로 채움
     } catch (err) {
       $('#stats-sub').textContent = err.message;
     } finally {
@@ -768,8 +769,83 @@
     } catch {}
   });
 
+  /* ---------------- 위쪽 막대: 서버 상태 · 오늘/누적 방문자 ---------------- */
+  // 1분마다: 사이트(GitHub Pages)가 열리는지, 통계 서버(Supabase)가 답하는지, 방문자 수
+  const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  function setDot(id, state, label) {
+    const n = $('#' + id);
+    if (!n) return;
+    n.dataset.state = state;
+    n.title = label;
+  }
+  async function ping(url, opts) {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const res = await fetch(url, { cache: 'no-store', signal: ctl.signal, ...opts });
+      return res.ok;
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  async function visitorCounts() {
+    const seen = new Set();
+    const today = new Set();
+    const midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    for (let offset = 0; offset < 200000; offset += 1000) {
+      const page = await api(`/rest/v1/events?select=visitor,created_at&type=eq.view&order=created_at.asc&limit=1000&offset=${offset}`);
+      page.forEach((r) => {
+        seen.add(r.visitor);
+        if (new Date(r.created_at) >= midnight) today.add(r.visitor);
+      });
+      if (page.length < 1000) break;
+    }
+    return { today: today.size, total: seen.size };
+  }
+  let pulseCfg = null;
+  let pulseTimer = null;
+  async function pulse() {
+    const t = hhmm(new Date());
+    const siteOk = await ping(ROOT + 'index.html?ping=' + Date.now(), { method: 'HEAD' });
+    setDot('pulse-site', siteOk ? 'ok' : 'down', siteOk ? `사이트 정상 · ${t} 확인` : `사이트가 열리지 않아요 · ${t} 확인`);
+    const c = pulseCfg;
+    if (!c) {
+      setDot('pulse-db', 'off', '통계 서버가 설정되지 않았어요 (사이트 설정 → 접속 통계)');
+      return;
+    }
+    const dbOk = await ping(c.url.replace(/\/+$/, '') + '/auth/v1/health', { headers: { apikey: c.key } });
+    setDot('pulse-db', dbOk ? 'ok' : 'down', dbOk ? `통계 서버(Supabase) 정상 · ${t} 확인` : `통계 서버(Supabase)가 답하지 않아요 · ${t} 확인`);
+    const today = $('#pulse-today b');
+    const total = $('#pulse-total b');
+    if (!dbOk) return;
+    cfg ||= c;
+    auth ||= loadAuth();
+    if (!auth) {
+      today.textContent = total.textContent = '–';
+      $('#pulse-today').title = $('#pulse-total').title = '접속 통계 탭에서 로그인하면 방문자 수가 보여요';
+      return;
+    }
+    try {
+      const n = await visitorCounts();
+      today.textContent = fmt(n.today);
+      total.textContent = fmt(n.total);
+      $('#pulse-today').title = `오늘(자정 이후) 들어온 방문자 ${fmt(n.today)}명 · ${t} 기준`;
+      $('#pulse-total').title = `지금까지 들어온 방문자 ${fmt(n.total)}명 · ${t} 기준`;
+    } catch {}
+  }
+
   /* ---------------- 시작 ---------------- */
   window.StudioStats = {
+    // 운영툴에 들어오면 바로, 그 뒤 1분마다 (창이 보일 때만)
+    pulse(c) {
+      pulseCfg = c?.url && c?.key ? c : null;
+      pulse();
+      clearInterval(pulseTimer);
+      pulseTimer = setInterval(() => document.visibilityState === 'visible' && pulse(), 60000);
+    },
     open(c) {
       try {
         notrack.checked = localStorage.getItem('pf-notrack') === '1';

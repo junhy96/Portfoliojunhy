@@ -166,6 +166,7 @@
     setSync('idle', '저장됨');
     renderBoard();
     switchView('board', true);
+    window.StudioStats?.pulse(db.settings?.analytics);
   }
   $('#login-form').addEventListener('submit', async (e) => {
     e.preventDefault();

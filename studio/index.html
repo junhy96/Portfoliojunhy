@@ -6,7 +6,8 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611100840" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&display=swap" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="admin.css?v=202611100849" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -58,6 +59,12 @@
         <button class="tab" data-view="settings" role="tab">사이트 설정</button>
       </nav>
       <div class="app-actions">
+        <div class="pulse" id="pulse" aria-label="서버 상태와 방문자">
+          <span class="pulse-dot" id="pulse-site" data-state="checking" title="사이트 확인 중…"><i></i><span>사이트</span></span>
+          <span class="pulse-dot" id="pulse-db" data-state="checking" title="통계 서버 확인 중…"><i></i><span>통계</span></span>
+          <span class="pulse-num" id="pulse-today" title="오늘 들어온 방문자 (브라우저 기준)">오늘 <b>–</b></span>
+          <span class="pulse-num" id="pulse-total" title="지금까지 들어온 방문자 (브라우저 기준)">누적 <b>–</b></span>
+        </div>
         <span class="sync" id="sync" data-state="idle"><i></i><span>저장됨</span></span>
         <a class="btn ghost" href="../" target="_blank" rel="noopener">사이트 보기 ↗</a>
         <button class="btn ghost" id="logout">연결 해제</button>
@@ -509,9 +516,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611100840"></script>
-  <script src="github.js?v=202611100840"></script>
-  <script src="admin.js?v=202611100840"></script>
-  <script src="stats.js?v=202611100840"></script>
+  <script src="../js/icons.js?v=202611100849"></script>
+  <script src="github.js?v=202611100849"></script>
+  <script src="admin.js?v=202611100849"></script>
+  <script src="stats.js?v=202611100849"></script>
 </body>
 </html>
