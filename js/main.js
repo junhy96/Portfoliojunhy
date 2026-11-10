@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100646';
-import { PdfViewer } from './pdf-viewer.js?v=202611100646';
-import { renderSkillChart } from './skills.js?v=202611100646';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100646';
-import { initWorks } from './works.js?v=202611100646';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100646';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100650';
+import { PdfViewer } from './pdf-viewer.js?v=202611100650';
+import { renderSkillChart } from './skills.js?v=202611100650';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100650';
+import { initWorks } from './works.js?v=202611100650';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100650';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -241,7 +241,7 @@ class Deck {
     // 1↔2페이지는 배경이 같으니, 내용이 스크롤되듯 길고 부드럽게 이어 내려감 (글이 사라졌다 다시 나타나지 않음)
     const flow = Math.max(prev, i) <= 1 && prev !== i;
     document.body.classList.toggle('is-flow', flow);
-    this.lockUntil = this.navTime + (flow ? 950 : 600);
+    this.lockUntil = this.navTime + 950;
     this._apply(animate);
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
@@ -388,7 +388,7 @@ function forceDesktop(on) {
   document.documentElement.classList.toggle('is-forced-desktop', on);
   // 세로로 들고 있으면 잠깐 안내 (한 번 열 때 한 번)
   if (on && innerHeight > innerWidth * 1.2) {
-    const tip = el('p', { className: 'rotate-tip', textContent: '가로로 돌리면 더 크게 볼 수 있어요' });
+    const tip = el('p', { className: 'rotate-tip', textContent: '가로로 돌리면 더 크게 볼 수 있습니다' });
     document.body.append(tip);
     setTimeout(() => tip.classList.add('is-gone'), 4200);
     setTimeout(() => tip.remove(), 5000);
