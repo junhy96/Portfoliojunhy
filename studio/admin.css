@@ -506,3 +506,18 @@ input:focus, textarea:focus, select:focus { border-color: rgba(144, 222, 147, .6
   .pulse-dot span { display: inline; }
 }
 @media (max-width: 420px) { .pulse { justify-content: flex-start; } }
+
+/* ---------- 게시판: 드래그로 순서 바꾸기 ---------- */
+.no-cell { display: inline-flex; align-items: center; gap: 8px; }
+.grip {
+  display: grid; place-items: center; width: 22px; height: 30px; margin-left: -6px; padding: 0; border: 0; border-radius: 6px;
+  background: none; color: var(--fg-3); cursor: grab; touch-action: none; transition: color .15s, background-color .15s;
+}
+.grip:hover { color: var(--accent); background: var(--accent-soft); }
+.grip:disabled { opacity: .3; cursor: not-allowed; background: none; color: var(--fg-3); }
+#board-body.is-sorting, #board-body.is-sorting * { cursor: grabbing !important; }
+#board-body tr.is-dragging { position: relative; z-index: 2; background: var(--card-2); box-shadow: 0 10px 28px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(144, 222, 147, .45); }
+#board-body tr.is-dragging .grip { color: var(--accent); }
+#board-body tr.just-moved { animation: just-moved 1.4s ease-out; }
+@keyframes just-moved { from { background: rgba(144, 222, 147, .18); } to { background: transparent; } }
+body.no-select { user-select: none; -webkit-user-select: none; }

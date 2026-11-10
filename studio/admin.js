@@ -258,9 +258,13 @@
         del.onclick = () => removePost(p);
         const title = h('button', { className: 'post-title', textContent: p.title });
         title.onclick = () => openEditor(p);
-        return h(
+        // 왼쪽 손잡이를 끌어 순서 바꾸기 (검색 중에는 끔)
+        const grip = h('button', { className: 'grip', type: 'button', title: q ? '검색 중에는 순서를 바꿀 수 없어요' : '끌어서 순서 바꾸기', ariaLabel: `${p.title} 순서 바꾸기`, disabled: !!q });
+        grip.innerHTML = '<svg viewBox="0 0 12 18" width="10" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="3" cy="3" r="1.5"/><circle cx="9" cy="3" r="1.5"/><circle cx="3" cy="9" r="1.5"/><circle cx="9" cy="9" r="1.5"/><circle cx="3" cy="15" r="1.5"/><circle cx="9" cy="15" r="1.5"/></g></svg>';
+        grip.addEventListener('pointerdown', (e) => startDrag(e, grip.closest('tr')));
+        const tr = h(
           'tr', {},
-          h('td', { className: 'c-no', textContent: String(total - i) }),
+          h('td', { className: 'c-no' }, h('span', { className: 'no-cell' }, grip, h('span', { textContent: String(total - i) }))),
           h('td', {}, thumb ? img(thumb, { className: 'thumb' }) : h('span', { className: 'thumb empty', textContent: '없음' })),
           h('td', {}, title, h('div', { className: 'post-sub', textContent: [p.subtitle, p.year].filter(Boolean).join(' · ') })),
           h('td', {}, p.docType ? h('span', { className: 'badge', textContent: p.docType }) : null, p.sample ? h('span', { className: 'badge muted-badge', textContent: '예시' }) : null, p.category ? h('div', { className: 'post-sub', textContent: p.category }) : null),
@@ -274,6 +278,8 @@
           h('td', { className: 'c-date', textContent: fmtDate(p.updatedAt) }),
           h('td', {}, h('div', { className: 'acts' }, up, down, edit, del))
         );
+        tr.dataset.id = p.id;
+        return tr;
       })
     );
     $('#board-empty').hidden = db.projects.length > 0;
@@ -281,7 +287,7 @@
   }
   $('#search').addEventListener('input', renderBoard);
 
-  // 순서 변경은 연속 클릭을 모아서 한 번에 저장
+  // 순서 변경은 연속 클릭·드래그를 모아서 한 번에 저장
   let reorderTimer;
   function move(i, dir) {
     const j = i + dir;
@@ -290,6 +296,62 @@
     [list[i], list[j]] = [list[j], list[i]];
     db = { ...db, projects: list };
     renderBoard();
+    saveOrder();
+  }
+
+  /* 드래그로 순서 바꾸기: 손잡이를 누른 채 위아래로 끌면 줄이 따라 움직이고, 놓으면 저장 */
+  let drag = null;
+  function startDrag(e, row) {
+    if (e.button > 0 || !row || $('#search').value.trim()) return;
+    e.preventDefault();
+    const body = $('#board-body');
+    drag = { row, body, startIds: $$('tr', body).map((r) => r.dataset.id) };
+    row.classList.add('is-dragging');
+    body.classList.add('is-sorting');
+    document.body.classList.add('no-select');
+    window.addEventListener('pointermove', onDrag, { passive: false });
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+  }
+  function onDrag(e) {
+    if (!drag) return;
+    e.preventDefault();
+    const { row, body } = drag;
+    const y = e.clientY;
+    // 손가락·마우스가 다른 줄의 가운데를 넘으면 그 자리로 옮김
+    const others = $$('tr', body).filter((r) => r !== row);
+    const after = others.find((r) => {
+      const b = r.getBoundingClientRect();
+      return y < b.top + b.height / 2;
+    });
+    if (after) {
+      if (row.nextElementSibling !== after) body.insertBefore(row, after);
+    } else if (body.lastElementChild !== row) body.append(row);
+    // 화면 끝 가까이 끌면 저절로 스크롤
+    if (y < 90) window.scrollBy(0, -14);
+    else if (y > window.innerHeight - 60) window.scrollBy(0, 14);
+  }
+  function endDrag() {
+    if (!drag) return;
+    const { row, body, startIds } = drag;
+    drag = null;
+    row.classList.remove('is-dragging');
+    body.classList.remove('is-sorting');
+    document.body.classList.remove('no-select');
+    window.removeEventListener('pointermove', onDrag);
+    window.removeEventListener('pointerup', endDrag);
+    window.removeEventListener('pointercancel', endDrag);
+    const ids = $$('tr', body).map((r) => r.dataset.id);
+    if (ids.join() === startIds.join()) return;
+    const byId = new Map(db.projects.map((p) => [p.id, p]));
+    db = { ...db, projects: [...ids.map((id) => byId.get(id)).filter(Boolean), ...db.projects.filter((p) => !ids.includes(p.id))] };
+    const movedId = row.dataset.id;
+    renderBoard();
+    $(`#board-body tr[data-id="${CSS.escape(movedId)}"]`)?.classList.add('just-moved');
+    saveOrder();
+  }
+
+  function saveOrder() {
     setSync('pending', '순서 저장 대기…');
     clearTimeout(reorderTimer);
     reorderTimer = setTimeout(async () => {
