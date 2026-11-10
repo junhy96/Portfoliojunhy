@@ -643,9 +643,65 @@
     canvas.height = rh;
     const clicks = heatClicks();
     $('#heat-count').textContent = clicks.length ? `클릭 ${fmt(clicks.length)}회` : '이 화면의 클릭 기록이 아직 없어요';
-    drawHeat(canvas, clicks, rw, rh);
+    paintHeat();
     rankList($('#list-targets'), countBy(clicks.filter((c) => c.target), 'target').slice(0, 8), 0, (v) => `${fmt(v)}회`);
   }
+
+  /**
+   * 점 찍을 자리
+   * - 버튼·카드·링크를 누른 클릭: 미리보기(같은 사이트) 안에서 이름이 같은 요소를 찾아 그 위에 찍음
+   *   → 방문자 화면 크기가 달라도 실제로 누른 버튼 위에 모임
+   * - 빈 곳을 누른 클릭: 방문자 화면에서의 비율 그대로
+   */
+  function describeEl(el) {
+    const card = el.closest('.work-card');
+    if (card) return ('작업: ' + (card.querySelector('.card-title, .px-tile-name, .ed-post-head b')?.textContent || card.getAttribute('aria-label') || '')).slice(0, 120);
+    const text = (el.getAttribute('aria-label') || el.textContent || '').replace(/\s+/g, ' ').trim();
+    return (text || el.tagName.toLowerCase()).slice(0, 120);
+  }
+  function targetBoxes(w, hgt) {
+    const boxes = new Map();
+    let doc;
+    try {
+      doc = $('#heat-frame').contentDocument;
+    } catch {}
+    if (!doc?.body) return boxes;
+    doc.querySelectorAll('.work-card, a, button, [data-go], [role="button"]').forEach((el) => {
+      const label = describeEl(el);
+      if (boxes.has(label)) return;
+      const r = el.getBoundingClientRect();
+      const cs = doc.defaultView.getComputedStyle(el);
+      if (r.width < 2 || r.height < 2 || cs.visibility === 'hidden' || cs.display === 'none') return;
+      if (r.right < 0 || r.bottom < 0 || r.left > w || r.top > hgt) return; // 미리보기 화면 밖
+      boxes.set(label, r);
+    });
+    return boxes;
+  }
+  // 같은 요소를 누른 클릭들이 한 점에 겹치지 않게 요소 안에서 조금씩 흩음 (클릭마다 늘 같은 자리)
+  const spread = (seed) => {
+    let h = 2166136261;
+    for (const ch of seed) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+    return [((h >>> 0) % 1000) / 1000, ((h >>> 10) % 1000) / 1000];
+  };
+  function paintHeat() {
+    const [w, hgt] = REF[heat.device];
+    const boxes = targetBoxes(w, hgt);
+    const pts = heatClicks().map((c, i) => {
+      const b = c.target && boxes.get(c.target);
+      if (!b) return { x: c.x * w, y: c.y * hgt };
+      const [u, v] = spread(c.session + c.created_at + i);
+      return { x: b.left + b.width * (0.3 + u * 0.4), y: b.top + b.height * (0.3 + v * 0.4) };
+    });
+    drawHeat($('#heat-canvas'), pts, w, hgt);
+  }
+  // 미리보기가 다 그려진 뒤(등장 애니메이션 포함) 버튼 위치에 맞춰 다시 찍음
+  //   (미리보기는 불러온 뒤에 내용을 채우므로 몇 번 나눠서 다시 찍음)
+  let paintTimers = [];
+  $('#heat-frame').addEventListener('load', () => {
+    paintTimers.forEach(clearTimeout);
+    paintTimers = [700, 1600, 3000, 5000].map((ms) => setTimeout(paintHeat, ms));
+  });
+
   function drawHeat(canvas, clicks, w, hgt) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, w, hgt);
@@ -658,8 +714,7 @@
     const r = w > 1000 ? 40 : 28;
     const a = Math.max(0.06, Math.min(0.45, 8 / clicks.length));
     clicks.forEach((c) => {
-      const x = c.x * w;
-      const y = c.y * hgt;
+      const { x, y } = c;
       const g = o.createRadialGradient(x, y, 0, x, y, r);
       g.addColorStop(0, `rgba(0,0,0,${a})`);
       g.addColorStop(1, 'rgba(0,0,0,0)');

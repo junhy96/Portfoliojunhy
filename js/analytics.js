@@ -111,13 +111,25 @@ export function initAnalytics(cfg) {
   new MutationObserver(onSection).observe(document.body, { attributes: true, attributeFilter: ['data-section'] });
 
   // 클릭 위치 (PDF 뷰어 안의 클릭은 제외)
+  // 누른 자리에서 거의 움직이지 않고 뗀 것만 클릭으로 셈 — 드래그·스와이프(페이지 넘기기, Works 가로 밀기)는 빼서 히트맵에 섞이지 않게
   let clicks = 0;
+  let down = null;
   addEventListener(
     'pointerdown',
     (e) => {
-      if (clicks >= MAX_CLICKS || e.button > 0 || document.body.classList.contains('viewer-open')) return;
+      down = e.button > 0 || document.body.classList.contains('viewer-open') ? null : { x: e.clientX, y: e.clientY, target: e.target, section: document.body.dataset.section || null };
+    },
+    { capture: true, passive: true }
+  );
+  addEventListener('pointercancel', () => (down = null), { capture: true, passive: true }); // 휴대폰에서 스크롤·스와이프로 바뀐 터치
+  addEventListener(
+    'pointerup',
+    (e) => {
+      const d = down;
+      down = null;
+      if (!d || clicks >= MAX_CLICKS || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 10) return;
       clicks++;
-      push({ type: 'click', x: round(e.clientX / innerWidth), y: round(e.clientY / innerHeight), target: describe(e.target) });
+      push({ type: 'click', section: d.section, x: round(d.x / innerWidth), y: round(d.y / innerHeight), target: describe(d.target) });
     },
     { capture: true, passive: true }
   );
