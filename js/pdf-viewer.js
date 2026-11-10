@@ -173,6 +173,7 @@ export class PdfViewer {
     this.scroller.hidden = !!video;
     this.root.querySelectorAll('.vtab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.act === 'tab-' + mode)));
     const frame = $('viewer-frame');
+    frame.classList.toggle('is-shorts', /youtube\.com\/shorts\//i.test(this.project?.video || ''));
     if (video) {
       if (!frame.firstChild) {
         const f = document.createElement('iframe');

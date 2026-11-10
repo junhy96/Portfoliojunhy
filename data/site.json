@@ -319,6 +319,50 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     },
     {
+      "id": "w-gamedesign-workbench",
+      "title": "기획 워크벤치",
+      "subtitle": "전투 시뮬레이터 · 강화·가챠 확률 설계 도구",
+      "category": "웹 툴",
+      "year": "2026",
+      "tags": [
+        "전투 시뮬레이션",
+        "확률 설계",
+        "밸런스"
+      ],
+      "summary": "엑셀로 풀기 어려운 전투 승률·강화·가챠 확률을 브라우저에서 바로 계산하고 검증하는 기획자용 도구 모음",
+      "description": "직업·캐릭터·몬스터·스킬·효과·속성 상성·시너지 데이터 테이블을 읽어 1:1, 파티, 보스전을 같은 규칙으로 시뮬레이션합니다. 턴제·실시간 모드, 데미지 공식 4종, 그로기·보스 페이즈·타겟팅을 지원하고, 조합별 승률과 클리어 시간 분포(P10~P99), 기여도 분석으로 밸런스 근거를 숫자로 보여줍니다.\n강화는 흡수 마르코프 체인으로 기대 비용·편차·파괴 위험을 정확히 풀고 목표 비용을 역산하며, 가챠는 천장·픽업·마일리지를 반영한 기대 비용과 확률 공시표를 만듭니다. 보스 패턴 프레임 검증기는 선딜·판정·후딜로 회피 윈도우를 계산합니다.",
+      "thumb": "uploads/works/gamedesign-workbench.jpg",
+      "pdf": null,
+      "docType": "툴 제작",
+      "link": "https://junhy96.github.io/gamedesign_workbench/",
+      "video": "https://www.youtube.com/watch?v=IOuSgqbn-ho",
+      "visible": true,
+      "createdAt": "2026-11-10T09:30:00.000Z",
+      "updatedAt": "2026-11-10T09:30:00.000Z"
+    },
+    {
+      "id": "w-obung",
+      "title": "오벙없",
+      "subtitle": "오픈톡 벙 모집 · 운영진 대화 분석 웹서비스",
+      "category": "웹서비스",
+      "year": "2026",
+      "tags": [
+        "웹서비스",
+        "데이터 분석",
+        "Supabase"
+      ],
+      "summary": "오픈톡 벙 모집·참가와 운영진 대화 분석을 한곳에 모은 웹서비스. 기획부터 배포까지 1인 개발",
+      "description": "카카오톡 오픈채팅방에 흩어지던 벙 모집과 참석 확인을 한곳에 모았습니다. 멤버는 휴대폰으로 벙을 고르고 참가·대기·취소하며, 남은 자리에 여러 명이 동시에 신청해도 정원을 넘지 않도록 서버에서 막습니다.\n운영진용 분석기는 대화 내보내기 파일을 브라우저 안에서만 읽어(원문은 서버로 보내지 않음) 시간대별 활동, 자주 쓴 말, 벙 지역 지도, 멤버 점검을 보여줍니다.\nVanilla JS · Cloudflare Pages · Supabase(카카오 로그인, RLS)로 1인 개발했고, Playwright 테스트로 화면과 동시 신청을 검증했습니다.",
+      "thumb": "uploads/works/obung.jpg",
+      "pdf": null,
+      "docType": "툴 제작",
+      "link": "https://obung.pages.dev/",
+      "video": "https://www.youtube.com/shorts/kA7ycbWYFR8",
+      "visible": true,
+      "createdAt": "2026-11-10T09:30:00.000Z",
+      "updatedAt": "2026-11-10T09:30:00.000Z"
+    },
+    {
       "id": "w-lies-of-p-chapter",
       "title": "굴리아 대성당 & 부서진 마을",
       "subtitle": "P의 거짓 · 30~40분 분량 창작 챕터",

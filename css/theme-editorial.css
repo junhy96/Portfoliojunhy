@@ -954,3 +954,5 @@ html[data-theme="editorial"] .works-grid .card-site { right: 6px; top: 6px; }
 .vbtn.site-link { color: #10200f; background: var(--pt-accent); border-color: var(--pt-accent); }
 .vbtn.site-link:hover { filter: brightness(1.08); }
 .vbtn[hidden] { display: none; } /* 다운로드·사이트 열기 등: PDF·주소가 없으면 숨김 */
+/* 유튜브 쇼츠: 세로 틀 */
+.video-frame.is-shorts { width: auto; height: min(calc(var(--vh, 100vh) - 200px), 900px); max-width: 100%; aspect-ratio: 9 / 16; }

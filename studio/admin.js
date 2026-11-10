@@ -618,7 +618,7 @@
       subtitle: form.subtitle.value.trim(),
       category: form.category.value.trim(),
       docType: form.docType.value,
-      video: video ? `https://www.youtube.com/watch?v=${ytId(video)}` : undefined,
+      video: video ? (/\/shorts\//i.test(video) ? `https://www.youtube.com/shorts/${ytId(video)}` : `https://www.youtube.com/watch?v=${ytId(video)}`) : undefined,
       sample: undefined, // 직접 수정해 저장하면 더 이상 '예시'가 아님
       year: form.year.value.trim(),
       tags: form.tags.value.split(',').map((t) => t.trim()).filter(Boolean),
