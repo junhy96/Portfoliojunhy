@@ -259,7 +259,29 @@
         }
       ]
     },
-    "links": [],
+    "links": [
+      {
+        "name": "크로노스튜디오AI 개발 자동화 포지션",
+        "tag": "ai",
+        "hide": {
+          "works": [
+            "w-arachne",
+            "w-midcore-rpg",
+            "w-browndust2",
+            "w-steampunk-boss",
+            "w-nameless-knights",
+            "w-odin-detect",
+            "w-lostark-giyen",
+            "w-dressroom"
+          ],
+          "timeline": []
+        },
+        "site": {
+          "title": "게임 개발자 전현영 포트폴리오",
+          "role": "AI Automation Specialist"
+        }
+      }
+    ],
     "images": {
       "hero": {
         "src": "uploads/site/photo-hero.jpg",
@@ -657,5 +679,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794330741492
+  "rev": 1794330874175
 }
