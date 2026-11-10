@@ -733,3 +733,10 @@ html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity:
 .tl-arrow[data-tl="-1"]:hover { transform: translateX(-2px); }
 .tl-arrow[data-tl="1"]:hover { transform: translateX(2px); }
 @media (hover: none) { .tl-arrows { display: none; } }
+/* 휴대폰 상단바: 역할(Combat Game Designer)이 길어 페이지 표시를 밀어내지 않게 한 줄로 */
+@media (max-width: 820px) {
+  .brand { min-width: 0; }
+  .brand-role { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .m-pages { flex: none; white-space: nowrap; }
+}
+@media (max-width: 400px) { .brand-role { display: none; } }

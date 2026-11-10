@@ -75,7 +75,9 @@
         "title": "국립 한경대학교 졸업",
         "org": "식품생물공학과",
         "desc": "",
-        "tasks": []
+        "tasks": [],
+        "image": "uploads/site/timeline-education.jpg",
+        "focusX": 0.45
       },
       {
         "id": "t9pm4zcs4",
