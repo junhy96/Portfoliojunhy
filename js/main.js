@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100606';
-import { PdfViewer } from './pdf-viewer.js?v=202611100606';
-import { renderSkillChart } from './skills.js?v=202611100606';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100606';
-import { initWorks } from './works.js?v=202611100606';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100606';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100612';
+import { PdfViewer } from './pdf-viewer.js?v=202611100612';
+import { renderSkillChart } from './skills.js?v=202611100612';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100612';
+import { initWorks } from './works.js?v=202611100612';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100612';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');

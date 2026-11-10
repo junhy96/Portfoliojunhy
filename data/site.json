@@ -120,6 +120,21 @@
           "몬스터 기획 · 제작 (오작동하는 미스트 골렘, 울려 퍼지는 카코포네)",
           "던전 시스템 기획"
         ]
+      },
+      {
+        "id": "tpbghb0kb",
+        "type": "교육",
+        "period": "2023.01 — 2023.07",
+        "title": "게임 캔버스 · 게임 기획 실무 교육",
+        "org": "시스템 · UI · 콘텐츠 기획",
+        "desc": "게임 기획 실무 과정에서 시스템, UI, 콘텐츠 기획을 배웠어요.",
+        "tasks": [
+          "시스템 기획",
+          "UI 기획",
+          "콘텐츠 기획"
+        ],
+        "image": "uploads/site/timeline-gamecanvas.jpg",
+        "focusX": 0.45
       }
     ],
     "skillsHeading": "Skills",

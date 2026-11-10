@@ -89,7 +89,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     if (x.org) inner.append(el('p', 'tl-org', x.org));
     if (x.desc) inner.append(el('p', 'tl-desc', x.desc));
     if (x.tasks.length) {
-      inner.append(el('p', 'tl-tasks-label', '주요 업무'));
+      inner.append(el('p', 'tl-tasks-label', x.type === '교육' ? '배운 내용' : '주요 업무'));
       const ul = el('ul', 'tl-tasks');
       x.tasks.forEach((t, k) => {
         const tli = el('li', '', t);
