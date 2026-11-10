@@ -106,6 +106,27 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       });
       inner.append(ul);
     }
+    // 업무 자료 (포트폴리오 PDF에서 그 회사 부분만): 쪽 미리보기를 누르면 그 쪽부터 크게
+    if (x.work?.pdf && x.work.thumbs?.length) {
+      card.classList.add('has-work');
+      const n = x.work.thumbs.length;
+      inner.append(el('p', 'tl-tasks-label tl-work-label', `업무 자료 · ${n}쪽`));
+      const row = el('div', 'tl-work');
+      x.work.thumbs.forEach((src, k) => {
+        const b = el('button', 'tl-work-page');
+        b.type = 'button';
+        b.setAttribute('aria-label', `${x.title} 업무 자료 ${k + 1}쪽 크게 보기`);
+        const im = el('img');
+        Object.assign(im, { src, alt: '', loading: 'lazy', decoding: 'async' });
+        b.append(im);
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener: b, doc: { id: 'tl-' + (x.id || k), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
+        });
+        row.append(b);
+      });
+      inner.append(row);
+    }
     if (inner.childElementCount) {
       more.append(inner);
       card.append(more);

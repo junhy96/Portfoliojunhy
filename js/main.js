@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101601';
-import { PdfViewer } from './pdf-viewer.js?v=202611101601';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101601';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101601';
-import { initWorks } from './works.js?v=202611101601';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101601';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101613';
+import { PdfViewer } from './pdf-viewer.js?v=202611101613';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101613';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101613';
+import { initWorks } from './works.js?v=202611101613';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101613';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -621,6 +621,8 @@ async function boot() {
     onClose: () => (deck.enabled = true),
   });
   const previewText = $('[data-preview]');
+  // 타임라인 카드의 '업무 자료' 쪽을 누르면 그 쪽부터 PDF로
+  window.addEventListener('pf-open-doc', (e) => viewer.open(e.detail.doc, e.detail.opener, e.detail.page));
   let hoverTimer;
   const hover = (i) => {
     clearTimeout(hoverTimer);

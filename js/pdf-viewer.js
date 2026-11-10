@@ -91,7 +91,7 @@ export class PdfViewer {
     return !this.root.hidden;
   }
 
-  async open(project, opener) {
+  async open(project, opener, startPage = 1) {
     this.opener = opener || document.activeElement;
     const session = ++this.session;
     this.project = project;
@@ -174,6 +174,7 @@ export class PdfViewer {
       this._layout(false);
       this.pages.forEach((p) => this.io.observe(p.el));
       this._updatePageIndicator();
+      if (startPage > 1 && this.pages[startPage - 1]) requestAnimationFrame(() => this.pages[startPage - 1].el.scrollIntoView({ block: 'start' }));
       this.scroller.focus({ preventScroll: true });
     } catch (err) {
       if (session !== this.session) return;
