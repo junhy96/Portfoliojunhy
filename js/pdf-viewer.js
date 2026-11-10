@@ -204,12 +204,15 @@ export class PdfViewer {
         b.dataset.index = i;
         b.setAttribute('role', 'listitem');
         b.setAttribute('aria-label', `${g.caption || '소개 이미지 ' + (i + 1)} 크게 보기`);
-        b.append(Object.assign(document.createElement('img'), { src: g.src, alt: '', loading: 'lazy', decoding: 'async' }));
+        // 원래 화면에서의 폭(w)으로 보여 줘서 누르지 않아도 글자가 읽히게 (모르면 900px)
+        b.style.setProperty('--w', `${Math.max(320, Math.min(1400, Number(g.w) || 900))}px`);
+        b.append(Object.assign(document.createElement('img'), { src: g.src, alt: g.caption || '', loading: i < 2 ? 'eager' : 'lazy', decoding: 'async' }));
         if (g.caption) b.append(Object.assign(document.createElement('span'), { textContent: g.caption }));
         return b;
       })
     );
     box.hidden = !this.gallery.length;
+    $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
     const shorts = /youtube\.com\/shorts\//i.test(this.project?.video || '');
     $('viewer-video').classList.toggle('has-gallery', !!this.gallery.length);
     $('viewer-video').classList.toggle('is-shorts', shorts && !!this.gallery.length);

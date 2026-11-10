@@ -342,35 +342,43 @@
       "gallery": [
         {
           "src": "uploads/works/gallery/wb-1-budget.jpg",
-          "caption": "강화 · 몬테카를로 2만 회 총비용 분포와 예산별 도달 확률"
+          "caption": "강화 · 몬테카를로 2만 회 총비용 분포와 예산별 도달 확률",
+          "w": 1036
         },
         {
           "src": "uploads/works/gallery/wb-2-verify.jpg",
-          "caption": "계산 검증 · 마르코프 체인 정답과 시뮬레이션 수렴"
+          "caption": "계산 검증 · 마르코프 체인 정답과 시뮬레이션 수렴",
+          "w": 504
         },
         {
           "src": "uploads/works/gallery/wb-3-dist.jpg",
-          "caption": "총비용 분포 · P10·P50·P90·P99"
+          "caption": "총비용 분포 · P10·P50·P90·P99",
+          "w": 982
         },
         {
           "src": "uploads/works/gallery/wb-4-paths.jpg",
-          "caption": "강화 경로 예시 · 시행별 단계 변화와 파괴 지점"
+          "caption": "강화 경로 예시 · 시행별 단계 변화와 파괴 지점",
+          "w": 1036
         },
         {
           "src": "uploads/works/gallery/wb-5-combat.jpg",
-          "caption": "전투 시뮬레이터 · 클리어 턴 분포"
+          "caption": "전투 시뮬레이터 · 클리어 턴 분포",
+          "w": 956
         },
         {
           "src": "uploads/works/gallery/wb-6-gacha.jpg",
-          "caption": "가챠 · 뽑기 수 분포 (천장·픽업 반영)"
+          "caption": "가챠 · 뽑기 수 분포 (천장·픽업 반영)",
+          "w": 956
         },
         {
           "src": "uploads/works/gallery/wb-7-gacha-why.jpg",
-          "caption": "가챠 · 비용이 이만큼 드는 이유 분해"
+          "caption": "가챠 · 비용이 이만큼 드는 이유 분해",
+          "w": 464
         },
         {
           "src": "uploads/works/gallery/wb-8-frame.jpg",
-          "caption": "패턴 프레임 검증 · 회피 윈도우 타임라인"
+          "caption": "패턴 프레임 검증 · 회피 윈도우 타임라인",
+          "w": 976
         }
       ]
     },
@@ -398,31 +406,38 @@
       "gallery": [
         {
           "src": "uploads/works/gallery/obung-1-activity.jpg",
-          "caption": "대화 분석 · 언제 가장 시끄러웠나 (날짜·시간·요일)"
+          "caption": "대화 분석 · 언제 가장 시끄러웠나 (날짜·시간·요일)",
+          "w": 636
         },
         {
           "src": "uploads/works/gallery/obung-2-cloud.jpg",
-          "caption": "키워드 클라우드 · 가운데일수록 많이 나온 말"
+          "caption": "키워드 클라우드 · 가운데일수록 많이 나온 말",
+          "w": 489
         },
         {
           "src": "uploads/works/gallery/obung-3-talkers.jpg",
-          "caption": "말 많은 순위 · 기간·상위 멤버 필터"
+          "caption": "말 많은 순위 · 기간·상위 멤버 필터",
+          "w": 636
         },
         {
           "src": "uploads/works/gallery/obung-4-search.jpg",
-          "caption": "멤버 검색 · 그 사람이 한 말과 자주 쓴 말"
+          "caption": "멤버 검색 · 그 사람이 한 말과 자주 쓴 말",
+          "w": 1140
         },
         {
           "src": "uploads/works/gallery/obung-5-dash.jpg",
-          "caption": "멤버 대시보드 · 사는 곳·년생·연령대·성비"
+          "caption": "멤버 대시보드 · 사는 곳·년생·연령대·성비",
+          "w": 1140
         },
         {
           "src": "uploads/works/gallery/obung-6-map.jpg",
-          "caption": "벙 지도 · 톡게시판 벙이 열린 동네와 캘린더"
+          "caption": "벙 지도 · 톡게시판 벙이 열린 동네와 캘린더",
+          "w": 1140
         },
         {
           "src": "uploads/works/gallery/obung-7-bung.jpg",
-          "caption": "벙 일정 · 남은 자리·참석자·빠진 사람"
+          "caption": "벙 일정 · 남은 자리·참석자·빠진 사람",
+          "w": 1160
         }
       ]
     },
