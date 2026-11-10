@@ -201,7 +201,7 @@
     "images": {
       "hero": {
         "src": "uploads/site/photo-hero.jpg",
-        "focusX": 0.76
+        "focusX": 0.74
       },
       "about": {
         "src": "uploads/site/photo-about.jpg",
