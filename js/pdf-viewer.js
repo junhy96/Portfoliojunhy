@@ -107,6 +107,11 @@ export class PdfViewer {
     // 유튜브 영상: PDF와 둘 다 있으면 위쪽 탭으로 오감 (기획서 먼저), 영상만 있으면 바로 재생
     const yt = project._yt;
     $('viewer-tabs').hidden = !(yt && project.pdf);
+    // 직접 만든 툴·사이트: 위쪽에 '사이트 열기' (새 탭)
+    const site = $('viewer-site');
+    const link = /^https?:\/\//i.test(project.link || '') ? project.link : '';
+    site.hidden = !link;
+    if (link) site.href = link;
     const ytLink = $('viewer-yt');
     ytLink.hidden = !yt;
     if (yt) ytLink.href = `https://www.youtube.com/watch?v=${yt}`;
@@ -153,7 +158,7 @@ export class PdfViewer {
       this.pagesEl.appendChild(img);
       this.pagesEl.style.width = `min(100%, 1200px)`;
     }
-    this.statusEl.textContent = '등록된 PDF가 없습니다.';
+    this.statusEl.textContent = /^https?:\/\//i.test(project.link || '') ? '위쪽 ‘사이트 열기’로 직접 써 볼 수 있어요.' : '등록된 PDF가 없습니다.';
     $('viewer-page').textContent = '– / –';
     this.descEl.hidden = false;
   }

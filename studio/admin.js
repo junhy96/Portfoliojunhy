@@ -271,8 +271,9 @@
           h(
             'td', {},
             p.pdf ? h('a', { className: 'pdf-link', href: assetUrl(p.pdf), target: '_blank', rel: 'noopener', textContent: `PDF ${fmtSize(p.pdfSize)}` }) : null,
+            p.link ? h('a', { className: 'pdf-link', href: p.link, target: '_blank', rel: 'noopener', textContent: '↗ 사이트' }) : null,
             ytId(p.video) ? h('a', { className: 'pdf-link yt', href: p.video, target: '_blank', rel: 'noopener', textContent: '▶ 영상' }) : null,
-            !p.pdf && !ytId(p.video) ? h('span', { className: 'muted', textContent: '—' }) : null
+            !p.pdf && !ytId(p.video) && !p.link ? h('span', { className: 'muted', textContent: '—' }) : null
           ),
           h('td', {}, h('label', { className: 'switch' }, vis, h('i'))),
           h('td', { className: 'c-date', textContent: fmtDate(p.updatedAt) }),
@@ -438,6 +439,7 @@
       ['title', 'subtitle', 'category', 'year', 'summary', 'description'].forEach((k) => (form[k].value = p[k] || ''));
       form.tags.value = (p.tags || []).join(', ');
       form.video.value = p.video || '';
+      form.link.value = p.link || '';
       form.visible.checked = p.visible !== false;
       fillDocTypes(p.docType || '');
       const cur = p.thumb || p.cover;
@@ -603,9 +605,15 @@
       form.video.focus();
       return toast('유튜브 링크를 확인해 주세요. 영상 페이지 주소를 그대로 붙여 넣으면 돼요.', true);
     }
+    const link = form.link.value.trim();
+    if (link && !/^https?:\/\/[^\s]+\.[^\s]+/i.test(link)) {
+      form.link.focus();
+      return toast('사이트 주소는 https://로 시작하는 전체 주소로 넣어 주세요.', true);
+    }
     const id = editing?.id || uid();
     const now = new Date().toISOString();
     const fields = {
+      link: link || undefined,
       title: form.title.value.trim(),
       subtitle: form.subtitle.value.trim(),
       category: form.category.value.trim(),

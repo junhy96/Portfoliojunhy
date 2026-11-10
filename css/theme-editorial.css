@@ -948,3 +948,9 @@ html[data-theme="editorial"] .brand .brand-role { color: var(--pt-accent); opaci
 .works-chip[aria-pressed="true"]::after { background: var(--pt-accent); }
 .ed-giant .hl { color: var(--pt-accent); }
 @media (max-width: 820px) { .m-num { color: var(--pt-accent); } }
+/* Works 카드: 직접 써 볼 수 있는 사이트·툴 표시 (오른쪽 위) · 뷰어의 '사이트 열기' */
+.card-site { position: absolute; right: 10px; top: 10px; z-index: 2; padding: 2px 8px; border-radius: 6px; font-size: 11px; letter-spacing: .02em; color: #10200f; background: var(--pt-accent); }
+html[data-theme="editorial"] .works-grid .card-site { right: 6px; top: 6px; }
+.vbtn.site-link { color: #10200f; background: var(--pt-accent); border-color: var(--pt-accent); }
+.vbtn.site-link:hover { filter: brightness(1.08); }
+.vbtn[hidden] { display: none; } /* 다운로드·사이트 열기 등: PDF·주소가 없으면 숨김 */

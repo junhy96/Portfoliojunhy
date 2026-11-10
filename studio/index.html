@@ -7,7 +7,7 @@
   <title>Studio — 관리자</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&display=swap" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611100852" />
+  <link rel="stylesheet" href="admin.css?v=202611100856" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -126,12 +126,16 @@
             </div>
 
             <div class="card">
-              <h3>유튜브 영상 <small class="muted">선택</small></h3>
+              <h3>영상 · 사이트 <small class="muted">선택</small></h3>
               <label class="field">
                 <span>유튜브 링크 <small>PDF와 같이 넣으면 사이트 팝업에서 ‘기획서 / 영상’ 탭으로 오가요. 썸네일을 따로 안 고르면 유튜브 섬네일을 써요</small></span>
                 <input name="video" type="url" maxlength="300" placeholder="https://www.youtube.com/watch?v=… 또는 https://youtu.be/…" />
               </label>
               <div class="yt-preview" id="yt-preview" hidden></div>
+              <label class="field">
+                <span>사이트 주소 <small>직접 만든 툴·웹서비스라면 주소를 넣어 주세요. 사이트 팝업 위쪽에 ‘사이트 열기 ↗’가 생기고 카드에 ‘사이트’ 표시가 붙어요</small></span>
+                <input name="link" type="url" maxlength="300" placeholder="https://…" />
+              </label>
             </div>
 
             <div class="card">
@@ -516,9 +520,9 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611100852"></script>
-  <script src="github.js?v=202611100852"></script>
-  <script src="admin.js?v=202611100852"></script>
-  <script src="stats.js?v=202611100852"></script>
+  <script src="../js/icons.js?v=202611100856"></script>
+  <script src="github.js?v=202611100856"></script>
+  <script src="admin.js?v=202611100856"></script>
+  <script src="stats.js?v=202611100856"></script>
 </body>
 </html>

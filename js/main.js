@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100852';
-import { PdfViewer } from './pdf-viewer.js?v=202611100852';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611100852';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100852';
-import { initWorks } from './works.js?v=202611100852';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100852';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100856';
+import { PdfViewer } from './pdf-viewer.js?v=202611100856';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611100856';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100856';
+import { initWorks } from './works.js?v=202611100856';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100856';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -58,6 +58,8 @@ function workItem(p, i, variant) {
     if (ytOnly) im.addEventListener('error', () => (im.src = img), { once: true });
     return im;
   };
+  // 직접 써 볼 수 있는 사이트·툴: 오른쪽 아래 표시
+  const siteBadge = () => (/^https?:\/\//i.test(p.link || '') ? el('span', { className: 'card-site', textContent: '사이트 ↗' }) : null);
   // 유튜브 표시: 가운데 재생 버튼 + 왼쪽 아래 YouTube 로고
   const ytBadges = () =>
     p._yt
@@ -85,6 +87,7 @@ function workItem(p, i, variant) {
         el('span', { className: 'card-no', textContent: pad(i + 1) }),
         p.docType || p.sample ? el('span', { className: 'card-doc' }, p.docType || '', p.sample ? el('em', { className: 'card-sample', textContent: '예시' }) : null) : null,
         ...ytBadges(),
+        siteBadge(),
         el('span', { className: 'card-open', textContent: openLabel })
       ),
       el('span', { className: 'card-meta' }, el('span', { className: 'card-title', textContent: p.title }), el('span', { className: 'card-info small', textContent: metaOf(p) }), el('span', { className: 'card-sub small', textContent: p.subtitle || p.summary || '' }))
