@@ -931,3 +931,11 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 .tl-item.is-focus .tl-card { border-left-color: var(--tl-pt); }
 .tl-item.is-focus .tl-period { color: var(--tl-pt); }
 .tl-item.is-focus .tl-tasks li::before { background: var(--tl-pt); }
+/* ===================== 강조 색 (#90DE93): 로딩 게이지 · 상단 메뉴 밑줄 · 왼쪽 진행 막대 ===================== */
+:root { --pt-accent: #90de93; }
+.loader-bar { height: 2px; border-radius: 2px; }
+.loader-bar i { background: var(--pt-accent); }
+html[data-theme="editorial"] .nav a::after { background: var(--pt-accent); }
+.rail-fill { background: var(--pt-accent); }
+.rail-fill::after { background: var(--pt-accent); box-shadow: 0 0 0 4px rgba(144, 222, 147, .18); }
+@media (max-width: 820px) { .m-bar i { background: var(--pt-accent); } }
