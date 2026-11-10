@@ -701,3 +701,20 @@ html[data-theme="editorial"] .works-grid .card-info { font-size: 13px; color: va
   html[data-theme="editorial"] .about-grid { margin-top: 28px; }
   html[data-theme="editorial"] .skill-list li { padding: 2px 0; }
 }
+
+/* ===================== 사진 어둡게 (글자 강조) =====================
+   섹션마다 사진 위에 어두운 막을 한 겹 더: 인물은 은은하게, 글자는 또렷하게 */
+html[data-theme="editorial"] body[data-section="hero"] .shade-full { opacity: .38; }
+html[data-theme="editorial"] body[data-section="about"] .shade-full { opacity: .52; }
+html[data-theme="editorial"] body[data-section="timeline"] .shade-full { opacity: .86; }
+html[data-theme="editorial"] body[data-section="skills"] .shade-full { opacity: .84; }
+html[data-theme="editorial"] body[data-section="works"] .shade-full { opacity: .62; }
+html[data-theme="editorial"] body[data-section="works"].is-previewing .shade-full { opacity: .78; }
+html[data-theme="editorial"] body[data-section="contact"] .shade-full { opacity: .5; }
+/* 타임라인 화살표 */
+.tl-arrows { display: inline-flex; gap: 2px; margin-left: 4px; }
+.tl-arrow { width: 28px; height: 24px; border: 0; background: none; color: var(--fg-2); font-size: 18px; line-height: 1; cursor: pointer; transition: color .2s, transform .2s; }
+.tl-arrow:hover { color: var(--fg); }
+.tl-arrow[data-tl="-1"]:hover { transform: translateX(-2px); }
+.tl-arrow[data-tl="1"]:hover { transform: translateX(2px); }
+@media (hover: none) { .tl-arrows { display: none; } }

@@ -254,14 +254,9 @@ export function initWorks(panel, projects, docTypes = []) {
       go(target + dir * step);
       return true;
     },
-    activate(on, fromEnd) {
+    activate(on) {
       if (!on) return;
       show();
-      if (fromEnd) {
-        cur = target = max();
-        grid.scrollLeft = cur;
-        paint();
-      }
     },
   };
 }

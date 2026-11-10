@@ -17,7 +17,7 @@
   --vh: 100vh;
   --ease: cubic-bezier(0.77, 0, 0.18, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --dur: 1000ms;
+  --dur: 600ms;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -133,12 +133,12 @@ body.is-ready .loader { opacity: 0; visibility: hidden; }
 /* reveal 애니메이션 */
 .reveal {
   opacity: 0; transform: translateY(8px);
-  transition: opacity .45s var(--ease-out), transform .5s var(--ease-out);
+  transition: opacity .3s var(--ease-out), transform .35s var(--ease-out);
   transition-delay: 0s;
 }
 .panel.is-active .reveal {
   opacity: 1; transform: none;
-  transition-delay: calc(80ms + var(--d, 0) * 50ms);
+  transition-delay: calc(40ms + var(--d, 0) * 30ms);
 }
 /* Works 기획서 카드 전용: 무작위 방향에서 앞쪽(화면 밖)으로부터 날아와 자리 잡음 — Animista slide-in-bck
    방향(--sx, --sy, --sz)과 시간차(--j)는 works.js가 들어올 때마다 새로 정함 */
@@ -447,8 +447,10 @@ html.is-embed .works-grid > li { animation: none !important; }
   animation: tracking-in-expand 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
 }
 body.is-ready .panel.is-active :is(.ed-name, .section-title, .ed-giant) {
-  animation: tracking-in-expand .7s cubic-bezier(0.215, 0.610, 0.355, 1.000) .1s both;
+  animation: tracking-in-expand .45s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0s both;
 }
+/* 다시 온 방문자: 열림 화면 없이 바로 */
+html.is-revisit .loader { display: none; }
 html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none !important; }
 @media (prefers-reduced-motion: reduce) {
   .tracking-in-expand { animation: none; }

@@ -1,15 +1,24 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611100535';
-import { PdfViewer } from './pdf-viewer.js?v=202611100535';
-import { renderSkillChart } from './skills.js?v=202611100535';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611100535';
-import { initWorks } from './works.js?v=202611100535';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611100535';
+import { MorphStage, FallbackStage } from './morph.js?v=202611100548';
+import { PdfViewer } from './pdf-viewer.js?v=202611100548';
+import { renderSkillChart } from './skills.js?v=202611100548';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611100548';
+import { initWorks } from './works.js?v=202611100548';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611100548';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
 let onTimelineFocus = null; // 타임라인에서 보는 항목이 바뀔 때 (boot에서 채움)
 const TONE_MODE = () => (document.documentElement.dataset.tone === 'mono' ? 3 : 2); // 배경 사진 색보정: 2 청록 회색, 3 모노톤
-const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
+// 열리는 화면 최소 표시 시간: 첫 방문만 PORTFOLIO가 펼쳐질 만큼(0.7초), 다시 오면 기다리지 않음
+const SPLASH_MIN = (() => {
+  if (EMBED) return 0;
+  try {
+    if (localStorage.getItem('pf-seen')) return 0;
+    localStorage.setItem('pf-seen', '1');
+  } catch {}
+  return 700;
+})();
+if (!SPLASH_MIN) document.documentElement.classList.add('is-revisit');
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
 // 스타일은 Editorial 하나 (예전 페이지가 캐시에 남아 다른 스타일을 고르더라도 덮어씀)
@@ -234,12 +243,12 @@ class Deck {
     this.index = i;
     this.navDir = Math.sign(i - prev); // 마지막으로 넘어간 방향
     this.navTime = performance.now();
-    this.lockUntil = this.navTime + 1000;
+    this.lockUntil = this.navTime + 600;
     this._apply(animate);
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
       p.classList.toggle('is-active', k === i);
-      p._h?.activate(k === i, step && i < prev); // 가로 타임라인: 아래 페이지에서 한 칸 올라오면 끝에서, 메뉴로 오면 처음부터
+      p._h?.activate(k === i); // 가로 목록(타임라인·Works): 들어오면 처음부터
     });
     panel.querySelectorAll('[data-scroll]').forEach((s) => (s.scrollTop = 0));
     history.replaceState(null, '', '#' + panel.id);
@@ -282,13 +291,8 @@ class Deck {
     // 넘어가는 중(1초)에는 휠을 막되, 반대 방향으로 새로 굴리면 바로 되돌아감 (내리다가 마음 바꿔 올릴 때 걸리지 않게)
     const reverse = strong && this.navDir && dir !== this.navDir;
     if (now < this.lockUntil && !reverse) return;
-    if (!strong && now - this.navTime < 1600) return; // 트랙패드 관성 무시
-    // 가로 타임라인: 끝에 닿기 전까지는 휠을 옆으로 이동하는 데 씀. 끝에 닿으면 계속 굴려도 바로 다음 페이지로
-    const h = this.panels[this.index]._h;
-    if (h) {
-      if (!h.wheel(dy)) this.go(this.index + dir, { step: true });
-      return;
-    }
+    if (!strong && now - this.navTime < 1000) return; // 트랙패드 관성 무시
+    // 휠(위아래)은 언제나 페이지 이동. 타임라인·Works의 옆 이동은 ← → 키·화살표 버튼·끌기·트랙패드 가로 밀기로
     if (now - this.innerScrollAt < 450) {
       // 목록 끝에 닿은 뒤에도 계속 굴리는 중이면 넘어가지 않음 → 잠깐 멈췄다가 다시 굴리면 다음 섹션
       this.innerScrollAt = now;
@@ -305,7 +309,7 @@ class Deck {
     if (e.key === 'End') return e.preventDefault(), this.go(this.panels.length - 1);
     const dir = map[e.key];
     const h = this.panels[this.index]._h;
-    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (e.shiftKey ? 0 : dir);
+    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || 0;
     if (h && hd && performance.now() > this.lockUntil - 400 && h.page(hd)) return e.preventDefault();
     if (!dir) return;
     if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1, { step: true });
@@ -339,9 +343,6 @@ class Deck {
       if (hs && Math.abs(dx) > Math.abs(dy)) return;
       const fast = performance.now() - t0 < 400;
       if (Math.abs(dy) > (fast ? 30 : 70) && performance.now() > this.lockUntil - 300) {
-        // 타임라인 페이지에서는 위아래로 밀어도 먼저 옆으로 넘기고, 끝이면 다음 페이지
-        const h = this.panels[this.index]._h;
-        if (h && h.page(Math.sign(dy))) return;
         this.go(this.index + Math.sign(dy), { step: true });
       }
     }, { passive: true });
@@ -580,7 +581,7 @@ async function boot() {
   const start = EMBED ? Math.max(0, $$('.panel').findIndex((p) => '#' + p.id === location.hash)) : 0;
   if (!EMBED && location.hash) history.replaceState(null, '', location.pathname + location.search);
   state.section = $$('.panel')[start].dataset.key;
-  await Promise.race([stage.load ? stage.load(sectionImage(state.section).src) : Promise.resolve(), new Promise((r) => setTimeout(r, 4000))]);
+  await Promise.race([stage.load ? stage.load(sectionImage(state.section).src) : Promise.resolve(), new Promise((r) => setTimeout(r, 1500))]);
   initAnalytics(settings.analytics);
   deck.go(start, { animate: false });
   const wait = Math.max(0, SPLASH_MIN - (performance.now() - bootAt));

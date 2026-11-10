@@ -232,20 +232,19 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       return true;
     },
     /** 페이지에 들어오고 나갈 때. 아래 페이지에서 올라오면 끝에서 시작 */
-    activate(on, fromEnd) {
+    activate(on) {
       if (on === active) return;
       active = on;
       cancelAnimationFrame(raf);
       clearTimeout(snapTimer);
       raf = 0;
       if (on) {
-        cur = target = fromEnd ? hi() : 0;
+        cur = target = 0;
         root.scrollLeft = cur;
-        reveal = fromEnd ? cur : 0;
+        reveal = 0;
         for (const n of marks) n.classList.toggle('is-in', posOf(n) < reveal);
         lineDone.style.width = reveal + 'px';
         focus = -1;
-        if (fromEnd) setFocus(nodes.length - 1);
         // 페이지가 올라오는 동안 잠깐 기다렸다가 선을 그음
         setTimeout(kick, 350);
       } else {
@@ -261,5 +260,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     },
   };
   if (panel) panel._h = ctl;
+  // 화살표 버튼: 한 항목씩
+  panel?.querySelectorAll('.tl-arrow').forEach((b) => (b.onclick = () => ctl.page(Number(b.dataset.tl))));
   return ctl;
 }
