@@ -201,27 +201,27 @@
     "images": {
       "hero": {
         "src": "uploads/site/photo-hero.jpg",
-        "focusX": 0.62
+        "focusX": 0.76
       },
       "about": {
         "src": "uploads/site/photo-about.jpg",
-        "focusX": 0.68
+        "focusX": 0.8
       },
       "timeline": {
         "src": "uploads/site/photo-timeline.jpg",
-        "focusX": 0.68
+        "focusX": 0.84
       },
       "skills": {
         "src": "uploads/site/photo-skills.jpg",
-        "focusX": 0.7
+        "focusX": 0.86
       },
       "works": {
         "src": "uploads/site/photo-works.jpg",
-        "focusX": 0.7
+        "focusX": 0.86
       },
       "contact": {
         "src": "uploads/site/photo-contact.jpg",
-        "focusX": 0.62
+        "focusX": 0.74
       }
     },
     "links": []
