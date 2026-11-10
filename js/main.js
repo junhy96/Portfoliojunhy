@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101528';
-import { PdfViewer } from './pdf-viewer.js?v=202611101528';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101528';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101528';
-import { initWorks } from './works.js?v=202611101528';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101528';
+import { MorphStage, FallbackStage } from './morph.js?v=202611101601';
+import { PdfViewer } from './pdf-viewer.js?v=202611101601';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611101601';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611101601';
+import { initWorks } from './works.js?v=202611101601';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611101601';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -304,7 +304,14 @@ class Deck {
     e.preventDefault();
     // 한 번의 '굴림'(제스처) = 한 칸 이동. 휠 이벤트가 0.2초 넘게 끊겼거나 방향이 바뀌면 새 굴림.
     // 트랙패드 관성처럼 2초 가까이 이어지는 이벤트도 한 굴림으로 보고, 한 번만 넘김 (여러 페이지를 건너뛰던 문제)
-    const fresh = now - this.lastWheel > 200 || dir !== this.lastDir;
+    // 관성은 값이 점점 줄기만 함. 값이 확 커지면 손가락으로 다시 민 것 → 새 굴림 (노트북 터치패드에서 관성 중에 다시 밀어도 안 넘어가던 문제)
+    const ad = Math.abs(dy);
+    const gap = now - this.lastWheel > 200 || dir !== this.lastDir;
+    // 관성의 가장 낮은 값(trough)보다 확 커지면 다시 민 것
+    this.trough = gap ? ad : Math.min(this.trough ?? ad, ad);
+    const pushed = !gap && ad > this.trough * 2.5 + 10 && now - (this.stepAt || 0) > 350;
+    if (pushed) this.trough = ad;
+    const fresh = gap || pushed;
     this.lastWheel = now;
     this.lastDir = dir;
     if (fresh) this.gestureUsed = false;
@@ -331,7 +338,7 @@ class Deck {
     this.gestureUsed = true;
     this.stepAt = now;
     if (tl && tl.page(dir)) {
-      this.tlLockUntil = now + 700;
+      this.tlLockUntil = now + 450;
       this.tlDir = dir;
       return;
     }

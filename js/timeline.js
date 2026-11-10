@@ -127,6 +127,9 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   let focus = -1;
   let snapTimer = 0;
   let lastDir = 1; // 마지막으로 굴린 방향
+  // 휠·방향키·스와이프로 한 칸씩 넘길 때는 '지금 보는 연혁'을 위치가 아니라 순서로 정함.
+  // 21:9처럼 넓은 화면에선 여러 연혁이 같은 스크롤 위치에 겹쳐서, 위치로 정하면 한 번에 끝(2025)까지 가 버림
+  let pinned = false;
   const max = () => Math.max(0, root.scrollWidth - root.clientWidth);
   // 화면 안에서 '지금 보는 자리'. 휴대폰은 카드가 화면 안에 다 들어오게 조금 왼쪽
   const focusX = () => (root.clientWidth < 600 ? Math.min(root.clientWidth * 0.28, root.clientWidth - 270) : root.clientWidth * 0.28);
@@ -182,8 +185,10 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     if (reveal > want) reveal = want;
     lineDone.style.width = reveal + 'px';
     for (const n of marks) if (!n.classList.contains('is-in') && posOf(n) < reveal - 8) n.classList.add('is-in');
-    const f = nearest(cur);
-    if (nodes[f].classList.contains('is-in')) setFocus(f);
+    if (!pinned) {
+      const f = nearest(cur);
+      if (nodes[f].classList.contains('is-in')) setFocus(f);
+    }
     if (Math.abs(target - cur) > 0.5 || reveal < want - 0.5) raf = requestAnimationFrame(frame);
   };
   const kick = () => active && !raf && (raf = requestAnimationFrame(frame));
@@ -191,6 +196,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   // 손가락·트랙패드로 직접 옆으로 밀었을 때
   root.addEventListener('scroll', () => {
     if (Math.abs(root.scrollLeft - cur) > 2) {
+      pinned = false;
       lastDir = Math.sign(root.scrollLeft - cur) || lastDir;
       cur = target = root.scrollLeft;
       snapSoon();
@@ -204,11 +210,18 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     kick();
   });
   // 접힌 항목을 누르면 그 항목으로
+  // 한 연혁으로: 순서로 보는 연혁을 정하고, 그 연혁이 보는 자리에 오게 (넓은 화면이라 못 움직여도 보는 연혁은 바뀜)
+  const goTo = (k) => {
+    pinned = true;
+    nodes[k].classList.add('is-in');
+    setFocus(k);
+    target = snapOf(k);
+    kick();
+  };
   nodes.forEach((n, k) =>
     n.addEventListener('click', () => {
       if (k === focus) return;
-      target = snapOf(k);
-      kick();
+      goTo(k);
     })
   );
 
@@ -220,6 +233,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       // 끝에 닿았으면: 화면이 아직 따라오는 중일 때만 붙잡고, 다 따라왔으면 false (→ 바로 다음/이전 페이지)
       if ((dy > 0 && target >= end - 1) || (dy < 0 && target <= 1)) return Math.abs(target - cur) > 40;
       lastDir = Math.sign(dy);
+      pinned = false;
       target = Math.max(0, Math.min(end, target + dy * 1.1));
       kick();
       snapSoon();
@@ -227,16 +241,12 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     },
     /** 방향키·스와이프: 한 항목씩 */
     page(dir) {
-      const end = hi();
-      // 첫/마지막 항목이면 false (→ 이전/다음 페이지)
-      if ((dir > 0 && target >= end - 1) || (dir < 0 && target <= 1)) return Math.abs(target - cur) > 40;
-      const next = Math.max(0, Math.min(nodes.length - 1, nearest(target) + dir));
-      let to = snapOf(next);
-      // 가는 방향으로 한 칸도 못 가면 끝까지
-      if (dir > 0 ? to <= target + 1 : to >= target - 1) to = dir > 0 ? end : 0;
-      target = to;
+      const now = focus < 0 ? nearest(target) : focus;
+      const next = now + dir;
+      // 첫/마지막 연혁이면 false (→ 이전/다음 페이지). 화면이 아직 따라오는 중이면 붙잡음
+      if (next < 0 || next >= nodes.length) return Math.abs(target - cur) > 40;
       lastDir = dir;
-      kick();
+      goTo(next);
       return true;
     },
     /** 페이지에 들어오고 나갈 때. 아래 페이지에서 올라오면 끝에서 시작 */
@@ -254,7 +264,11 @@ export function renderTimeline(root, items, { onFocus } = {}) {
         for (const n of marks) n.classList.toggle('is-in', posOf(n) < reveal);
         lineDone.style.width = reveal + 'px';
         focus = -1;
-        if (fromEnd) setFocus(nodes.length - 1);
+        pinned = !!fromEnd;
+        if (fromEnd) {
+          nodes[nodes.length - 1].classList.add('is-in');
+          setFocus(nodes.length - 1);
+        }
         // 페이지가 올라오는 동안 잠깐 기다렸다가 선을 그음
         setTimeout(kick, 350);
       } else {
