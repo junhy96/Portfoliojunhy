@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611110030';
-import { cleanTag } from './analytics.js?v=202611110030';
+import { timelineItems } from './timeline.js?v=202611110033';
+import { cleanTag } from './analytics.js?v=202611110033';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -61,7 +61,12 @@ function header(s, title) {
       return false;
     }
   };
-  (c.links || []).filter((l) => l?.url && real(l.url)).forEach((l) => meta.append(add(el('li'), el('b', null, l.label || '링크'), el('span', null, l.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')))));
+  // 긴 주소는 줄여서 보여 주고, PDF에서 누르면 원래 주소로
+  const short = (u) => {
+    const t = u.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+    return t.length > 30 ? t.slice(0, 28) + '…' : t;
+  };
+  (c.links || []).filter((l) => l?.url && real(l.url)).forEach((l) => meta.append(add(el('li'), el('b', null, l.label || '링크'), Object.assign(el('a', 'd-link', short(l.url)), { href: l.url }))));
   return add(h, who, meta);
 }
 function footer(s) {
@@ -98,15 +103,30 @@ function resume(data) {
   const career = tl.filter((x) => x.type !== '교육').slice().reverse();
   const edu = tl.filter((x) => x.type === '교육').slice().reverse();
   const tools = (s.skillChart || []).filter((x) => x && x.group === 'tool' && x.name);
+  // 1쪽: 사진 · 간략 소개(Who?) · 경력 · 교육 · 툴
+  const head = header(s, '이력서');
+  const photo = Object.assign(el('img', 'd-photo'), { src: 'uploads/site/photo-resume.jpg', alt: '' });
+  head.prepend(photo);
+  head.classList.add('has-photo');
   add(
     doc,
-    header(s, '이력서'),
-    s.intro ? add(el('section', 'd-sec d-lead'), el('p', 'd-intro', s.intro)) : null,
+    head,
+    s.intro ? section('Who?', el('p', 'd-intro', s.intro)) : null,
     add(el('div', 'd-cols'), career.length ? section('경력', rows(career)) : null, edu.length ? section('교육', rows(edu)) : null),
-    s.about?.bio ? section('자기소개', el('p', 'd-text', s.about.bio)) : null,
     tools.length ? section('툴 숙련도', toolBars(tools, false)) : null,
     footer(s)
   );
+  // 2쪽: 자기소개서
+  if (s.about?.bio) {
+    const doc2 = el('main', 'doc d-page2');
+    add(
+      doc2,
+      header(s, '자기소개서'),
+      section('자기소개서', el('p', 'd-text d-letter', s.about.bio)),
+      footer(s)
+    );
+    doc.after(doc2);
+  }
   return '이력서';
 }
 

@@ -122,3 +122,12 @@ ul, ol { padding: 0; list-style: none; }
 .d-sec { align-content: start; }
 /* 교육 칸은 좁아서: 기간을 제목 위로 올려 줄바꿈 없이 */
 .d-cols > .d-sec:last-child .d-rows li { grid-template-columns: 1fr; gap: .5mm; }
+/* 이력서: 사진 · 2쪽 자기소개서 */
+.d-head.has-photo { display: grid; grid-template-columns: 26mm 1fr auto; gap: 6mm; align-items: end; }
+.d-photo { width: 26mm; height: 34mm; object-fit: cover; border-radius: 2mm; display: block; }
+.d-letter { font-size: 11pt; line-height: 1.9; color: var(--ink); }
+.d-page2 { margin-top: 0; }
+@media print { .doc + .doc { break-before: page; } }
+@media screen and (max-width: 840px) { .d-head.has-photo { grid-template-columns: 22mm 1fr; } .d-head.has-photo .d-contact { grid-column: 1 / -1; } }
+.d-link { color: inherit; text-decoration: none; }
+.d-name { white-space: nowrap; }
