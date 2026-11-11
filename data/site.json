@@ -482,28 +482,6 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     },
     {
-      "id": "w-lies-of-p-chapter",
-      "title": "굴리아 대성당 & 부서진 마을",
-      "subtitle": "P의 거짓 · 30~40분 분량 창작 챕터",
-      "category": "3D 액션 RPG",
-      "year": "2026",
-      "tags": [
-        "레벨 디자인",
-        "내러티브",
-        "UE5"
-      ],
-      "summary": "화석병이 번진 마을의 과거를 기록으로 따라가는 4구역 · 855m 창작 챕터 레벨 디자인",
-      "description": "폐허 마을 → 언덕길 → 감염 매장지 → 대성당으로 이어지는 선형 동선에 숏컷과 세이브 포인트 3곳을 배치했습니다.\n구역별 몬스터 배치·함정·보상과 예상 체류 시간을 설계하고, 게시판과 묘비 기록, NPC 퀘스트 분기로 마을의 진실이 드러나게 했습니다.\nUE5로 이식한 레벨과 자체 제작 목업 툴로 직접 검증했습니다.",
-      "thumb": "uploads/works/lies-of-p-chapter.jpg",
-      "pdf": "uploads/works/lies-of-p-chapter.pdf",
-      "pdfName": "P의거짓_창작챕터_레벨디자인.pdf",
-      "pdfSize": 2635701,
-      "docType": "레벨 디자인",
-      "visible": true,
-      "createdAt": "2026-11-10T09:00:00.000Z",
-      "updatedAt": "2026-11-10T09:00:00.000Z"
-    },
-    {
       "id": "w-part-break",
       "title": "부위 파괴 시스템 기획서",
       "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
@@ -521,6 +499,28 @@
       "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
       "pdfSize": 1321399,
       "docType": "전투 기획",
+      "visible": true,
+      "createdAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "w-lies-of-p-chapter",
+      "title": "굴리아 대성당 & 부서진 마을",
+      "subtitle": "P의 거짓 · 30~40분 분량 창작 챕터",
+      "category": "3D 액션 RPG",
+      "year": "2026",
+      "tags": [
+        "레벨 디자인",
+        "내러티브",
+        "UE5"
+      ],
+      "summary": "화석병이 번진 마을의 과거를 기록으로 따라가는 4구역 · 855m 창작 챕터 레벨 디자인",
+      "description": "폐허 마을 → 언덕길 → 감염 매장지 → 대성당으로 이어지는 선형 동선에 숏컷과 세이브 포인트 3곳을 배치했습니다.\n구역별 몬스터 배치·함정·보상과 예상 체류 시간을 설계하고, 게시판과 묘비 기록, NPC 퀘스트 분기로 마을의 진실이 드러나게 했습니다.\nUE5로 이식한 레벨과 자체 제작 목업 툴로 직접 검증했습니다.",
+      "thumb": "uploads/works/lies-of-p-chapter.jpg",
+      "pdf": "uploads/works/lies-of-p-chapter.pdf",
+      "pdfName": "P의거짓_창작챕터_레벨디자인.pdf",
+      "pdfSize": 2635701,
+      "docType": "레벨 디자인",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
       "updatedAt": "2026-11-10T09:00:00.000Z"
@@ -680,5 +680,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794357830222
+  "rev": 1794357834644
 }
