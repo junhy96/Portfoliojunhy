@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611101732';
-import { PdfViewer } from './pdf-viewer.js?v=202611101732';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611101732';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611101732';
-import { initWorks } from './works.js?v=202611101732';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611101732';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110023';
+import { PdfViewer } from './pdf-viewer.js?v=202611110023';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110023';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110023';
+import { initWorks } from './works.js?v=202611110023';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110023';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -335,7 +335,8 @@ class Deck {
     }
     this.gestureUsed = true;
     this.stepAt = now;
-    if (tl && tl.page(dir)) {
+    // 위로 굴리면 연혁을 하나씩 되감지 않고 바로 이전 페이지로 (다시 내려오면 2022부터)
+    if (tl && dir > 0 && tl.page(dir)) {
       this.tlLockUntil = now + 450;
       this.tlDir = dir;
       return;
@@ -351,7 +352,7 @@ class Deck {
     if (e.key === 'End') return e.preventDefault(), this.go(this.panels.length - 1);
     const dir = map[e.key];
     const h = this.panels[this.index]._h;
-    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (this.panels[this.index].id === 'timeline' && !e.shiftKey ? dir : 0);
+    const hd = { ArrowRight: 1, ArrowLeft: -1 }[e.key] || (this.panels[this.index].id === 'timeline' && !e.shiftKey && dir > 0 ? dir : 0);
     if (h && hd && performance.now() > this.lockUntil - 400 && h.page(hd)) return e.preventDefault();
     if (!dir) return;
     if (e.key === ' ' && e.shiftKey) return e.preventDefault(), this.go(this.index - 1, { step: true });
@@ -387,7 +388,7 @@ class Deck {
       if (Math.abs(dy) > (fast ? 30 : 70) && performance.now() > this.lockUntil - 300) {
         // 타임라인: 위아래로 밀어도 한 항목씩 넘기고, 끝이면 다음·이전 페이지
         const tl = this.panels[this.index].id === 'timeline' ? this.panels[this.index]._h : null;
-        if (tl && tl.page(Math.sign(dy))) return;
+        if (tl && dy > 0 && tl.page(1)) return;
         this.go(this.index + Math.sign(dy), { step: true });
       }
     }, { passive: true });
