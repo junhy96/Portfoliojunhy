@@ -172,3 +172,12 @@ ul, ol { padding: 0; list-style: none; }
 .d-letter p { margin-bottom: 1.6mm; }
 .d-letter-h { margin: 3.6mm 0 1.4mm; }
 .d-page2 .d-sec { padding: 6mm 7mm 5mm; }
+/* 자기소개서 쪽: 머리를 낮게 (이름 · 연락처는 1쪽과 같으니 작게), 박스 안 제목은 머리의 '자기소개서'와 겹쳐서 뺌 */
+.d-page2 .d-head { padding-bottom: 3mm; gap: 6mm; }
+.d-page2 .d-name { font-size: 18pt; margin-top: .5mm; }
+.d-page2 .d-name-en { font-size: 10pt; }
+.d-page2 .d-role { font-size: 9.5pt; }
+.d-page2 .d-contact { font-size: 8pt; gap: .3mm; }
+.d-page2 > * + * { margin-top: 5mm; }
+.d-page2 .d-sec > .d-h { display: none; }
+.d-page2 .d-sec .d-letter-h:first-child { margin-top: 0; }
