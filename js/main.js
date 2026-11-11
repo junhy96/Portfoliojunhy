@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110202';
-import { PdfViewer } from './pdf-viewer.js?v=202611110202';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110202';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110202';
-import { initWorks } from './works.js?v=202611110202';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110202';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110220';
+import { PdfViewer } from './pdf-viewer.js?v=202611110220';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110220';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110220';
+import { initWorks } from './works.js?v=202611110220';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110220';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -460,7 +460,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611110202';
+const BUILD = '?v=202611110220';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];
@@ -525,7 +525,9 @@ async function boot() {
     canvas.remove();
     stage = lightStage();
   }
-  stage.preload([...Object.values(images).map((i) => i.src), ...projects.map(thumbOf), ...timelineItems(settings).map((x) => x.image).filter(Boolean)]);
+  stage.preload(Object.values(images).map((i) => i.src));
+  // 작업물·연혁 사진은 첫 화면이 다 뜬 뒤에 천천히
+  setTimeout(() => stage.preload([...projects.map(thumbOf), ...timelineItems(settings).map((x) => x.image).filter(Boolean)]), 4000);
 
   stage.setMode(TONE_MODE(), { instant: true }); // Editorial 색보정 (청록 회색 또는 모노톤)
 

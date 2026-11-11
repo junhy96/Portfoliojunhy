@@ -161,6 +161,7 @@ export function renderSkillChart(root, skills) {
       const ic = window.SKILL_ICONS?.[s.icon] || window.SKILL_ICONS?.idea || { body: '' };
       icon.innerHTML = ic.body;
       if (ic.logo) icon.classList.add('is-logo');
+      if (window.skillBrand?.(s.icon)) icon.style.color = window.skillBrand(s.icon); // 로고는 브랜드 색
       const ix = anchor === 'start' ? cx : anchor === 'end' ? cx - iconSize : cx - iconSize / 2;
       // 아이콘은 이름 앞(가운데 정렬이면 위)에
       if (anchor === 'middle') {

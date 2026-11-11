@@ -395,7 +395,18 @@ export class MorphStage {
   }
 
   preload(srcs) {
-    srcs.filter(Boolean).forEach((s) => this.load(s));
+    // 처음 열 때 수십 장을 한꺼번에 텍스처로 올리면 첫 화면 글자 그리기가 밀려 배경만 보이는 일이 있어서,
+    // 한 장씩 브라우저가 한가할 때 올림
+    this._queue = [...(this._queue || []), ...srcs.filter(Boolean)];
+    if (this._pumping) return;
+    this._pumping = true;
+    const idle = (f) => (window.requestIdleCallback ? requestIdleCallback(f, { timeout: 1500 }) : setTimeout(f, 250));
+    const next = () => {
+      const src = this._queue.shift();
+      if (!src) return (this._pumping = false);
+      this.load(src).then(() => idle(next));
+    };
+    idle(next);
   }
 
   /** src 이미지로 모핑 전환 */

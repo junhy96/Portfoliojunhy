@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611110202';
-import { cleanTag } from './analytics.js?v=202611110202';
+import { timelineItems } from './timeline.js?v=202611110220';
+import { cleanTag } from './analytics.js?v=202611110220';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
