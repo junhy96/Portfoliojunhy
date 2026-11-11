@@ -143,3 +143,9 @@ ul, ol { padding: 0; list-style: none; }
 .d-page2 .d-h { margin-bottom: 3mm; }
 .d-letter p { margin: 0 0 2.2mm; orphans: 2; widows: 2; }
 .d-letter-h { margin: 5mm 0 2mm; }
+/* 자기소개서: 네모 테두리 안에 (쪽이 넘어가도 쪽마다 테두리가 닫히게) */
+.d-page2 .d-sec {
+  border: 1px solid var(--line); border-top: 3px solid var(--pt); border-radius: 2mm; padding: 7mm 8mm 6mm;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.d-page2 .d-sec > .d-h { margin-top: 0; }
