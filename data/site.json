@@ -460,28 +460,6 @@
       "pdfSize": 4458563
     },
     {
-      "id": "w-part-break",
-      "title": "부위 파괴 시스템 기획서",
-      "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
-      "category": "3D 액션 RPG",
-      "year": "2026",
-      "tags": [
-        "시스템 기획",
-        "수치 공식",
-        "테이블"
-      ],
-      "summary": "머리·몸통·날개·꼬리를 노려 부수는 부위 파괴의 규칙·공식·연출·보상을 테이블 단위로 정리한 시스템 기획서",
-      "description": "논타겟팅 ARPG에서 부위를 직접 노려 치는 전략성과, 파괴 연출·AI 변화가 주는 성취감을 기획 의도로 잡았습니다.\nMonster_Table과 Monster_Destroy_Table을 분리한 테이블 구조, 레벨 반감·무기별 상수·부위 보정치를 담은 파괴 공식, 기본형·연출형 파괴 액션, 유실물 보상, 파괴 이후 상태·행동 변화와 UI 노출 규칙까지 정의했습니다.",
-      "thumb": "uploads/works/part-break.jpg",
-      "pdf": "uploads/works/part-break.pdf",
-      "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
-      "pdfSize": 1321399,
-      "docType": "전투 기획",
-      "visible": true,
-      "createdAt": "2026-11-10T09:00:00.000Z",
-      "updatedAt": "2026-11-10T09:00:00.000Z"
-    },
-    {
       "id": "w-arachne",
       "title": "거미 여왕 아라크네",
       "subtitle": "던전앤파이터 · 2페이즈 레이드 몬스터 기획",
@@ -526,23 +504,23 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     },
     {
-      "id": "w-midcore-rpg",
-      "title": "마왕성 주식회사",
-      "subtitle": "냥냥시노비 코어 루프 분해 + 신규 게임 1-Page 컨셉",
-      "category": "모바일 RPG",
+      "id": "w-part-break",
+      "title": "부위 파괴 시스템 기획서",
+      "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
+      "category": "3D 액션 RPG",
       "year": "2026",
       "tags": [
-        "코어 루프",
-        "리텐션",
-        "A/B 검증"
+        "시스템 기획",
+        "수치 공식",
+        "테이블"
       ],
-      "summary": "로그라이크 디펜스의 코어 루프를 분해하고, 그 구조로 설계한 생산형 던전 디펜스 신작 제안",
-      "description": "「냥냥시노비」의 인게임·아웃게임 루프와 과금 전환점, 비선형 강화 트리가 만드는 핵심 재미를 분석했습니다.\n이를 바탕으로 원정대 유형에 맞춰 마왕·던전 방·몬스터를 편성하는 「마왕성 주식회사」를 제안하고, D1·D7·D30 리텐션 목표와 출시 전 A/B 검증 설계까지 정리했습니다.",
-      "thumb": "uploads/works/midcore-rpg.jpg",
-      "pdf": "uploads/works/midcore-rpg.pdf",
-      "pdfName": "미드코어RPG_신규게임기획서.pdf",
-      "pdfSize": 1442272,
-      "docType": "분석·제안",
+      "summary": "머리·몸통·날개·꼬리를 노려 부수는 부위 파괴의 규칙·공식·연출·보상을 테이블 단위로 정리한 시스템 기획서",
+      "description": "논타겟팅 ARPG에서 부위를 직접 노려 치는 전략성과, 파괴 연출·AI 변화가 주는 성취감을 기획 의도로 잡았습니다.\nMonster_Table과 Monster_Destroy_Table을 분리한 테이블 구조, 레벨 반감·무기별 상수·부위 보정치를 담은 파괴 공식, 기본형·연출형 파괴 액션, 유실물 보상, 파괴 이후 상태·행동 변화와 UI 노출 규칙까지 정의했습니다.",
+      "thumb": "uploads/works/part-break.jpg",
+      "pdf": "uploads/works/part-break.pdf",
+      "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
+      "pdfSize": 1321399,
+      "docType": "전투 기획",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
       "updatedAt": "2026-11-10T09:00:00.000Z"
@@ -565,6 +543,28 @@
       "pdfName": "브라운더스트2_동료시스템_개선제안서.pdf",
       "pdfSize": 1835216,
       "docType": "시스템·UI 기획",
+      "visible": true,
+      "createdAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "w-midcore-rpg",
+      "title": "마왕성 주식회사",
+      "subtitle": "냥냥시노비 코어 루프 분해 + 신규 게임 1-Page 컨셉",
+      "category": "모바일 RPG",
+      "year": "2026",
+      "tags": [
+        "코어 루프",
+        "리텐션",
+        "A/B 검증"
+      ],
+      "summary": "로그라이크 디펜스의 코어 루프를 분해하고, 그 구조로 설계한 생산형 던전 디펜스 신작 제안",
+      "description": "「냥냥시노비」의 인게임·아웃게임 루프와 과금 전환점, 비선형 강화 트리가 만드는 핵심 재미를 분석했습니다.\n이를 바탕으로 원정대 유형에 맞춰 마왕·던전 방·몬스터를 편성하는 「마왕성 주식회사」를 제안하고, D1·D7·D30 리텐션 목표와 출시 전 A/B 검증 설계까지 정리했습니다.",
+      "thumb": "uploads/works/midcore-rpg.jpg",
+      "pdf": "uploads/works/midcore-rpg.pdf",
+      "pdfName": "미드코어RPG_신규게임기획서.pdf",
+      "pdfSize": 1442272,
+      "docType": "분석·제안",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
       "updatedAt": "2026-11-10T09:00:00.000Z"
@@ -680,5 +680,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794357839282
+  "rev": 1794357844566
 }
