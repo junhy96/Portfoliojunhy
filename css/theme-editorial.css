@@ -1399,3 +1399,21 @@ body[data-section="timeline"] .tl-show.is-on.is-fit { opacity: 1; transform: non
 .tl-work-open { display: none; margin-top: 12px; padding: 0; border: 0; background: none; color: var(--pt-accent); font: inherit; font-size: 13px; cursor: pointer; }
 @media (max-width: 820px) { .tl-work-open { display: inline-block; } }
 .tl-item:not(.is-focus) .tl-work-open { pointer-events: none; }
+
+/* 맨 위 메뉴(home · about …): Animista pulsate-fwd를 느리고 작게. 한 단어씩 차례로 물결치듯 */
+@keyframes pulsate-fwd-soft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+html[data-theme="editorial"] .nav a { display: inline-block; transform-origin: 50% 60%; animation: pulsate-fwd-soft 3.2s ease-in-out infinite both; }
+html[data-theme="editorial"] .nav a:nth-child(2) { animation-delay: .25s; }
+html[data-theme="editorial"] .nav a:nth-child(3) { animation-delay: .5s; }
+html[data-theme="editorial"] .nav a:nth-child(4) { animation-delay: .75s; }
+html[data-theme="editorial"] .nav a:nth-child(5) { animation-delay: 1s; }
+html[data-theme="editorial"] .nav a:nth-child(6) { animation-delay: 1.25s; }
+html[data-theme="editorial"] .nav a:hover, html[data-theme="editorial"] .nav a:focus-visible { animation-play-state: paused; }
+
+/* 타임라인 큰 미리보기: 연혁이 바뀔 때마다 위에서 내려오며 나타남 (Animista fade-in-top) */
+@keyframes fade-in-top { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+body[data-section="timeline"] .tl-show.is-on.is-fit.is-anim { animation: fade-in-top .6s cubic-bezier(.39, .575, .565, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="editorial"] .nav a, body[data-section="timeline"] .tl-show.is-anim { animation: none !important; }
+}

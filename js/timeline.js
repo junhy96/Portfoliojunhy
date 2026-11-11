@@ -128,6 +128,10 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     showItem = x;
     showPage = 0;
     show.classList.add('is-on');
+    // 연혁이 바뀔 때마다 위에서 내려오는 등장 애니메이션을 처음부터
+    show.classList.remove('is-anim');
+    void show.offsetWidth;
+    show.classList.add('is-anim');
     paintShow();
     autoShow();
     placeShow();
