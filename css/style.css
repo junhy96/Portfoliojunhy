@@ -479,3 +479,6 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
 .deck { will-change: auto; }
 .deck.is-moving { will-change: transform; }
 .deck.has-near > .panel:not(.is-near) { visibility: hidden; }
+
+/* HTML만 읽는 AI용 텍스트 요약: 화면에는 안 보이게 (display:none은 일부 요약기가 버려서 잘라 숨김) */
+.ai-brief { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: normal; border: 0; }

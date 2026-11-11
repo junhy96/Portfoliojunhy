@@ -171,6 +171,19 @@
               llms.push({ path, mode: '100644', type: 'blob', sha: b.sha });
             } catch {}
           }
+          // index.html 안의 텍스트 요약도 같은 커밋으로 (HTML만 읽는 AI용)
+          if (window.injectBrief) {
+            try {
+              const f = await this.request(`/contents/index.html?ref=${head}`);
+              const bytes = Uint8Array.from(atob(String(f.content).replace(/\s/g, '')), (c) => c.charCodeAt(0));
+              const before = new TextDecoder().decode(bytes);
+              const after = window.injectBrief(before, next);
+              if (after !== before) {
+                const b = await this.request('/git/blobs', { method: 'POST', body: { content: after, encoding: 'utf-8' } });
+                llms.push({ path: 'index.html', mode: '100644', type: 'blob', sha: b.sha });
+              }
+            } catch {}
+          }
         }
         const tree = await this.request('/git/trees', {
           method: 'POST',

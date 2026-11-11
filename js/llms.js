@@ -206,6 +206,30 @@
     return L.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
   }
 
+  /**
+   * index.html 안에 넣는 텍스트 요약: 자바스크립트를 돌리지 않고 HTML만 읽는 AI(링크 요약 등)도 내용을 보게.
+   * 화면에는 안 보이고, 사이트가 그려지면 main.js가 지움 (화면 낭독기가 두 번 읽지 않게)
+   */
+  var START = '<!-- ai-brief:start -->';
+  var END = '<!-- ai-brief:end -->';
+  function esc(t) {
+    return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function injectBrief(indexHtml, data, opts) {
+    var i = indexHtml.indexOf(START);
+    var j = indexHtml.indexOf(END);
+    if (i < 0 || j < i) return indexHtml;
+    var md = buildLlms(data, Object.assign({ full: false }, opts || {}));
+    var block =
+      START +
+      '\n  <section class="ai-brief" id="ai-brief" aria-label="텍스트 요약">\n' +
+      '    <p>이 페이지는 자바스크립트로 그려집니다. 아래는 같은 내용의 텍스트 요약이고, 전체 내용은 ' + (opts && opts.base ? opts.base : SITE) + 'llms-full.txt 에 있습니다.</p>\n' +
+      '    <pre>' + esc(md) + '</pre>\n  </section>\n  ' +
+      END;
+    return indexHtml.slice(0, i) + block + indexHtml.slice(j + END.length);
+  }
+
   root.buildLlms = buildLlms;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { buildLlms: buildLlms, careerTotal: careerTotal, SITE: SITE };
+  root.injectBrief = injectBrief;
+  if (typeof module !== 'undefined' && module.exports) module.exports = { buildLlms: buildLlms, injectBrief: injectBrief, careerTotal: careerTotal, SITE: SITE };
 })(typeof window !== 'undefined' ? window : globalThis);
