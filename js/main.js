@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110023';
-import { PdfViewer } from './pdf-viewer.js?v=202611110023';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110023';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110023';
-import { initWorks } from './works.js?v=202611110023';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110023';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110026';
+import { PdfViewer } from './pdf-viewer.js?v=202611110026';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110026';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110026';
+import { initWorks } from './works.js?v=202611110026';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110026';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -16,6 +16,8 @@ if (EMBED) document.documentElement.classList.add('is-embed');
 document.documentElement.dataset.theme = 'editorial';
 // 색감: 관리자 설정(tone) 또는 미리보기 주소 ?tone=mono|teal. 설정을 읽기 전에도 깜빡이지 않게 지난번 값을 먼저 씀
 const TONE_Q = new URLSearchParams(location.search).get('tone');
+// 시안 보기: ?menu=dock → 첫 페이지 아래 카드 메뉴
+if (new URLSearchParams(location.search).get('menu') === 'dock') document.documentElement.classList.add('menu-dock');
 const toneOf = (setting) => (TONE_Q === 'mono' || TONE_Q === 'teal' ? TONE_Q : setting === 'mono' ? 'mono' : 'teal');
 try {
   document.documentElement.dataset.tone = toneOf(localStorage.getItem('pf-tone'));
