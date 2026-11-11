@@ -20,8 +20,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" media="print" onload="this.media='all'" />
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
-  <link rel="stylesheet" href="css/style.css?v=202611110250" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611110250" />
+  <link rel="alternate" type="text/markdown" href="llms.txt" title="AI 에이전트용 요약 (llms.txt)" />
+  <link rel="alternate" type="text/markdown" href="llms-full.txt" title="AI 에이전트용 전체 내용 (llms-full.txt)" />
+  <link rel="stylesheet" href="css/style.css?v=202611110301" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611110301" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -46,6 +48,29 @@
     <span class="loader-text">Loading<b>.</b><b>.</b><b>.</b></span>
   </div>
 
+  <!-- AI 요약 팝업: llms.txt와 같은 마크다운. 지금 링크(지원처 프리셋) 기준 -->
+  <dialog class="md-dialog" id="md-dialog" aria-labelledby="md-title">
+    <div class="md-head">
+      <div>
+        <p class="md-kicker">llms.txt</p>
+        <h2 id="md-title">AI가 읽는 요약</h2>
+      </div>
+      <button class="md-x" type="button" data-md-close aria-label="닫기">✕</button>
+    </div>
+    <p class="md-desc">이 사이트는 화면을 자바스크립트로 그려서, AI가 주소만 읽으면 내용이 비어 보입니다. AI 에이전트와 LLM이 읽는 마크다운 요약을 따로 두었습니다. 복사해서 ChatGPT나 Claude에 붙여 넣어도 됩니다.</p>
+    <div class="md-tabs" role="tablist">
+      <button type="button" role="tab" data-md="short" aria-selected="true">요약 <small>llms.txt</small></button>
+      <button type="button" role="tab" data-md="full" aria-selected="false">전체 <small>llms-full.txt</small></button>
+    </div>
+    <pre class="md-pre" id="md-pre" tabindex="0"></pre>
+    <div class="md-foot">
+      <span class="md-meta" id="md-meta"></span>
+      <a class="md-btn" id="md-open" href="llms.txt" target="_blank" rel="noopener">파일 열기 ↗</a>
+      <button class="md-btn" type="button" id="md-down">.md 내려받기</button>
+      <button class="md-btn is-main" type="button" id="md-copy">.md 복사</button>
+    </div>
+  </dialog>
+
   <header class="topbar">
     <a class="brand" href="#home" data-go="0">
       <strong data-bind="nameKo"></strong>
@@ -60,6 +85,8 @@
       <a href="#contact" data-go="5"><span>06</span>Contact</a>
     </nav>
     <a class="topbar-mail small" data-bind-href="mailto" data-bind="email"></a>
+    <!-- AI 에이전트·LLM용 마크다운 요약 (llms.txt) 보기 · 복사 -->
+    <button class="topbar-md" id="md-btn" type="button" aria-haspopup="dialog" title="AI가 읽는 마크다운 요약 (llms.txt)"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M6 15V9l2.5 3L11 9v6M15.5 9v6m0 0-2-2.2m2 2.2 2-2.2"/></svg><span>AI 요약</span></button>
     <!-- 면접용 인쇄 · PDF: 지금 보는 페이지 내용만 (홈·About·Contact는 이력서) -->
     <a class="topbar-print" id="print-btn" href="print.html?part=resume" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3h10v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg><span id="print-label">이력서 PDF</span></a>
     <!-- 휴대폰: PC 왼쪽 레일의 페이지 표시를 상단바로. 누르면 페이지 목록 -->
@@ -268,7 +295,8 @@
     </div>
   </div>
 
-  <script src="js/icons.js?v=202611110250"></script>
-  <script type="module" src="js/main.js?v=202611110250"></script>
+  <script src="js/icons.js?v=202611110301"></script>
+  <script src="js/llms.js?v=202611110301"></script>
+  <script type="module" src="js/main.js?v=202611110301"></script>
 </body>
 </html>

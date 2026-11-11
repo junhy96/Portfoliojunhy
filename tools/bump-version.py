@@ -15,9 +15,9 @@ def bump(path, patterns):
     open(ROOT + path, 'w').write(s)
     print(path, n)
 
-bump('index.html', [r'(href="css/style\.css)', r'(href="css/theme-editorial\.css)', r'(src="js/main\.js)', r'(src="js/icons\.js)'])
+bump('index.html', [r'(href="css/style\.css)', r'(href="css/theme-editorial\.css)', r'(src="js/main\.js)', r'(src="js/icons\.js)', r'(src="js/llms\.js)'])
 bump('js/main.js', [r"(const BUILD = ')", r"(from '\./morph\.js)", r"(from '\./pdf-viewer\.js)", r"(from '\./analytics\.js)", r"(from '\./skills\.js)", r"(from '\./timeline\.js)", r"(from '\./works\.js)"])
 bump('print.html', [r'(href="css/print\.css)', r'(src="js/print\.js)', r'(src="js/icons\.js)'])
 bump('js/print.js', [r"(from '\./timeline\.js)", r"(from '\./analytics\.js)"])
-bump('studio/index.html', [r'(href="admin\.css)', r'(src="github\.js)', r'(src="admin\.js)', r'(src="stats\.js)', r'(src="\.\./js/icons\.js)'])
+bump('studio/index.html', [r'(href="admin\.css)', r'(src="github\.js)', r'(src="admin\.js)', r'(src="stats\.js)', r'(src="\.\./js/icons\.js)', r'(src="\.\./js/llms\.js)'])
 print('version', V)

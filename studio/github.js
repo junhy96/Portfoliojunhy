@@ -162,12 +162,23 @@
           method: 'POST',
           body: { content: JSON.stringify(next, null, 2) + '\n', encoding: 'utf-8' },
         });
+        // AI 에이전트용 요약(llms.txt · llms-full.txt)도 같은 커밋으로 새로 만듦 (js/llms.js)
+        const llms = [];
+        if (window.buildLlms) {
+          for (const [path, full] of [['llms.txt', false], ['llms-full.txt', true]]) {
+            try {
+              const b = await this.request('/git/blobs', { method: 'POST', body: { content: window.buildLlms(next, { full }), encoding: 'utf-8' } });
+              llms.push({ path, mode: '100644', type: 'blob', sha: b.sha });
+            } catch {}
+          }
+        }
         const tree = await this.request('/git/trees', {
           method: 'POST',
           body: {
             base_tree: headCommit.tree.sha,
             tree: [
               ...entries,
+              ...llms,
               { path: DATA_PATH, mode: '100644', type: 'blob', sha: json.sha },
               ...deletes.map((path) => ({ path, mode: '100644', type: 'blob', sha: null })),
             ],

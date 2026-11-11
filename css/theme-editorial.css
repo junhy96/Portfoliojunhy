@@ -1421,3 +1421,58 @@ body[data-section="timeline"] .tl-show.is-on.is-fit.is-anim { animation: fade-in
 /* 첫 화면 Career 옆 총경력 (지원처 링크에서만) */
 .cv-total { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--fg-3); letter-spacing: 0; }
 .cv-total[hidden] { display: none; }
+
+/* ===================== AI 요약 (llms.txt) 버튼 · 팝업 ===================== */
+.topbar-md {
+  display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 13px; margin-left: 18px; flex: none;
+  border: 1px solid var(--line-2); border-radius: 999px; background: none; color: var(--fg-2); font: inherit; font-size: 13.5px; white-space: nowrap; cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.topbar-md + .topbar-print { margin-left: 8px; }
+.topbar-md svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.topbar-md:hover, .topbar-md:focus-visible { border-color: var(--pt-accent); color: var(--fg); outline: none; }
+@media (max-width: 820px) {
+  .topbar-md { order: 2; height: 32px; padding: 0 9px; margin-left: auto; margin-right: 6px; font-size: 12px; }
+  .topbar-md span { display: none; }
+  .topbar-md + .topbar-print { margin-left: 0; }
+}
+body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
+
+.md-dialog {
+  width: min(860px, calc(100vw - 32px)); max-height: min(86vh, 900px); padding: 0; margin: auto;
+  border: 1px solid var(--line-2); border-radius: 14px; background: #151515; color: var(--fg);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, .6); overflow: hidden;
+}
+.md-dialog[open] { display: flex; flex-direction: column; animation: md-in .28s cubic-bezier(.39, .575, .565, 1) both; }
+@keyframes md-in { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: none; } }
+.md-dialog::backdrop { background: rgba(6, 6, 6, .72); backdrop-filter: blur(3px); }
+.md-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 22px 24px 0; }
+.md-kicker { margin: 0; font-size: 12px; letter-spacing: .04em; color: var(--pt-accent); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.md-head h2 { margin: 4px 0 0; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+.md-x { width: 36px; height: 36px; border: 0; border-radius: 8px; background: none; color: var(--fg-2); font-size: 16px; cursor: pointer; }
+.md-x:hover, .md-x:focus-visible { background: rgba(255, 255, 255, .08); color: var(--fg); outline: none; }
+.md-desc { margin: 10px 24px 0; font-size: 13.5px; line-height: 1.65; color: var(--fg-2); }
+.md-tabs { display: flex; gap: 6px; margin: 16px 24px 10px; }
+.md-tabs button { height: 32px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: 999px; background: none; color: var(--fg-2); font: inherit; font-size: 13px; cursor: pointer; }
+.md-tabs button small { margin-left: 4px; font-size: 11px; color: var(--fg-3); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.md-tabs button[aria-selected="true"] { border-color: var(--pt-accent); color: var(--fg); background: rgba(144, 222, 147, .1); }
+.md-pre {
+  flex: 1; min-height: 160px; margin: 0 24px; padding: 16px 18px; overflow: auto; overscroll-behavior: contain;
+  border: 1px solid var(--line); border-radius: 10px; background: #0e0e0e; color: #d9d9d4;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'D2Coding', monospace; font-size: 12.5px; line-height: 1.65;
+  white-space: pre-wrap; word-break: break-word; tab-size: 2;
+}
+.md-pre:focus-visible { outline: 1px solid var(--pt-accent); }
+.md-foot { display: flex; align-items: center; gap: 8px; padding: 14px 24px 20px; flex-wrap: wrap; }
+.md-meta { margin-right: auto; font-size: 12px; color: var(--fg-3); }
+.md-btn { display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: 8px; background: none; color: var(--fg); font: inherit; font-size: 13.5px; text-decoration: none; cursor: pointer; }
+.md-btn:hover, .md-btn:focus-visible { border-color: var(--fg-2); outline: none; }
+.md-btn.is-main { border-color: var(--pt-accent); background: var(--pt-accent); color: #10200f; font-weight: 600; }
+.md-btn.is-main:hover, .md-btn.is-main:focus-visible { filter: brightness(1.06); }
+@media (max-width: 600px) {
+  .md-head { padding: 18px 16px 0; }
+  .md-desc, .md-tabs, .md-pre { margin-left: 16px; margin-right: 16px; }
+  .md-foot { padding: 12px 16px 16px; }
+  .md-meta { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .md-dialog[open] { animation: none; } }

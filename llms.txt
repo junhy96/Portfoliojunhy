@@ -1,0 +1,61 @@
+# 전현영 (Jeon Hyun Young) · Game Designer
+
+> 항상 전체 프로세스를 염두하며 최선의 구조와 퍼포먼스를 약속드립니다. 재미를 감으로 두지 않고, 수치와 구조로 증명하는 기획자 전현영입니다.
+
+전현영 포트폴리오 사이트의 요약입니다. 사이트 화면은 자바스크립트로 그려지므로, AI 에이전트는 이 마크다운을 읽으면 됩니다.
+
+- 사이트: https://junhy96.github.io/Portfoliojunhy/
+- 이메일: junhy96@naver.com
+- Notion: https://app.notion.com/p/Project-9ccf7116f1f8830f9098815c0e590db6
+- GitHub: https://github.com/junhy96
+- 총 경력: 2년 3개월
+
+## 경력
+
+- 2026.09 — 현재 · 알체라 · Business Operator: 자율주행 FSD 학습, 프로젝트 툴 개선 피드
+- 2025.12 — 2026.07 · MR라이프 · 개발 팀장 (개발팀 · 팀장): 마케팅 업체 인하우스 툴 개발; SQL을 활용한 자체 서버 운용 · 스키마 기획; C# .NET 서버 입력 툴 제작
+- 2025.01 — 2025.07 · 네오플 · 던전앤파이터 (콘텐츠 기획팀 · 전투 콘텐츠 기획): 이내 여명 작전 콘텐츠 기획; 몬스터 기획 · 제작 (오작동하는 미스트 골렘, 울려 퍼지는 카코포네); 던전 시스템 기획
+- 2024.09 — 2024.12 · 레드닷 게임즈 · 짐승 친구들 키우기 (기획 총괄 · ‘용사가 돌아왔다’ 전투 기반 설계): 우주 경찰서 지령서 · 별자리 시스템 기획; 길드 대항전 콘텐츠 · 시스템 기획; 크리스마스 이벤트 기획; 프리셋 시스템 기획; 용사가 돌아왔다 전투 기반 설계
+- 2024.02 — 2024.06 · KOG · 그랜드체이스 클래식 (전투 · 라이브 기획): 시즌 패스 개선; 신규 전직 시스템 초안 제안; 신규 펫 스킬 기획 · 컨셉 및 대사 기획; 전투 밸런스 기획
+
+## 교육
+
+- 2023.01 — 2023.07 · 게임 캔버스 · 게임 기획 실무 교육 (시스템 · UI · 콘텐츠 기획)
+- 2015 — 2022 · 국립 한경대학교 졸업 (식품생물공학과)
+
+## 툴 · 숙련도 (100점 만점)
+
+- Claude Code 100
+- Excel 100
+- PowerPoint 100
+- Unreal Engine 5 80
+- MySQL 80
+- Confluence 80
+- Jira · Redmine 80
+- SVN · Git 80
+- Blender 70
+- Unity 70
+- Lua Script 60
+- Python · VBA 60
+
+## 작업물
+
+- [벨리알 V2 전투 기획](https://junhy96.github.io/Portfoliojunhy/uploads/works/stellar-belial.pdf): 전투 기획 · 3D 액션 RPG · 2026. 원작 보스 벨리알을 리버스 엔지니어링으로 재현하고, 3페이즈와 가짜 클리어 연출을 새로 설계한 전투 기획 (영상 https://www.youtube.com/watch?v=nlwOW5K8PC4)
+- [기획 워크벤치](https://junhy96.github.io/gamedesign_workbench/): 툴 제작 · 웹 툴 · 2026. 몬테카를로 시뮬레이션과 마르코프 체인으로 강화·가챠·전투 확률을 계산하고, 두 결과를 서로 맞춰 검증하는 기획자용 도구 모음 (영상 https://www.youtube.com/watch?v=IOuSgqbn-ho, 사이트 https://junhy96.github.io/gamedesign_workbench/)
+- [오벙없](https://junhy96.github.io/Portfoliojunhy/uploads/works/obung.pdf): 툴 제작 · 웹서비스 · 2026. 대화 내보내기 파일 하나로 오픈톡방의 활동·멤버·벙을 한눈에 정리하는 웹서비스. 기획부터 배포까지 1인 개발 (영상 https://www.youtube.com/shorts/kA7ycbWYFR8, 사이트 https://obung.pages.dev/)
+- [부위 파괴 시스템 기획서](https://junhy96.github.io/Portfoliojunhy/uploads/works/part-break.pdf): 전투 기획 · 3D 액션 RPG · 2026. 머리·몸통·날개·꼬리를 노려 부수는 부위 파괴의 규칙·공식·연출·보상을 테이블 단위로 정리한 시스템 기획서
+- [거미 여왕 아라크네](https://junhy96.github.io/Portfoliojunhy/uploads/works/arachne.pdf): 전투 기획 · 2D 액션 RPG · 2026. 우아한 인간형과 거미 괴물로 나뉜 2페이즈 보스 — 안전지대 유지와 고치 파훼 기믹
+- [동료 시스템 개선 제안서](https://junhy96.github.io/Portfoliojunhy/uploads/works/browndust2.pdf): 시스템·UI 기획 · 모바일 RPG · 2026. 유저 성장 단계에 맞춰 캐릭터 카드 정보를 고르는 커스터마이징과 진형 시뮬레이션 룸 기획
+- [굴리아 대성당 & 부서진 마을](https://junhy96.github.io/Portfoliojunhy/uploads/works/lies-of-p-chapter.pdf): 레벨 디자인 · 3D 액션 RPG · 2026. 화석병이 번진 마을의 과거를 기록으로 따라가는 4구역 · 855m 창작 챕터 레벨 디자인
+- [마왕성 주식회사](https://junhy96.github.io/Portfoliojunhy/uploads/works/midcore-rpg.pdf): 분석·제안 · 모바일 RPG · 2026. 로그라이크 디펜스의 코어 루프를 분해하고, 그 구조로 설계한 생산형 던전 디펜스 신작 제안
+- [증기 골렘 보스 디자인](https://junhy96.github.io/Portfoliojunhy/uploads/works/steampunk-boss.pdf): 전투 기획 · 3D 액션 로그라이트 · 2026. 패링·회피로 진공관 카운터를 줄여 약점을 여는, 조작법을 가르치는 수문장 보스
+- [무명 기사단 유저 이탈 분석](https://junhy96.github.io/Portfoliojunhy/uploads/works/nameless-knights.pdf): 분석·제안 · 모바일 RPG · 2025. 29%p 이탈이 일어나는 구간을 찾아 원인을 분석하고 FTUE·매출 개선안을 제안한 리포트
+- [주변 감지 시스템 역기획](https://junhy96.github.io/Portfoliojunhy/uploads/works/odin-detect.pdf): 시스템·UI 기획 · MMORPG · 2025. 반경 45m의 몬스터·유저를 찾아 표시하는 편의 시스템을 테이블·플로차트·UI까지 역기획
+- [기옌 지역 설정 기획서](https://junhy96.github.io/Portfoliojunhy/uploads/works/lostark-giyen.pdf): 시나리오 · MMORPG · 2023. 전 욕망 군단장 에키드나가 지배하는 쾌락의 왕국 ‘기옌’의 지역·인물·메인 퀘스트 설정
+- [드레스 룸 UI 시스템](https://junhy96.github.io/Portfoliojunhy/uploads/works/dressroom.pdf): 시스템·UI 기획 · 2D MMORPG · 2023. 넘쳐나는 치장 아이템을 세트·등급으로 묶어 찾고 정리하는 드레스 룸 인벤토리 기획
+
+## 더 보기
+
+- [전체 내용](https://junhy96.github.io/Portfoliojunhy/llms-full.txt): 작업물 설명, 툴 설명, 경력 설명, 자기소개서
+- [이력서 인쇄 페이지](https://junhy96.github.io/Portfoliojunhy/print.html?part=resume): A4 이력서 · 자기소개서 PDF
+- [작업 목록 인쇄 페이지](https://junhy96.github.io/Portfoliojunhy/print.html?part=works)

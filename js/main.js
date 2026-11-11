@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110250';
-import { PdfViewer } from './pdf-viewer.js?v=202611110250';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110250';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611110250';
-import { initWorks } from './works.js?v=202611110250';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110250';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110301';
+import { PdfViewer } from './pdf-viewer.js?v=202611110301';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110301';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611110301';
+import { initWorks } from './works.js?v=202611110301';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110301';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -442,6 +442,7 @@ function applyLinkPreset(data) {
   if (ov.role) data.settings.role = ov.role;
   if (ov.intro) data.settings.intro = ov.intro;
   if (ov.careerTotal) data.settings._careerTotal = true;
+  if (ov.coverLetter) data.settings.about = { ...(data.settings.about || {}), coverLetter: ov.coverLetter };
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
   document.documentElement.dataset.link = tag;
 }
@@ -467,7 +468,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611110250';
+const BUILD = '?v=202611110301';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];
@@ -695,6 +696,8 @@ async function boot() {
     if (b) viewer.open(projects[b.dataset.index], b);
   });
 
+  initAiMd(data, deck);
+
   // 첫 화면
   // 새로 들어오면 항상 첫 페이지부터 (주소에 #about 등이 남아 있어도 무시).
   // 관리자 클릭 히트맵 미리보기(?embed)만 주소의 섹션으로 바로 감
@@ -709,3 +712,58 @@ async function boot() {
 }
 
 boot();
+
+/* ---------- AI 요약 팝업 (llms.txt와 같은 마크다운, 지금 링크 기준) ---------- */
+function initAiMd(data, deck) {
+  const btn = $('#md-btn');
+  const dlg = $('#md-dialog');
+  if (!btn || !dlg || !window.buildLlms) return;
+  const SITE_URL = /^(localhost|127\.)/.test(location.hostname) ? 'https://junhy96.github.io/Portfoliojunhy/' : new URL('./', location.href).href;
+  const tag = document.documentElement.dataset.link;
+  const linkNote = tag ? `이 요약은 지원처 링크(?from=${tag}) 기준입니다.` : '';
+  const pre = $('#md-pre');
+  let mode = 'short';
+  const text = () => window.buildLlms(data, { full: mode === 'full', base: SITE_URL, linkNote });
+  const paint = () => {
+    const t = text();
+    pre.textContent = t;
+    pre.scrollTop = 0;
+    $('#md-meta').textContent = `${t.length.toLocaleString()}자 · ${t.split('\n').length}줄`;
+    const file = mode === 'full' ? 'llms-full.txt' : 'llms.txt';
+    $('#md-open').href = file;
+    $('#md-open').textContent = `${file} 열기 ↗`;
+    $$('[data-md]', dlg).forEach((b) => b.setAttribute('aria-selected', String(b.dataset.md === mode)));
+  };
+  $$('[data-md]', dlg).forEach((b) => b.addEventListener('click', () => ((mode = b.dataset.md), paint())));
+  btn.addEventListener('click', () => {
+    paint();
+    dlg.showModal();
+    if (deck) deck.enabled = false;
+  });
+  dlg.addEventListener('close', () => deck && (deck.enabled = true));
+  dlg.addEventListener('click', (e) => {
+    if (e.target === dlg || e.target.closest('[data-md-close]')) dlg.close();
+  });
+  $('#md-copy').addEventListener('click', async (e) => {
+    const b = e.currentTarget;
+    try {
+      await navigator.clipboard.writeText(text());
+      b.textContent = '복사했어요 ✓';
+    } catch {
+      // 클립보드를 못 쓰면 글을 선택해 둠 (Ctrl+C)
+      const r = document.createRange();
+      r.selectNodeContents(pre);
+      getSelection().removeAllRanges();
+      getSelection().addRange(r);
+      b.textContent = 'Ctrl+C로 복사';
+    }
+    setTimeout(() => (b.textContent = '.md 복사'), 1800);
+  });
+  $('#md-down').addEventListener('click', () => {
+    const name = `${(data.settings.nameEn || 'portfolio').replace(/\s+/g, '_')}${tag ? '_' + tag : ''}${mode === 'full' ? '_full' : ''}.md`;
+    const a = el('a', { href: URL.createObjectURL(new Blob([text()], { type: 'text/markdown;charset=utf-8' })), download: name });
+    document.body.append(a);
+    a.click();
+    setTimeout(() => (URL.revokeObjectURL(a.href), a.remove()), 1000);
+  });
+}
