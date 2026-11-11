@@ -185,7 +185,7 @@
     const pick = (a) => a[Math.floor(rnd() * a.length)];
     const now = Date.now();
     const rows = [];
-    const tags = [null, null, null, 'nexon', 'neople', 'krafton', 'smilegate'];
+    const tags = [null, null, null, 'A게임사', 'B게임사', 'C게임사', 'D게임사']; // 예시: 실제 회사 이름은 쓰지 않음
     const refs = [null, null, 'linkedin.com', 'notion.so', 'saramin.co.kr', 'wanted.co.kr'];
     const hero = [['05포트폴리오→', 0.5, 0.51], ['04툴 · 스킬→', 0.64, 0.51], ['03연혁→', 0.77, 0.51], ['PDF이력서↓', 0.9, 0.51], ['05Works', 0.76, 0.05]];
     for (let s = 0; s < 120; s++) {
