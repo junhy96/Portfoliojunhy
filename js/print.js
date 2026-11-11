@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611110033';
-import { cleanTag } from './analytics.js?v=202611110033';
+import { timelineItems } from './timeline.js?v=202611110036';
+import { cleanTag } from './analytics.js?v=202611110036';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -117,14 +117,15 @@ function resume(data) {
     footer(s)
   );
   // 2쪽: 자기소개서
-  if (s.about?.bio) {
+  const letter = (s.about?.coverLetter || s.about?.bio || '').trim();
+  if (letter) {
     const doc2 = el('main', 'doc d-page2');
-    add(
-      doc2,
-      header(s, '자기소개서'),
-      section('자기소개서', el('p', 'd-text d-letter', s.about.bio)),
-      footer(s)
-    );
+    const body = el('div', 'd-letter');
+    letter.split('\n').map((t) => t.trim()).filter(Boolean).forEach((t) => {
+      const m = t.match(/^[〈<]\s*(.+?)\s*[〉>]$/);
+      body.append(m ? el('h3', 'd-letter-h', m[1]) : el('p', null, t));
+    });
+    add(doc2, header(s, '자기소개서'), section('자기소개서', body), footer(s));
     doc.after(doc2);
   }
   return '이력서';

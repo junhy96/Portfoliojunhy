@@ -131,3 +131,15 @@ ul, ol { padding: 0; list-style: none; }
 @media screen and (max-width: 840px) { .d-head.has-photo { grid-template-columns: 22mm 1fr; } .d-head.has-photo .d-contact { grid-column: 1 / -1; } }
 .d-link { color: inherit; text-decoration: none; }
 .d-name { white-space: nowrap; }
+
+/* 자기소개서: 문단 · 소제목 */
+.d-letter { display: grid; gap: 2.2mm; font-size: 10.2pt; line-height: 1.78; color: var(--ink); }
+.d-letter p { text-align: justify; word-break: keep-all; }
+.d-letter-h { margin-top: 3mm; font-size: 11pt; font-weight: 700; color: var(--pt-ink); break-after: avoid; }
+.d-page2 .d-sec { break-inside: auto; }
+/* 여러 쪽으로 넘어가는 자기소개서: grid/flex는 쪽 경계에서 줄이 겹쳐 그려져서 일반 흐름으로 */
+.d-page2, .d-page2 .d-sec, .d-letter { display: block; }
+.d-page2 > * + * { margin-top: 7mm; }
+.d-page2 .d-h { margin-bottom: 3mm; }
+.d-letter p { margin: 0 0 2.2mm; orphans: 2; widows: 2; }
+.d-letter-h { margin: 5mm 0 2mm; }

@@ -1193,6 +1193,7 @@
     f.siteTitle.value = s.siteTitle || '';
     f.aboutHeading.value = s.about?.heading || '';
     f.bio.value = s.about?.bio || '';
+    f.coverLetter.value = s.about?.coverLetter || '';
     f.skills.value = (s.about?.skills || []).join(', ');
     f.tools.value = (s.about?.tools || []).join(', ');
     f.worksIntro.value = s.worksIntro || '';
@@ -1275,6 +1276,7 @@
       about: {
         heading: f.aboutHeading.value.trim(),
         bio: f.bio.value.trim(),
+        coverLetter: f.coverLetter.value.trim(),
         skills: list(f.skills.value),
         tools: list(f.tools.value),
       },
