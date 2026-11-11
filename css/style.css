@@ -474,3 +474,8 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
   font-size: 3.2vw; white-space: nowrap; pointer-events: none; transition: opacity .6s ease;
 }
 .rotate-tip.is-gone { opacity: 0; }
+
+/* 지금 페이지와 바로 옆 페이지만 그림 (main.js Deck이 is-near를 붙임). 큰 레이어는 움직일 때만 */
+.deck { will-change: auto; }
+.deck.is-moving { will-change: transform; }
+.deck.has-near > .panel:not(.is-near) { visibility: hidden; }

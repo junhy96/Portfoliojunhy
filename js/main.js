@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110151';
-import { PdfViewer } from './pdf-viewer.js?v=202611110151';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110151';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110151';
-import { initWorks } from './works.js?v=202611110151';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110151';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110202';
+import { PdfViewer } from './pdf-viewer.js?v=202611110202';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110202';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110202';
+import { initWorks } from './works.js?v=202611110202';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110202';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -263,6 +263,16 @@ class Deck {
     document.body.classList.toggle('is-flow', flow);
     this.lockUntil = this.navTime + 950;
     this._apply(animate);
+    // 지금 페이지와 바로 옆 페이지만 그림 (+ 넘어가는 동안은 떠나는 페이지도).
+    // 여섯 페이지를 한 장으로 계속 그리면 큰 화면·그래픽 메모리가 빠듯한 PC에서 배경만 뜨고 글이 안 그려지는 일이 있음
+    const near = (k, from) => Math.abs(k - i) <= 1 || k === from;
+    this.el.classList.add('has-near', 'is-moving');
+    this.panels.forEach((p, k) => p.classList.toggle('is-near', near(k, prev)));
+    clearTimeout(this._nearT);
+    this._nearT = setTimeout(() => {
+      this.el.classList.remove('is-moving');
+      this.panels.forEach((p, k) => p.classList.toggle('is-near', near(k, -1)));
+    }, animate ? 1100 : 50);
     const panel = this.panels[i];
     this.panels.forEach((p, k) => {
       p.classList.toggle('is-active', k === i);
@@ -449,7 +459,24 @@ function forceDesktop(on) {
   }
 }
 
+// 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
+const BUILD = '?v=202611110202';
+function staleHtml() {
+  const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
+  const v = (src.match(/\?v=\w+/) || [''])[0];
+  if (!v || v === BUILD || BUILD === '?v=0') return false;
+  try {
+    if (sessionStorage.getItem('pf-reload') === BUILD) return false; // 한 번만
+    sessionStorage.setItem('pf-reload', BUILD);
+  } catch {
+    return false;
+  }
+  location.reload();
+  return true;
+}
+
 async function boot() {
+  if (staleHtml()) return;
   let data;
   try {
     // GitHub Pages는 CDN 캐시가 있으므로 매번 새로 받아옴
