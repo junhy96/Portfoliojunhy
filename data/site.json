@@ -504,28 +504,6 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     },
     {
-      "id": "w-midcore-rpg",
-      "title": "마왕성 주식회사",
-      "subtitle": "냥냥시노비 코어 루프 분해 + 신규 게임 1-Page 컨셉",
-      "category": "모바일 RPG",
-      "year": "2026",
-      "tags": [
-        "코어 루프",
-        "리텐션",
-        "A/B 검증"
-      ],
-      "summary": "로그라이크 디펜스의 코어 루프를 분해하고, 그 구조로 설계한 생산형 던전 디펜스 신작 제안",
-      "description": "「냥냥시노비」의 인게임·아웃게임 루프와 과금 전환점, 비선형 강화 트리가 만드는 핵심 재미를 분석했습니다.\n이를 바탕으로 원정대 유형에 맞춰 마왕·던전 방·몬스터를 편성하는 「마왕성 주식회사」를 제안하고, D1·D7·D30 리텐션 목표와 출시 전 A/B 검증 설계까지 정리했습니다.",
-      "thumb": "uploads/works/midcore-rpg.jpg",
-      "pdf": "uploads/works/midcore-rpg.pdf",
-      "pdfName": "미드코어RPG_신규게임기획서.pdf",
-      "pdfSize": 1442272,
-      "docType": "분석·제안",
-      "visible": true,
-      "createdAt": "2026-11-10T09:00:00.000Z",
-      "updatedAt": "2026-11-10T09:00:00.000Z"
-    },
-    {
       "id": "w-lies-of-p-chapter",
       "title": "굴리아 대성당 & 부서진 마을",
       "subtitle": "P의 거짓 · 30~40분 분량 창작 챕터",
@@ -565,6 +543,28 @@
       "pdfName": "브라운더스트2_동료시스템_개선제안서.pdf",
       "pdfSize": 1835216,
       "docType": "시스템·UI 기획",
+      "visible": true,
+      "createdAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "w-midcore-rpg",
+      "title": "마왕성 주식회사",
+      "subtitle": "냥냥시노비 코어 루프 분해 + 신규 게임 1-Page 컨셉",
+      "category": "모바일 RPG",
+      "year": "2026",
+      "tags": [
+        "코어 루프",
+        "리텐션",
+        "A/B 검증"
+      ],
+      "summary": "로그라이크 디펜스의 코어 루프를 분해하고, 그 구조로 설계한 생산형 던전 디펜스 신작 제안",
+      "description": "「냥냥시노비」의 인게임·아웃게임 루프와 과금 전환점, 비선형 강화 트리가 만드는 핵심 재미를 분석했습니다.\n이를 바탕으로 원정대 유형에 맞춰 마왕·던전 방·몬스터를 편성하는 「마왕성 주식회사」를 제안하고, D1·D7·D30 리텐션 목표와 출시 전 A/B 검증 설계까지 정리했습니다.",
+      "thumb": "uploads/works/midcore-rpg.jpg",
+      "pdf": "uploads/works/midcore-rpg.pdf",
+      "pdfName": "미드코어RPG_신규게임기획서.pdf",
+      "pdfSize": 1442272,
+      "docType": "분석·제안",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
       "updatedAt": "2026-11-10T09:00:00.000Z"
@@ -680,5 +680,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794357858638
+  "rev": 1794357863369
 }
