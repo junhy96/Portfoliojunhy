@@ -884,6 +884,7 @@
       type.addEventListener('change', () => (dirty = true));
       // 배경 사진: 사이트에서 이 항목을 보고 있을 때 뒷배경이 이 사진으로 바뀜
       r._id = it.id || 't' + uid(); // 지원처별 링크에서 이 경력을 켜고 끌 때 쓰는 고정 ID
+      r._orig = it; // 편집 칸이 없는 값(업무 자료 work 등)은 저장할 때 그대로 둠
       r._image = it.image || '';
       r._focusX = it.focusX ?? 0.5;
       const drop = h(
@@ -926,7 +927,8 @@
   function readTimeline(files = []) {
     return $$('#tl-editor .tl-row')
       .map((r) => {
-        const x = Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()]));
+        const { image: _i, focusX: _f, ...keep } = r._orig || {};
+        const x = { ...keep, ...Object.fromEntries($$('[data-key]', r).map((n) => [n.dataset.key, n.value.trim()])) };
         x.id = r._id;
         x.tasks = $('[data-tasks]', r).value.split('\n').map((t) => t.trim()).filter(Boolean);
         if (r._blob) {

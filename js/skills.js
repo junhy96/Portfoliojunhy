@@ -214,6 +214,7 @@ export function renderSkillChart(root, skills) {
     const head = document.createElement('div');
     head.className = 'tip-head';
     head.innerHTML = window.skillIconSvg ? window.skillIconSvg(s.icon, 18) : '';
+    if (window.skillBrand?.(s.icon)) head.firstChild.style.color = window.skillBrand(s.icon);
     const name = document.createElement('b');
     name.textContent = s.name;
     head.append(name);
@@ -302,6 +303,7 @@ export function renderToolBars(root, tools) {
     const icon = document.createElement('span');
     icon.className = 'tb-icon';
     icon.innerHTML = window.skillIconSvg ? window.skillIconSvg(s.icon, 20) : '';
+    if (window.skillBrand?.(s.icon)) icon.style.color = window.skillBrand(s.icon); // 로고는 브랜드 색
     const name = document.createElement('span');
     name.className = 'tb-name';
     name.textContent = s.name;
@@ -328,6 +330,7 @@ export function renderToolBars(root, tools) {
     const head = document.createElement('div');
     head.className = 'tip-head';
     head.innerHTML = window.skillIconSvg ? window.skillIconSvg(s.icon, 18) : '';
+    if (window.skillBrand?.(s.icon)) head.firstChild.style.color = window.skillBrand(s.icon);
     const nm = document.createElement('b');
     nm.textContent = s.name;
     head.append(nm);

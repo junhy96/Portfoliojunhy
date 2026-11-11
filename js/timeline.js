@@ -60,6 +60,88 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     return null;
   }
 
+  // 업무 자료 한 쪽을 크게 (PDF 보기 창)
+  const openWork = (x, k, opener) =>
+    window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener, doc: { id: 'tl-' + (x.id || x._i), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, showDesc: true, description: x.tasks.length ? '주요 업무\n' + x.tasks.map((t) => '– ' + t).join('\n') : '', pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
+
+  // 오른쪽 위 빈 자리: 보고 있는 연혁의 업무 자료를 크게, 천천히 한 쪽씩 넘김 (누르면 그 쪽부터 크게)
+  const body = root.parentElement;
+  const show = el('button', 'tl-show');
+  show.type = 'button';
+  const showImgs = [el('img'), el('img')];
+  showImgs.forEach((im) => Object.assign(im, { alt: '', decoding: 'async' }));
+  const showCap = el('span', 'tl-show-cap');
+  const showDots = el('span', 'tl-show-dots');
+  show.append(...showImgs, el('span', 'tl-show-shade'), showCap, showDots);
+  body.append(show);
+  let showItem = null;
+  let showPage = 0;
+  let showFront = 0;
+  let showTimer = 0;
+  const paintShow = () => {
+    const x = showItem;
+    const n = x.work.thumbs.length;
+    const next = showImgs[1 - showFront];
+    next.src = x.work.thumbs[showPage];
+    next.classList.add('is-on');
+    showImgs[showFront].classList.remove('is-on');
+    showFront = 1 - showFront;
+    showCap.textContent = `업무 자료 ${showPage + 1} / ${n} · 누르면 크게`;
+    showDots.replaceChildren(...x.work.thumbs.map((_, k) => el('i', k === showPage ? 'is-on' : '')));
+    show.setAttribute('aria-label', `${x.title} 업무 자료 ${showPage + 1}쪽 크게 보기`);
+  };
+  const autoShow = () => {
+    clearInterval(showTimer);
+    showTimer = setInterval(() => {
+      if (!showItem || !active || document.hidden) return;
+      showPage = (showPage + 1) % showItem.work.thumbs.length;
+      paintShow();
+    }, 3600);
+  };
+  const showAt = (x, k) => {
+    if (showItem !== x) return;
+    showPage = k;
+    paintShow();
+    autoShow();
+  };
+  // 자리 잡기: 제목줄 아래 ~ 접힌 연혁 위, 펼친 카드 오른쪽 ~ 오른쪽 여백. 자리가 좁으면 숨김
+  const placeShow = () => {
+    if (!show.classList.contains('is-on') || focus < 0) return;
+    const b = body.getBoundingClientRect();
+    const head = body.querySelector('.tl-head')?.getBoundingClientRect();
+    const side = body.querySelector('.tl-head-side')?.getBoundingClientRect();
+    const card = nodes[focus].querySelector('.tl-card');
+    const others = nodes.filter((_, k) => k !== focus).map((n) => n.querySelector('.tl-card').getBoundingClientRect().top).filter((t) => t > 0);
+    if (!head || !side || !card) return;
+    const top = head.bottom + 28;
+    const bottom = (others.length ? Math.min(...others) : root.getBoundingClientRect().bottom - 120) - 28;
+    const left = root.getBoundingClientRect().left + focusX() + card.offsetWidth + 48;
+    const right = side.right;
+    const w = Math.min(right - left, ((bottom - top) * 16) / 9, 760);
+    show.classList.toggle('is-fit', w >= 280);
+    show.style.width = w + 'px';
+    show.style.left = right - w - b.left + 'px';
+    show.style.top = top - b.top + 'px';
+  };
+  const setShow = (x) => {
+    if (!x?.work?.thumbs?.length) {
+      showItem = null;
+      show.classList.remove('is-on');
+      clearInterval(showTimer);
+      return;
+    }
+    if (showItem === x) return;
+    showItem = x;
+    showPage = 0;
+    show.classList.add('is-on');
+    paintShow();
+    autoShow();
+    placeShow();
+    setTimeout(placeShow, 650); // 카드가 다 펼쳐진 뒤 다시
+  };
+  show.addEventListener('click', () => showItem && openWork(showItem, showPage, show));
+  window.addEventListener('resize', () => placeShow());
+
   const track = el('div', 'tl-track');
   const lineBase = el('i', 'tl-line');
   const lineDone = el('i', 'tl-line tl-line-done');
@@ -122,8 +204,10 @@ export function renderTimeline(root, items, { onFocus } = {}) {
         b.append(im);
         b.addEventListener('click', (e) => {
           e.stopPropagation();
-          window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener: b, doc: { id: 'tl-' + (x.id || k), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, showDesc: true, description: x.tasks.length ? '주요 업무\n' + x.tasks.map((t) => '– ' + t).join('\n') : '', pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
+          openWork(x, k, b);
         });
+        // 마우스를 올리면 오른쪽 큰 미리보기도 그 쪽으로
+        b.addEventListener('pointerenter', () => showAt(x, k));
         row.append(b);
       });
       inner.append(row);
@@ -167,6 +251,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     marks.forEach((n) => n.classList.remove('is-cur'));
     yearOf[i]?.classList.add('is-cur');
     onFocus?.(items[i], i);
+    setShow(items[i]);
   };
   const nearest = (x) => {
     let best = 0;
@@ -299,6 +384,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
           if (active) return;
           marks.forEach((n) => n.classList.remove('is-in', 'is-focus', 'is-cur'));
           focus = -1;
+          setShow(null);
           reveal = 0;
           lineDone.style.width = '0px';
         }, 700);

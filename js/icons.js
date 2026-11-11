@@ -574,3 +574,7 @@ window.skillIconSvg = function (key, size) {
   var icon = window.SKILL_ICONS[key] || window.SKILL_ICONS.idea;
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' + (size || 24) + '" height="' + (size || 24) + '" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon.body + '</svg>';
 };
+
+/* 툴 로고 브랜드 색 (어두운 바탕용: 원래 색이 너무 어두운 Unreal·Unity·Lua는 밝게) */
+window.SKILL_BRAND = { unreal: '#f4f4ef', unity: '#e8e8e4', claude: '#d97757', mysql: '#5d9bd0', excel: '#21a366', sheets: '#34a853', powerpoint: '#e0643a', word: '#4a8be0', lua: '#8a8cf0', python: '#ffd43b', confluence: '#2684ff', jira: '#2684ff', git: '#f05032', svn: '#809cc9', figma: '#f24e1e', blender: '#f5792a', csharp: '#a66cc2', cpp: '#659ad2', notion: '#f4f4ef', photoshop: '#31a8ff' };
+window.skillBrand = function (key) { return window.SKILL_BRAND[key] || ''; };

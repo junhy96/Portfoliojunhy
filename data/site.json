@@ -83,7 +83,18 @@
           "전투 밸런스 기획"
         ],
         "image": "uploads/site/timeline-kog.jpg",
-        "focusX": 0.5
+        "focusX": 0.5,
+        "work": {
+          "pdf": "uploads/site/tl-work/kog.pdf",
+          "pages": 5,
+          "thumbs": [
+            "uploads/site/tl-work/kog-1.jpg",
+            "uploads/site/tl-work/kog-2.jpg",
+            "uploads/site/tl-work/kog-3.jpg",
+            "uploads/site/tl-work/kog-4.jpg",
+            "uploads/site/tl-work/kog-5.jpg"
+          ]
+        }
       },
       {
         "type": "경력",
@@ -100,7 +111,19 @@
           "용사가 돌아왔다 전투 기반 설계"
         ],
         "image": "uploads/site/timeline-reddot.jpg",
-        "focusX": 0.5
+        "focusX": 0.5,
+        "work": {
+          "pdf": "uploads/site/tl-work/reddot.pdf",
+          "pages": 6,
+          "thumbs": [
+            "uploads/site/tl-work/reddot-1.jpg",
+            "uploads/site/tl-work/reddot-2.jpg",
+            "uploads/site/tl-work/reddot-3.jpg",
+            "uploads/site/tl-work/reddot-4.jpg",
+            "uploads/site/tl-work/reddot-5.jpg",
+            "uploads/site/tl-work/reddot-6.jpg"
+          ]
+        }
       },
       {
         "type": "경력",
@@ -115,7 +138,19 @@
           "던전 시스템 기획"
         ],
         "image": "uploads/site/timeline-neople.jpg",
-        "focusX": 0.5
+        "focusX": 0.5,
+        "work": {
+          "pdf": "uploads/site/tl-work/neople.pdf",
+          "pages": 6,
+          "thumbs": [
+            "uploads/site/tl-work/neople-1.jpg",
+            "uploads/site/tl-work/neople-2.jpg",
+            "uploads/site/tl-work/neople-3.jpg",
+            "uploads/site/tl-work/neople-4.jpg",
+            "uploads/site/tl-work/neople-5.jpg",
+            "uploads/site/tl-work/neople-6.jpg"
+          ]
+        }
       },
       {
         "type": "교육",
