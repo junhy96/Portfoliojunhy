@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611110312';
-import { cleanTag } from './analytics.js?v=202611110312';
+import { timelineItems, careerTotal } from './timeline.js?v=202611110321';
+import { cleanTag } from './analytics.js?v=202611110321';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -55,7 +55,10 @@ function header(s, title) {
   const c = s.contact || {};
   const meta = el('ul', 'd-contact');
   if (c.email) meta.append(add(el('li'), el('b', null, 'Email'), el('span', null, c.email)));
-  meta.append(add(el('li'), el('b', null, 'Web'), el('span', null, SITE.replace(/^https?:\/\//, '').replace(/\/$/, ''))));
+  // 사이트 주소: PDF에서 누르면 사이트로. 지원처 링크(from=)로 뽑았으면 그 링크로
+  const tag = cleanTag(q.get('from'));
+  const webUrl = SITE + (tag && (s.links || []).some((l) => cleanTag(l.tag) === tag) ? '?from=' + encodeURIComponent(tag) : '');
+  meta.append(add(el('li'), el('b', null, 'Web'), Object.assign(el('a', 'd-link', SITE.replace(/^https?:\/\//, '').replace(/\/$/, '')), { href: webUrl })));
   // 주소가 첫 화면뿐인 링크(예: https://github.com)는 아직 채우지 않은 자리라 인쇄하지 않음
   const real = (u) => {
     try {
