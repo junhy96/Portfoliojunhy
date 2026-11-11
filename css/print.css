@@ -167,3 +167,8 @@ ul, ol { padding: 0; list-style: none; }
 .d-letter-h { font-size: 12pt; }
 .d-rows b, .d-tools b { font-weight: 700; }
 .d-total { margin-left: 2.5mm; font-family: 'SUITE Variable', SUITE, sans-serif; font-size: 8.5pt; font-weight: 400; color: var(--ink-3); letter-spacing: 0; }
+/* 자기소개서 조금 촘촘하게 (한 쪽에 더 들어가게) */
+.d-letter { font-size: 9.9pt; line-height: 1.68; }
+.d-letter p { margin-bottom: 1.6mm; }
+.d-letter-h { margin: 3.6mm 0 1.4mm; }
+.d-page2 .d-sec { padding: 6mm 7mm 5mm; }
