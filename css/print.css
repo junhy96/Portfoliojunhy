@@ -181,3 +181,5 @@ ul, ol { padding: 0; list-style: none; }
 .d-page2 > * + * { margin-top: 5mm; }
 .d-page2 .d-sec > .d-h { display: none; }
 .d-page2 .d-sec .d-letter-h:first-child { margin-top: 0; }
+/* 작업 하나: 표지 그림을 조금 낮춰 설명·링크가 첫 쪽에 함께 들어가게 */
+.d-cover img { max-height: 82mm; }
