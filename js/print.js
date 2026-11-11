@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611110040';
-import { cleanTag } from './analytics.js?v=202611110040';
+import { timelineItems } from './timeline.js?v=202611110044';
+import { cleanTag } from './analytics.js?v=202611110044';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -83,12 +83,15 @@ function rows(items) {
   items.forEach((x) => ol.append(add(el('li'), el('time', null, x.period || ''), add(el('div'), el('b', null, x.title || ''), x.org ? el('span', null, x.org) : null))));
   return ol;
 }
+// 툴 아이콘 색 (각 브랜드 대표색)
+const BRAND = { unreal: '#0e1128', unity: '#222c37', claude: '#d97757', mysql: '#4479a1', excel: '#217346', powerpoint: '#c43e1c', word: '#2b579a', lua: '#2c2d72', python: '#3776ab', confluence: '#0052cc', jira: '#0052cc', git: '#f05032', figma: '#f24e1e', blender: '#e87d0d', csharp: '#68217a' };
 function toolBars(tools, withDesc) {
   const ul = el('ul', 'd-tools' + (withDesc ? ' is-wide' : ''));
   tools.forEach((t) => {
     const lv = Math.max(0, Math.min(100, Number(t.level) || 0));
     const icon = el('i', 'd-ic');
     icon.innerHTML = window.skillIconSvg ? window.skillIconSvg(t.icon, 16) : '';
+    if (BRAND[t.icon]) icon.style.color = BRAND[t.icon]; // 툴 로고를 각 브랜드 색으로
     const bar = el('span', 'd-bar');
     bar.append(el('i'));
     bar.firstChild.style.width = lv + '%';
@@ -106,7 +109,7 @@ function resume(data) {
   const tools = (s.skillChart || []).filter((x) => x && x.group === 'tool' && x.name);
   // 1쪽: 사진 · 간략 소개(Who?) · 경력 · 교육 · 툴
   const head = header(s, '이력서');
-  const photo = Object.assign(el('img', 'd-photo'), { src: 'uploads/site/photo-resume.jpg', alt: '' });
+  const photo = Object.assign(el('img', 'd-photo'), { src: 'uploads/site/photo-resume-color.jpg', alt: '' });
   head.prepend(photo);
   head.classList.add('has-photo');
   add(
