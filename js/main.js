@@ -1,15 +1,15 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110106';
-import { PdfViewer } from './pdf-viewer.js?v=202611110106';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110106';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110106';
-import { initWorks } from './works.js?v=202611110106';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110106';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110111';
+import { PdfViewer } from './pdf-viewer.js?v=202611110111';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110111';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110111';
+import { initWorks } from './works.js?v=202611110111';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110111';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
 let onTimelineFocus = null; // 타임라인에서 보는 항목이 바뀔 때 (boot에서 채움)
 const TONE_MODE = () => (document.documentElement.dataset.tone === 'mono' ? 3 : 2); // 배경 사진 색보정: 2 청록 회색, 3 모노톤
-const SPLASH_MIN = EMBED ? 0 : 1500; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 잠깐 멈춤)
+const SPLASH_MIN = EMBED ? 0 : 2200; // 열리는 화면 최소 표시 시간 (PORTFOLIO 0.7초 + 뒤로 흐르는 작업 이미지를 잠깐 볼 수 있게)
 const bootAt = performance.now();
 if (EMBED) document.documentElement.classList.add('is-embed');
 // 스타일은 Editorial 하나 (예전 페이지가 캐시에 남아 다른 스타일을 고르더라도 덮어씀)

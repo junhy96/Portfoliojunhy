@@ -1360,3 +1360,24 @@ html[data-theme="editorial"] .rail-mark { display: grid; place-items: center; wi
 html[data-theme="editorial"] .rail-mark svg { width: 40px; height: 40px; }
 html[data-theme="editorial"] .rail-mark:hover, html[data-theme="editorial"] .rail-mark:focus-visible { background: rgba(144, 222, 147, .12); outline: none; }
 html[data-theme="editorial"] .rail-mark:hover svg { animation: wobble-hor-bottom .8s both; }
+
+/* 열리는 화면: 뒤로 작업 이미지가 천천히 흘러감 + Loading... */
+.loader { overflow: hidden; }
+.loader > :not(.loader-reel) { position: relative; z-index: 1; }
+.loader-reel {
+  position: absolute; inset: 0; display: grid; align-content: center; pointer-events: none;
+  opacity: 0; animation: reel-in 1s ease .15s forwards;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+.loader-reel::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(20, 20, 20, .78), rgba(20, 20, 20, .35)); }
+.loader-track { display: flex; gap: 18px; width: max-content; animation: reel 70s linear infinite; }
+.loader-track img { width: clamp(220px, 30vw, 460px); aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; flex: none; filter: saturate(.75); }
+@keyframes reel { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes reel-in { to { opacity: .55; } }
+.loader-text { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--fg-3); margin-top: -4px; }
+.loader-text b { font-weight: 400; animation: dot 1.2s infinite; }
+.loader-text b:nth-child(2) { animation-delay: .2s; }
+.loader-text b:nth-child(3) { animation-delay: .4s; }
+@keyframes dot { 0%, 20% { opacity: .15; } 50% { opacity: 1; } 100% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .loader-track { animation: none; } }

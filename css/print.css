@@ -149,3 +149,20 @@ ul, ol { padding: 0; list-style: none; }
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .d-page2 .d-sec > .d-h { margin-top: 0; }
+
+/* 글꼴: 본문 SUITE, 이름·제목·연도는 제주명조 (제주명조는 굵기가 하나라 가짜 굵게 없이 400) */
+:root { font-family: 'SUITE Variable', SUITE, 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; }
+.pbar { font-family: 'Pretendard Variable', Pretendard, sans-serif; }
+.d-name, .d-h, .d-tl h3, .d-work-title, .d-works h3, .d-letter-h,
+.d-rows time, .d-tl-meta, .d-work-meta {
+  font-family: 'Jeju Myeongjo', 'Nanum Myeongjo', 'Noto Serif KR', serif;
+  font-weight: 400; font-synthesis: none; letter-spacing: -.01em;
+}
+.d-name { font-size: 26pt; letter-spacing: -.03em; }
+.d-name-en { font-family: 'SUITE Variable', SUITE, sans-serif; font-weight: 500; }
+.d-h { font-size: 13pt; }
+.d-tl h3 { font-size: 13pt; }
+.d-works h3 { font-size: 12.5pt; }
+.d-work-title { font-size: 22pt; }
+.d-letter-h { font-size: 12pt; }
+.d-rows b, .d-tools b { font-weight: 700; }
