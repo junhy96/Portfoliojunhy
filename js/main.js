@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110412';
-import { PdfViewer } from './pdf-viewer.js?v=202611110412';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110412';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611110412';
-import { initWorks } from './works.js?v=202611110412';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110412';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110529';
+import { PdfViewer } from './pdf-viewer.js?v=202611110529';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110529';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611110529';
+import { initWorks } from './works.js?v=202611110529';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110529';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -468,7 +468,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611110412';
+const BUILD = '?v=202611110529';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];
@@ -732,7 +732,8 @@ function initAiMd(data, deck) {
     $('#md-meta').textContent = `${t.length.toLocaleString()}자 · ${t.split('\n').length}줄`;
     const file = mode === 'full' ? 'llms-full.txt' : 'llms.txt';
     $('#md-open').href = file;
-    $('#md-open').textContent = `${file} 열기 ↗`;
+    $('#md-open').textContent = '파일 열기 ↗';
+    $('#md-open').title = file + ' 열기';
     $$('[data-md]', dlg).forEach((b) => b.setAttribute('aria-selected', String(b.dataset.md === mode)));
   };
   $$('[data-md]', dlg).forEach((b) => b.addEventListener('click', () => ((mode = b.dataset.md), paint())));
