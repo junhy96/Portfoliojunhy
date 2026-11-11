@@ -460,28 +460,6 @@
       "pdfSize": 4458563
     },
     {
-      "id": "w-arachne",
-      "title": "거미 여왕 아라크네",
-      "subtitle": "던전앤파이터 · 2페이즈 레이드 몬스터 기획",
-      "category": "2D 액션 RPG",
-      "year": "2026",
-      "tags": [
-        "몬스터 기획",
-        "패턴 설계",
-        "기믹"
-      ],
-      "summary": "우아한 인간형과 거미 괴물로 나뉜 2페이즈 보스 — 안전지대 유지와 고치 파훼 기믹",
-      "description": "1페이즈는 줄어드는 안전지대를 지키는 전투, 2페이즈는 거미줄 설치 위치를 고민하게 만드는 전투로 설계했습니다.\n목표 → 방해 요소 → 해소 시 딜 타임으로 이어지는 보상 피드백 구조를 잡고, 1인·4인 HP, 속성·상태이상 저항, 패턴 11종과 AI 플로차트를 정리했습니다.",
-      "thumb": "uploads/works/arachne.jpg",
-      "pdf": "uploads/works/arachne.pdf",
-      "pdfName": "던전앤파이터_아라크네_몬스터기획.pdf",
-      "pdfSize": 4587049,
-      "docType": "전투 기획",
-      "visible": true,
-      "createdAt": "2026-11-10T09:00:00.000Z",
-      "updatedAt": "2026-11-10T09:00:00.000Z"
-    },
-    {
       "id": "w-part-break",
       "title": "부위 파괴 시스템 기획서",
       "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
@@ -498,6 +476,28 @@
       "pdf": "uploads/works/part-break.pdf",
       "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
       "pdfSize": 1321399,
+      "docType": "전투 기획",
+      "visible": true,
+      "createdAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "w-arachne",
+      "title": "거미 여왕 아라크네",
+      "subtitle": "던전앤파이터 · 2페이즈 레이드 몬스터 기획",
+      "category": "2D 액션 RPG",
+      "year": "2026",
+      "tags": [
+        "몬스터 기획",
+        "패턴 설계",
+        "기믹"
+      ],
+      "summary": "우아한 인간형과 거미 괴물로 나뉜 2페이즈 보스 — 안전지대 유지와 고치 파훼 기믹",
+      "description": "1페이즈는 줄어드는 안전지대를 지키는 전투, 2페이즈는 거미줄 설치 위치를 고민하게 만드는 전투로 설계했습니다.\n목표 → 방해 요소 → 해소 시 딜 타임으로 이어지는 보상 피드백 구조를 잡고, 1인·4인 HP, 속성·상태이상 저항, 패턴 11종과 AI 플로차트를 정리했습니다.",
+      "thumb": "uploads/works/arachne.jpg",
+      "pdf": "uploads/works/arachne.pdf",
+      "pdfName": "던전앤파이터_아라크네_몬스터기획.pdf",
+      "pdfSize": 4587049,
       "docType": "전투 기획",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
@@ -680,5 +680,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794357834644
+  "rev": 1794357839282
 }
