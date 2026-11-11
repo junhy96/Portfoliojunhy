@@ -117,3 +117,8 @@ ul, ol { padding: 0; list-style: none; }
   .d-tools.is-wide li { grid-template-columns: 20px 120px 1fr 28px; }
   .d-rows li { grid-template-columns: 110px 1fr; }
 }
+/* 경력·교육 두 칸: 짧은 쪽(교육)이 긴 쪽 높이로 늘어나 제목 막대가 길어지던 문제 */
+.d-cols { align-items: start; }
+.d-sec { align-content: start; }
+/* 교육 칸은 좁아서: 기간을 제목 위로 올려 줄바꿈 없이 */
+.d-cols > .d-sec:last-child .d-rows li { grid-template-columns: 1fr; gap: .5mm; }
