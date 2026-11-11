@@ -98,12 +98,6 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       paintShow();
     }, 3600);
   };
-  const showAt = (x, k) => {
-    if (showItem !== x) return;
-    showPage = k;
-    paintShow();
-    autoShow();
-  };
   // 자리 잡기: 제목줄 아래 ~ 접힌 연혁 위, 펼친 카드 오른쪽 ~ 오른쪽 여백. 자리가 좁으면 숨김
   const placeShow = () => {
     if (!show.classList.contains('is-on') || focus < 0) return;
@@ -178,8 +172,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     const inner = el('div', 'tl-more-inner');
     if (x.org) inner.append(el('p', 'tl-org', x.org));
     if (x.desc) inner.append(el('p', 'tl-desc', x.desc));
-    const hasWork = !!(x.work?.pdf && x.work.thumbs?.length);
-    if (x.tasks.length && !hasWork) {
+    if (x.tasks.length) {
       inner.append(el('p', 'tl-tasks-label', x.type === '교육' ? '배운 내용' : '주요 업무'));
       const ul = el('ul', 'tl-tasks');
       x.tasks.forEach((t, k) => {
@@ -189,28 +182,15 @@ export function renderTimeline(root, items, { onFocus } = {}) {
       });
       inner.append(ul);
     }
-    // 업무 자료 (포트폴리오 PDF에서 그 회사 부분만): 쪽 미리보기를 누르면 그 쪽부터 크게
+    // 업무 자료는 오른쪽 위 큰 미리보기로 보여 줌. 그 자리가 없는 휴대폰에서만 여는 버튼
     if (x.work?.pdf && x.work.thumbs?.length) {
-      card.classList.add('has-work');
-      const n = x.work.thumbs.length;
-      inner.append(el('p', 'tl-tasks-label tl-work-label', `업무 자료 · ${n}쪽 — 누르면 주요 업무와 함께 크게`));
-      const row = el('div', 'tl-work');
-      x.work.thumbs.forEach((src, k) => {
-        const b = el('button', 'tl-work-page');
-        b.type = 'button';
-        b.setAttribute('aria-label', `${x.title} 업무 자료 ${k + 1}쪽 크게 보기`);
-        const im = el('img');
-        Object.assign(im, { src, alt: '', loading: 'lazy', decoding: 'async' });
-        b.append(im);
-        b.addEventListener('click', (e) => {
-          e.stopPropagation();
-          openWork(x, k, b);
-        });
-        // 마우스를 올리면 오른쪽 큰 미리보기도 그 쪽으로
-        b.addEventListener('pointerenter', () => showAt(x, k));
-        row.append(b);
+      const b = el('button', 'tl-work-open', `업무 자료 ${x.work.thumbs.length}쪽 보기 →`);
+      b.type = 'button';
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openWork(x, 0, b);
       });
-      inner.append(row);
+      inner.append(b);
     }
     if (inner.childElementCount) {
       more.append(inner);
