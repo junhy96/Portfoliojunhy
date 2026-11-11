@@ -1357,6 +1357,6 @@ html.menu-dock[data-theme="editorial"] .panel-hero .ed-hero-name { bottom: calc(
 @media (min-width: 821px) and (max-height: 780px) { html.menu-dock[data-theme="editorial"] .ed-hero-name .ed-name { font-size: 40px; margin: 2px 0 8px; } }
 /* 왼쪽 위: 게임기 아이콘 (사이트 아이콘과 같은 모양), 누르면 맨 처음 페이지 */
 html[data-theme="editorial"] .rail-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: var(--pt-accent); transition: background .2s, transform .2s; }
-html[data-theme="editorial"] .rail-mark svg { width: 34px; height: 34px; }
+html[data-theme="editorial"] .rail-mark svg { width: 40px; height: 40px; }
 html[data-theme="editorial"] .rail-mark:hover, html[data-theme="editorial"] .rail-mark:focus-visible { background: rgba(144, 222, 147, .12); outline: none; }
 html[data-theme="editorial"] .rail-mark:hover svg { animation: wobble-hor-bottom .8s both; }
