@@ -285,7 +285,7 @@ export class PdfViewer {
     if (video && yt) {
       if (!frame.firstChild) {
         const f = document.createElement('iframe');
-        f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&rel=0&playsinline=1&modestbranding=1`;
+        f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&mute=1&rel=0&playsinline=1&modestbranding=1`;
         f.title = (this.project.title || '') + ' 영상';
         f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
         f.allowFullscreen = true;
