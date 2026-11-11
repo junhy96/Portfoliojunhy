@@ -504,28 +504,6 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     },
     {
-      "id": "w-part-break",
-      "title": "부위 파괴 시스템 기획서",
-      "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
-      "category": "3D 액션 RPG",
-      "year": "2026",
-      "tags": [
-        "시스템 기획",
-        "수치 공식",
-        "테이블"
-      ],
-      "summary": "머리·몸통·날개·꼬리를 노려 부수는 부위 파괴의 규칙·공식·연출·보상을 테이블 단위로 정리한 시스템 기획서",
-      "description": "논타겟팅 ARPG에서 부위를 직접 노려 치는 전략성과, 파괴 연출·AI 변화가 주는 성취감을 기획 의도로 잡았습니다.\nMonster_Table과 Monster_Destroy_Table을 분리한 테이블 구조, 레벨 반감·무기별 상수·부위 보정치를 담은 파괴 공식, 기본형·연출형 파괴 액션, 유실물 보상, 파괴 이후 상태·행동 변화와 UI 노출 규칙까지 정의했습니다.",
-      "thumb": "uploads/works/part-break.jpg",
-      "pdf": "uploads/works/part-break.pdf",
-      "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
-      "pdfSize": 1321399,
-      "docType": "전투 기획",
-      "visible": true,
-      "createdAt": "2026-11-10T09:00:00.000Z",
-      "updatedAt": "2026-11-10T09:00:00.000Z"
-    },
-    {
       "id": "w-browndust2",
       "title": "동료 시스템 개선 제안서",
       "subtitle": "브라운 더스트 2 · 캐릭터 UI 커스터마이징 + 진형 시뮬레이션",
@@ -543,6 +521,28 @@
       "pdfName": "브라운더스트2_동료시스템_개선제안서.pdf",
       "pdfSize": 1835216,
       "docType": "시스템·UI 기획",
+      "visible": true,
+      "createdAt": "2026-11-10T09:00:00.000Z",
+      "updatedAt": "2026-11-10T09:00:00.000Z"
+    },
+    {
+      "id": "w-part-break",
+      "title": "부위 파괴 시스템 기획서",
+      "subtitle": "Action RPG · 규칙 · 공식 · 테이블 설계",
+      "category": "3D 액션 RPG",
+      "year": "2026",
+      "tags": [
+        "시스템 기획",
+        "수치 공식",
+        "테이블"
+      ],
+      "summary": "머리·몸통·날개·꼬리를 노려 부수는 부위 파괴의 규칙·공식·연출·보상을 테이블 단위로 정리한 시스템 기획서",
+      "description": "논타겟팅 ARPG에서 부위를 직접 노려 치는 전략성과, 파괴 연출·AI 변화가 주는 성취감을 기획 의도로 잡았습니다.\nMonster_Table과 Monster_Destroy_Table을 분리한 테이블 구조, 레벨 반감·무기별 상수·부위 보정치를 담은 파괴 공식, 기본형·연출형 파괴 액션, 유실물 보상, 파괴 이후 상태·행동 변화와 UI 노출 규칙까지 정의했습니다.",
+      "thumb": "uploads/works/part-break.jpg",
+      "pdf": "uploads/works/part-break.pdf",
+      "pdfName": "ActionRPG_부위파괴_시스템기획서.pdf",
+      "pdfSize": 1321399,
+      "docType": "전투 기획",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
       "updatedAt": "2026-11-10T09:00:00.000Z"
@@ -680,5 +680,5 @@
       "updatedAt": "2026-11-10T09:00:00.000Z"
     }
   ],
-  "rev": 1794357844566
+  "rev": 1794357849209
 }
