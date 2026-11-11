@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110026';
-import { PdfViewer } from './pdf-viewer.js?v=202611110026';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110026';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110026';
-import { initWorks } from './works.js?v=202611110026';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110026';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110029';
+import { PdfViewer } from './pdf-viewer.js?v=202611110029';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110029';
+import { renderTimeline, timelineItems } from './timeline.js?v=202611110029';
+import { initWorks } from './works.js?v=202611110029';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110029';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -182,6 +182,13 @@ function render({ settings: s, projects }) {
   renderSkillChart($('#skill-chart'), s.skillChart);
   renderToolBars($('#tool-bars'), (s.skillChart || []).filter((x) => x.group === 'tool'));
   initWorks($('#works'), projects, s.docTypes || []);
+  // 아래 카드 메뉴의 미리보기: 이 링크(프리셋)에서 보이는 작업 · 연혁으로
+  const dockImg = (sel, src) => {
+    const im = $(sel);
+    if (im && src) im.src = src;
+  };
+  dockImg('.hd-card.c1 img', projects.find((p) => p.thumb || p.cover)?.thumb || projects.find((p) => p.cover)?.cover);
+  dockImg('.hd-card.c3 img', tl.slice().reverse().find((x) => x.image)?.image);
   renderTimeline($('#timeline-track'), tl, { onFocus: (it) => onTimelineFocus?.(it) });
 
   // 박스 안의 정지 이미지 (Pixel 스타일에서 캔버스가 없는 섹션에 보임)
