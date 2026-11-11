@@ -166,3 +166,4 @@ ul, ol { padding: 0; list-style: none; }
 .d-work-title { font-size: 22pt; }
 .d-letter-h { font-size: 12pt; }
 .d-rows b, .d-tools b { font-weight: 700; }
+.d-total { margin-left: 2.5mm; font-family: 'SUITE Variable', SUITE, sans-serif; font-size: 8.5pt; font-weight: 400; color: var(--ink-3); letter-spacing: 0; }

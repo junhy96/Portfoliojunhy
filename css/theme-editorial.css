@@ -1417,3 +1417,7 @@ body[data-section="timeline"] .tl-show.is-on.is-fit.is-anim { animation: fade-in
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="editorial"] .nav a, body[data-section="timeline"] .tl-show.is-anim { animation: none !important; }
 }
+
+/* 첫 화면 Career 옆 총경력 (지원처 링크에서만) */
+.cv-total { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--fg-3); letter-spacing: 0; }
+.cv-total[hidden] { display: none; }

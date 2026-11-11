@@ -41,6 +41,26 @@ const endOf = (p) => {
 const keyOf = (x) => (/졸업|수료/.test(String(x.title || '')) ? endOf(x.period) : startOf(x.period));
 const tasksOf = (x) => (Array.isArray(x.tasks) ? x.tasks : String(x.tasks || '').split('\n')).map((t) => String(t).trim()).filter(Boolean);
 
+/** 총경력: '경력' 항목 기간을 달 단위로 합침 (시작·끝 달 포함, 겹친 달은 한 번만, '현재'는 이번 달까지) → '총 2년 3개월' */
+export function careerTotal(items) {
+  const now = new Date();
+  const months = new Set();
+  items.filter((x) => x.type === '경력').forEach((x) => {
+    const all = [...String(x.period || '').matchAll(/(\d{4})(?:\D{1,3}(\d{1,2})(?!\d))?/g)];
+    if (!all.length) return;
+    const ym = (m) => Number(m[1]) * 12 + (Number(m[2] || 1) - 1);
+    const a = ym(all[0]);
+    const ongoing = /현재|재직|ing|진행/i.test(x.period);
+    const b = ongoing ? now.getFullYear() * 12 + now.getMonth() : all.length > 1 ? ym(all[all.length - 1]) : a;
+    for (let k = a; k <= b; k++) months.add(k);
+  });
+  const n = months.size;
+  if (!n) return '';
+  const y = Math.floor(n / 12);
+  const m = n % 12;
+  return '총 ' + [y ? `${y}년` : '', m ? `${m}개월` : ''].filter(Boolean).join(' ');
+}
+
 /** 옛 데이터(about.experience: period/title/desc)도 그대로 받음 */
 export function timelineItems(s) {
   const raw = Array.isArray(s.timeline) ? s.timeline : s.about?.experience || [];
@@ -76,25 +96,28 @@ export function renderTimeline(root, items, { onFocus } = {}) {
   body.append(show);
   let showItem = null;
   let showPage = 0;
+  // 업무 자료 첫 장(간지)은 내용이 겹쳐서 미리보기에서 뺌. off = 빼고 난 뒤 PDF 쪽 번호와의 차이
+  const off = (x) => (x.work.thumbs.length > 1 ? 1 : 0);
+  const pagesOf = (x) => x.work.thumbs.slice(off(x));
   let showFront = 0;
   let showTimer = 0;
   const paintShow = () => {
     const x = showItem;
-    const n = x.work.thumbs.length;
+    const n = pagesOf(x).length;
     const next = showImgs[1 - showFront];
-    next.src = x.work.thumbs[showPage];
+    next.src = pagesOf(x)[showPage];
     next.classList.add('is-on');
     showImgs[showFront].classList.remove('is-on');
     showFront = 1 - showFront;
     showCap.textContent = `업무 자료 ${showPage + 1} / ${n} · 누르면 크게`;
-    showDots.replaceChildren(...x.work.thumbs.map((_, k) => el('i', k === showPage ? 'is-on' : '')));
+    showDots.replaceChildren(...pagesOf(x).map((_, k) => el('i', k === showPage ? 'is-on' : '')));
     show.setAttribute('aria-label', `${x.title} 업무 자료 ${showPage + 1}쪽 크게 보기`);
   };
   const autoShow = () => {
     clearInterval(showTimer);
     showTimer = setInterval(() => {
       if (!showItem || !active || document.hidden) return;
-      showPage = (showPage + 1) % showItem.work.thumbs.length;
+      showPage = (showPage + 1) % pagesOf(showItem).length;
       paintShow();
     }, 3600);
   };
@@ -137,7 +160,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     placeShow();
     setTimeout(placeShow, 650); // 카드가 다 펼쳐진 뒤 다시
   };
-  show.addEventListener('click', () => showItem && openWork(showItem, showPage, show));
+  show.addEventListener('click', () => showItem && openWork(showItem, showPage + off(showItem), show));
   window.addEventListener('resize', () => placeShow());
 
   const track = el('div', 'tl-track');
@@ -188,11 +211,11 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     }
     // 업무 자료는 오른쪽 위 큰 미리보기로 보여 줌. 그 자리가 없는 휴대폰에서만 여는 버튼
     if (x.work?.pdf && x.work.thumbs?.length) {
-      const b = el('button', 'tl-work-open', `업무 자료 ${x.work.thumbs.length}쪽 보기 →`);
+      const b = el('button', 'tl-work-open', `업무 자료 ${pagesOf(x).length}쪽 보기 →`);
       b.type = 'button';
       b.addEventListener('click', (e) => {
         e.stopPropagation();
-        openWork(x, 0, b);
+        openWork(x, off(x), b);
       });
       inner.append(b);
     }

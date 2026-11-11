@@ -1025,6 +1025,7 @@
     set('#pr-site-role', site.role, s.role);
     set('#pr-site-intro', site.intro, s.intro);
     set('#pr-site-letter', site.coverLetter, s.about?.coverLetter ? '기본 자기소개서' : '');
+    $('#pr-site-total').checked = !!site.careerTotal;
   }
   function prReset() {
     prEditing = null;
@@ -1103,7 +1104,7 @@
     if (!tag) return $('#pr-tag').focus(), toast('링크 이름표를 정해 주세요.', true);
     if ((db.settings?.links || []).some((l) => l.tag === tag && l.tag !== prEditing)) return $('#pr-tag').focus(), toast(`이름표 ‘${tag}’는 이미 다른 프리셋이 쓰고 있어요.`, true);
     const off = (kind) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => b.getAttribute('aria-pressed') !== 'true').map((b) => b.dataset.id);
-    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim() };
+    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked };
     Object.keys(site).forEach((k) => !site[k] && delete site[k]);
     const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}) };
     const btn = $('#pr-create');

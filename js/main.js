@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611110228';
-import { PdfViewer } from './pdf-viewer.js?v=202611110228';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611110228';
-import { renderTimeline, timelineItems } from './timeline.js?v=202611110228';
-import { initWorks } from './works.js?v=202611110228';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611110228';
+import { MorphStage, FallbackStage } from './morph.js?v=202611110250';
+import { PdfViewer } from './pdf-viewer.js?v=202611110250';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611110250';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611110250';
+import { initWorks } from './works.js?v=202611110250';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611110250';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -120,6 +120,12 @@ function render({ settings: s, projects }) {
   if (years.length) binds.timelineRange = years[0] === years[years.length - 1] ? String(years[0]) : `${years[0]} — ${years[years.length - 1]}`;
   if (matchMedia('(hover: none)').matches) binds.worksIntro = String(binds.worksIntro || '').replace(/클릭하면/g, '누르면').replace(/클릭해/g, '눌러');
   $$('[data-bind]').forEach((n) => (n.textContent = binds[n.dataset.bind] ?? ''));
+  // 지원처 링크에서 켠 경우: Career 옆에 작은 회색 글씨로 총경력
+  const total = s._careerTotal ? careerTotal(tl) : '';
+  $$('[data-career-total]').forEach((n) => {
+    n.textContent = total;
+    n.hidden = !total;
+  });
   // 마지막 페이지 큰 제목: 첫 단어만 강조 색 (Thank You → THANK)
   $$('[data-bind="contactHeading"]').forEach((n) => {
     const [first, ...rest] = n.textContent.trim().split(/\s+/);
@@ -435,6 +441,7 @@ function applyLinkPreset(data) {
   if (ov.title) data.settings.siteTitle = ov.title;
   if (ov.role) data.settings.role = ov.role;
   if (ov.intro) data.settings.intro = ov.intro;
+  if (ov.careerTotal) data.settings._careerTotal = true;
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
   document.documentElement.dataset.link = tag;
 }
@@ -460,7 +467,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611110228';
+const BUILD = '?v=202611110250';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];

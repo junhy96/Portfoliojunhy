@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems } from './timeline.js?v=202611110228';
-import { cleanTag } from './analytics.js?v=202611110228';
+import { timelineItems, careerTotal } from './timeline.js?v=202611110250';
+import { cleanTag } from './analytics.js?v=202611110250';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -43,6 +43,7 @@ function applyPreset(data) {
   if (ov.title) data.settings.siteTitle = ov.title;
   if (ov.role) data.settings.role = ov.role;
   if (ov.intro) data.settings.intro = ov.intro;
+  if (ov.careerTotal) data.settings._careerTotal = true;
   if (ov.coverLetter) data.settings.about = { ...(data.settings.about || {}), coverLetter: ov.coverLetter };
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
 }
@@ -73,6 +74,11 @@ function header(s, title) {
 }
 function footer(s) {
   return el('footer', 'd-foot', `${s.nameKo || ''} · ${s.role || ''} · ${SITE.replace(/^https?:\/\//, '').replace(/\/$/, '')} · ${today()} 출력`);
+}
+// 경력 제목 옆에 작은 회색 글씨로 총경력 (지원처 링크에서 켰을 때)
+function withTotal(sec, total) {
+  if (total) sec.querySelector('.d-h').append(el('small', 'd-total', total));
+  return sec;
 }
 function section(title, ...kids) {
   return add(el('section', 'd-sec'), el('h2', 'd-h', title), ...kids);
@@ -117,7 +123,7 @@ function resume(data) {
     doc,
     head,
     s.intro ? section('Who?', el('p', 'd-intro', s.intro)) : null,
-    add(el('div', 'd-cols'), career.length ? section('경력', rows(career)) : null, edu.length ? section('교육', rows(edu)) : null),
+    add(el('div', 'd-cols'), career.length ? withTotal(section('경력', rows(career)), s._careerTotal ? careerTotal(tl) : '') : null, edu.length ? section('교육', rows(edu)) : null),
     tools.length ? section('툴 숙련도', toolBars(tools, false)) : null,
     footer(s)
   );
