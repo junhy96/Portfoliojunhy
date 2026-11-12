@@ -1000,6 +1000,12 @@
             copy.onclick = () => copyText(presetUrl(l.tag));
             const load = h('button', { type: 'button', className: 'btn sm', textContent: '불러오기' });
             load.onclick = () => prLoad(l);
+            // 이 링크로 들어온 방문만 접속 통계에서 보기
+            const stat = h('button', { type: 'button', className: 'btn sm', textContent: '통계 보기' });
+            stat.onclick = () => {
+              switchView('stats');
+              window.studioStatsFor?.(String(l.tag).toLowerCase());
+            };
             const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
             del.onclick = () => prDelete(l);
             return h(
@@ -1008,7 +1014,7 @@
               h('p', { className: 'pr-slot-tag', textContent: '?from=' + l.tag }),
               h('p', { className: 'pr-slot-stat', textContent: `기획서 ${w} · 경력 ${t}` }),
               l.site?.title ? h('p', { className: 'pr-slot-tag', textContent: '탭: ' + l.site.title }) : null,
-              h('div', { className: 'pr-slot-acts' }, copy, load)
+              h('div', { className: 'pr-slot-acts' }, copy, load, stat)
             );
           })
         : [h('p', { className: 'muted sm pr-empty', textContent: '아직 프리셋이 없어요. 아래에서 첫 프리셋을 만들어 보세요.' })])

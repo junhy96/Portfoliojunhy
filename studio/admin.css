@@ -556,3 +556,9 @@ body.is-readonly .app-main { padding-top: 64px; }
 .stats-demo-cta { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
 .demo-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 10px; background: var(--accent-soft); border: 1px solid rgba(144, 222, 147, .4); font-size: 13.5px; }
 .demo-banner b { color: var(--accent); }
+
+/* 접속 통계: 링크(프리셋)별 보기 */
+.stats-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted, #9a9a94); }
+.stats-tag select { height: 36px; max-width: 260px; padding: 0 30px 0 12px; border: 1px solid var(--line, #333); border-radius: 8px; background: var(--card, #1a1a1a); color: inherit; font: inherit; font-size: 13.5px; }
+.stats-tag select:focus-visible { outline: 2px solid #90de93; outline-offset: 1px; }
+.stats-tag.is-on select { border-color: #90de93; color: #fff; }

@@ -16,6 +16,10 @@
   let days = 7;
   let all = [];
   const heat = { section: 'hero', device: 'desktop' };
+  // 링크(프리셋)별 보기: '' = 전체, '-' = 꼬리표 없이 들어온 방문, 그 밖 = ?from= 꼬리표
+  let tagFilter = '';
+  let presetNames = null; // 꼬리표 → 프리셋 이름 (data/site.json의 links)
+  const NO_TAG = '-';
 
   const h = (tag, props = {}, ...kids) => {
     const n = Object.assign(document.createElement(tag), props);
@@ -234,7 +238,6 @@
       all = await demoRows();
       $('#stats-who').textContent = '';
       render();
-      $('#stats-sub').textContent = `예시 데이터 · 최근 ${days}일. 실제 방문 기록이 아니에요.`;
       return;
     }
     show('body');
@@ -270,10 +273,64 @@
   });
 
   /* ---------------- 집계 ---------------- */
+  // 방문(세션)마다 꼬리표: 첫 화면 기록(view)의 target
+  function sessionTags(rows) {
+    const m = new Map();
+    rows.forEach((e) => {
+      if (e.type === 'view' && e.target && !m.has(e.session)) m.set(e.session, e.target);
+    });
+    return m;
+  }
+  function filtered() {
+    if (!tagFilter) return all;
+    const tags = sessionTags(all);
+    return all.filter((e) => (tags.get(e.session) || NO_TAG) === tagFilter);
+  }
   function split() {
     const start = Date.now() - days * DAY;
-    return { cur: all.filter((e) => +e.t >= start), prev: all.filter((e) => +e.t < start), start };
+    const rows = filtered();
+    return { cur: rows.filter((e) => +e.t >= start), prev: rows.filter((e) => +e.t < start), start };
   }
+  // 고를 수 있는 링크: 기록에 있는 꼬리표 + 만들어 둔 프리셋 (기록이 없어도 보이게)
+  async function fillTags() {
+    if (!presetNames) {
+      presetNames = new Map();
+      try {
+        const site = await (await fetch(ROOT + 'data/site.json?t=' + Date.now(), { cache: 'no-store' })).json();
+        (site.settings?.links || []).forEach((l) => l?.tag && presetNames.set(String(l.tag).toLowerCase(), l.name || l.tag));
+      } catch {}
+    }
+    const start = Date.now() - days * DAY;
+    const count = new Map();
+    const tags = sessionTags(all);
+    let none = 0;
+    new Set(all.filter((e) => e.type === 'view' && +e.t >= start).map((e) => e.session)).forEach((sid) => {
+      const t = tags.get(sid);
+      if (t) count.set(t, (count.get(t) || 0) + 1);
+      else none++;
+    });
+    presetNames.forEach((_, t) => count.has(t) || count.set(t, 0));
+    const sel = $('#stats-tag');
+    const opt = (value, label) => h('option', { value, textContent: label });
+    sel.replaceChildren(
+      opt('', '전체 방문'),
+      ...[...count.entries()].sort((a, b) => b[1] - a[1]).map(([t, n]) => opt(t, `${presetNames.get(t) ? presetNames.get(t) + ' · ' : ''}?from=${t} (${fmt(n)})`)),
+      opt(NO_TAG, `링크 꼬리표 없이 들어온 방문 (${fmt(none)})`)
+    );
+    if (![...sel.options].some((o) => o.value === tagFilter)) tagFilter = '';
+    sel.value = tagFilter;
+    sel.closest('.stats-tag').classList.toggle('is-on', !!tagFilter);
+  }
+  // 링크 프리셋 화면의 '통계 보기': 그 링크만 골라 둠 (아직 통계를 안 열었으면 열 때 적용)
+  window.studioStatsFor = (tag) => {
+    tagFilter = tag || '';
+    if (all.length) render();
+  };
+  $('#stats-tag').addEventListener('change', (e) => {
+    tagFilter = e.target.value;
+    e.target.closest('.stats-tag').classList.toggle('is-on', !!tagFilter);
+    render();
+  });
   function metrics(rows) {
     const views = rows.filter((e) => e.type === 'view');
     return {
@@ -316,8 +373,10 @@
 
   /* ---------------- 그리기 ---------------- */
   function render() {
+    fillTags();
     const { cur, prev, start } = split();
-    $('#stats-sub').textContent = `최근 ${days}일 · 방문 기록 ${fmt(cur.length)}건. 시간은 이 컴퓨터의 시간대 기준입니다.`;
+    const which = !tagFilter ? '' : tagFilter === NO_TAG ? ' · 꼬리표 없이 들어온 방문만' : ` · ?from=${tagFilter} 링크로 들어온 방문만`;
+    $('#stats-sub').textContent = demo ? `예시 데이터 · 최근 ${days}일${which}. 실제 방문 기록이 아니에요.` : `최근 ${days}일${which} · 방문 기록 ${fmt(cur.length)}건. 시간은 이 컴퓨터의 시간대 기준입니다.`;
     renderTiles(metrics(cur), metrics(prev));
     renderDaily(cur, start);
     renderDevices(cur);
@@ -699,7 +758,7 @@
       n.style.transform = `scale(${scale})`;
     });
     const id = SECTIONS.find(([k]) => k === heat.section)[2];
-    const src = `${ROOT}?embed=1#${id}`;
+    const src = `${ROOT}?embed=1${tagFilter && tagFilter !== NO_TAG ? '&from=' + encodeURIComponent(tagFilter) : ''}#${id}`;
     if (src !== lastSrc) {
       frame.src = src;
       lastSrc = src;
