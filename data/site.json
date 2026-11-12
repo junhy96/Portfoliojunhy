@@ -319,6 +319,17 @@
           "intro": "AI로 무엇을 할 수 있는지 말하기 전에, 먼저 만들어서 돌려 보는 전현영입니다.\nClaude Code · MCP · Skills로 기획 툴과 웹 서비스를 직접 만들어 운영합니다.",
           "careerTotal": true
         }
+      },
+      {
+        "name": "newb",
+        "tag": "newb",
+        "hide": {
+          "works": [],
+          "timeline": [
+            "t9pm4zcs4",
+            "tuc2jvtb8"
+          ]
+        }
       }
     ],
     "images": {
