@@ -482,3 +482,11 @@ html.is-embed .panel :is(.ed-name, .section-title, .ed-giant) { animation: none 
 
 /* HTML만 읽는 AI용 텍스트 요약: 화면에는 안 보이게 (display:none은 일부 요약기가 버려서 잘라 숨김) */
 .ai-brief { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: normal; border: 0; }
+
+/* 다른 사이트 안에 띄워졌을 때: 사이트 대신 안내 카드만 */
+html.is-framed body > *:not(.frame-guard) { display: none !important; }
+html.is-framed body { background: #141414; }
+.frame-guard { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; color: #f4f4ef; font-family: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', sans-serif; }
+.frame-guard b { font-size: 20px; letter-spacing: -.01em; }
+.frame-guard p { margin: 0; font-size: 14px; line-height: 1.7; color: rgba(244, 244, 239, .7); }
+.frame-guard a { margin-top: 6px; padding: 10px 18px; border-radius: 8px; background: #90de93; color: #10200f; font-weight: 600; text-decoration: none; }
