@@ -1120,7 +1120,11 @@
       await save(`${old ? '링크 프리셋 수정' : '링크 프리셋 생성'}: ${preset.name}`, (d) => {
         const list = d.settings.links || [];
         const i = list.findIndex((x) => x.tag === (old || tag));
-        if (i > -1) list[i] = preset;
+        // 편집 칸이 없는 값(show: 이 링크에서만 보일 작업물, order: 작업물 순서)은 그대로 둠
+        if (i > -1) {
+          const { name: _n, tag: _t, hide: _h, site: _s, ...keep } = list[i];
+          list[i] = { ...keep, ...preset };
+        }
         else list.push(preset);
         d.settings.links = list;
       });

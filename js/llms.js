@@ -162,7 +162,7 @@
     }
 
     var works = (data.projects || []).filter(function (p) {
-      return p && p.visible !== false;
+      return p && (p.visible !== false || p._shown);
     });
     if (works.length) {
       push('## 작업물');

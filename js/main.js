@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611120839';
-import { PdfViewer } from './pdf-viewer.js?v=202611120839';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611120839';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611120839';
-import { initWorks } from './works.js?v=202611120839';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611120839';
+import { MorphStage, FallbackStage } from './morph.js?v=202611120855';
+import { PdfViewer } from './pdf-viewer.js?v=202611120855';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611120855';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611120855';
+import { initWorks } from './works.js?v=202611120855';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611120855';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -429,13 +429,26 @@ class Deck {
  * 지원처별 링크: 주소의 ?from=꼬리표가 관리자에서 만든 링크와 같으면, 그 링크에서 끈 기획서·경력을 빼고 보여 줌
  * (꼬리표가 없거나 모르는 꼬리표면 전부 보여 줌. 통계 꼬리표는 analytics.js가 따로 남김)
  */
+/** 링크 프리셋의 작업물: show = 전체에선 비공개지만 이 링크에서만 보일 것, order = 이 링크에서의 순서 */
+function presetWorks(data, preset, hideW) {
+  const show = new Set(preset.show || []);
+  const extra = (data._allProjects || []).filter((p) => show.has(p.id) && !data.projects.includes(p));
+  extra.forEach((p) => (p._shown = true));
+  data.projects = [...data.projects, ...extra].filter((p) => !hideW.has(p.id));
+  const order = preset.order || [];
+  if (order.length) {
+    const rank = (id) => (order.indexOf(id) < 0 ? 1e6 : order.indexOf(id));
+    data.projects = data.projects.map((p, k) => [p, k]).sort((a, b) => rank(a[0].id) - rank(b[0].id) || a[1] - b[1]).map((x) => x[0]);
+  }
+}
+
 function applyLinkPreset(data) {
   const tag = cleanTag(new URLSearchParams(location.search).get('from'));
   const preset = tag && (data.settings?.links || []).find((l) => cleanTag(l.tag) === tag);
   if (!preset) return;
   const hideW = new Set(preset.hide?.works || []);
   const hideT = new Set(preset.hide?.timeline || []);
-  data.projects = data.projects.filter((p) => !hideW.has(p.id));
+  presetWorks(data, preset, hideW);
   // 지원처마다 바꾸는 문구 (비어 있으면 사이트 설정 그대로)
   const ov = preset.site || {};
   if (ov.title) data.settings.siteTitle = ov.title;
@@ -468,7 +481,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611120839';
+const BUILD = '?v=202611120855';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];
@@ -493,9 +506,10 @@ async function boot() {
     const res = await fetch('data/site.json?t=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error(res.status);
     data = await res.json();
-    data.projects = (data.projects || []).filter((p) => p.visible !== false);
-    data.projects.forEach((p) => (p._yt = ytId(p.video)));
+    data._allProjects = data.projects || [];
+    data.projects = data._allProjects.filter((p) => p.visible !== false);
     applyLinkPreset(data);
+    data.projects.forEach((p) => (p._yt = ytId(p.video)));
     forceDesktop(!!data.settings?.forceDesktop);
     const tone = toneOf(data.settings?.tone);
     document.documentElement.dataset.tone = tone;

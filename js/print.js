@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611120839';
-import { cleanTag } from './analytics.js?v=202611120839';
+import { timelineItems, careerTotal } from './timeline.js?v=202611120855';
+import { cleanTag } from './analytics.js?v=202611120855';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -31,13 +31,26 @@ const today = () => {
 };
 const levelLabel = (v) => (v >= 90 ? '능숙' : v >= 70 ? '숙련' : v >= 50 ? '실무 활용' : '기본');
 
+/** 링크 프리셋의 작업물: show = 전체에선 비공개지만 이 링크에서만 보일 것, order = 이 링크에서의 순서 */
+function presetWorks(data, preset, hideW) {
+  const show = new Set(preset.show || []);
+  const extra = (data._allProjects || []).filter((p) => show.has(p.id) && !data.projects.includes(p));
+  extra.forEach((p) => (p._shown = true));
+  data.projects = [...data.projects, ...extra].filter((p) => !hideW.has(p.id));
+  const order = preset.order || [];
+  if (order.length) {
+    const rank = (id) => (order.indexOf(id) < 0 ? 1e6 : order.indexOf(id));
+    data.projects = data.projects.map((p, k) => [p, k]).sort((a, b) => rank(a[0].id) - rank(b[0].id) || a[1] - b[1]).map((x) => x[0]);
+  }
+}
+
 function applyPreset(data) {
   const tag = cleanTag(q.get('from'));
   const preset = tag && (data.settings?.links || []).find((l) => cleanTag(l.tag) === tag);
   if (!preset) return;
   const hideW = new Set(preset.hide?.works || []);
   const hideT = new Set(preset.hide?.timeline || []);
-  data.projects = data.projects.filter((p) => !hideW.has(p.id));
+  presetWorks(data, preset, hideW);
   // 지원처마다 바꾸는 문구 (비어 있으면 사이트 설정 그대로)
   const ov = preset.site || {};
   if (ov.title) data.settings.siteTitle = ov.title;
@@ -230,7 +243,8 @@ document.getElementById('do-close').addEventListener('click', () => (history.len
 (async () => {
   try {
     const data = await (await fetch('data/site.json', { cache: 'no-store' })).json();
-    data.projects = (data.projects || []).filter((p) => p.visible !== false);
+    data._allProjects = data.projects || [];
+    data.projects = data._allProjects.filter((p) => p.visible !== false);
     applyPreset(data);
     document.documentElement.dataset.part = part;
     const name = (PARTS[part] || resume)(data);
