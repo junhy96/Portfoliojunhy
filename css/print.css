@@ -183,3 +183,11 @@ ul, ol { padding: 0; list-style: none; }
 .d-page2 .d-sec .d-letter-h:first-child { margin-top: 0; }
 /* 작업 하나: 표지 그림을 조금 낮춰 설명·링크가 첫 쪽에 함께 들어가게 */
 .d-cover img { max-height: 82mm; }
+
+/* 이력서 1쪽: 포트폴리오 QR */
+.d-head.has-photo.has-qr { grid-template-columns: 26mm 1fr auto 21mm; }
+.d-qr { display: grid; justify-items: center; gap: 1mm; align-self: end; color: var(--ink-3); text-decoration: none; }
+.d-qr svg { width: 21mm; height: 21mm; display: block; }
+.d-qr svg path, .d-qr svg rect[fill="black"] { fill: #161616; }
+.d-qr span { font-size: 7.5pt; letter-spacing: .02em; }
+@media screen and (max-width: 840px) { .d-head.has-photo.has-qr { grid-template-columns: 22mm 1fr; } .d-qr { justify-self: start; } }

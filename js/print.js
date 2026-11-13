@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611130050';
-import { cleanTag } from './analytics.js?v=202611130050';
+import { timelineItems, careerTotal } from './timeline.js?v=202611130103';
+import { cleanTag } from './analytics.js?v=202611130103';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -88,6 +88,24 @@ function header(s, title) {
   (c.links || []).filter((l) => l?.url && real(l.url)).forEach((l) => meta.append(add(el('li'), el('b', null, l.label || '링크'), Object.assign(el('a', 'd-link', short(l.url)), { href: l.url }))));
   return add(h, who, meta);
 }
+// 포트폴리오 사이트 QR: 종이로 받은 사람도 휴대폰으로 바로 열 수 있게
+function portfolioQr(s) {
+  if (!window.qrcode) return null;
+  const tag = cleanTag(q.get('from'));
+  const url = SITE + (tag && (s.links || []).some((l) => cleanTag(l.tag) === tag) ? '?from=' + encodeURIComponent(tag) : '');
+  try {
+    const qr = window.qrcode(0, 'M');
+    qr.addData(url);
+    qr.make();
+    const box = el('a', 'd-qr');
+    box.href = url;
+    box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    box.append(el('span', null, '포트폴리오'));
+    return box;
+  } catch {
+    return null;
+  }
+}
 function footer(s) {
   return el('footer', 'd-foot', `${s.nameKo || ''} · ${s.role || ''} · ${SITE.replace(/^https?:\/\//, '').replace(/\/$/, '')} · ${today()} 출력`);
 }
@@ -135,6 +153,11 @@ function resume(data) {
   const photo = Object.assign(el('img', 'd-photo'), { src: 'uploads/site/photo-resume-color.jpg', alt: '' });
   head.prepend(photo);
   head.classList.add('has-photo');
+  const qr = portfolioQr(s);
+  if (qr) {
+    head.append(qr);
+    head.classList.add('has-qr');
+  }
   add(
     doc,
     head,
