@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611130635';
-import { PdfViewer } from './pdf-viewer.js?v=202611130635';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611130635';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611130635';
-import { initWorks } from './works.js?v=202611130635';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611130635';
+import { MorphStage, FallbackStage } from './morph.js?v=202611130739';
+import { PdfViewer } from './pdf-viewer.js?v=202611130739';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611130739';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611130739';
+import { initWorks } from './works.js?v=202611130739';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611130739';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -481,7 +481,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611130635';
+const BUILD = '?v=202611130739';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];

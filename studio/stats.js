@@ -758,7 +758,15 @@
       n.style.transform = `scale(${scale})`;
     });
     const id = SECTIONS.find(([k]) => k === heat.section)[2];
-    const src = `${ROOT}?embed=1${tagFilter && tagFilter !== NO_TAG ? '&from=' + encodeURIComponent(tagFilter) : ''}#${id}`;
+    // 방문자가 본 화면과 같게: 고른 링크, 또는 이 화면의 클릭이 모두 한 링크에서 왔으면 그 링크로 (작업물 순서 · 구성이 링크마다 달라서)
+    let viewTag = tagFilter && tagFilter !== NO_TAG ? tagFilter : '';
+    if (!viewTag) {
+      const tags = sessionTags(all);
+      const seen = new Set(heatClicks().map((c) => tags.get(c.session) || ''));
+      if (seen.size === 1) viewTag = [...seen][0];
+    }
+    heat.viewTag = viewTag;
+    const src = `${ROOT}?embed=1${viewTag ? '&from=' + encodeURIComponent(viewTag) : ''}#${id}`;
     if (src !== lastSrc) {
       frame.src = src;
       lastSrc = src;
@@ -766,7 +774,7 @@
     canvas.width = rw;
     canvas.height = rh;
     const clicks = heatClicks();
-    $('#heat-count').textContent = clicks.length ? `클릭 ${fmt(clicks.length)}회` : '이 화면의 클릭 기록이 아직 없어요';
+    $('#heat-count').textContent = clicks.length ? `클릭 ${fmt(clicks.length)}회${heat.viewTag ? ` · ?from=${heat.viewTag} 화면` : ''}` : '이 화면의 클릭 기록이 아직 없어요';
     paintHeat();
     rankList($('#list-targets'), countBy(clicks.filter((c) => c.target), 'target').slice(0, 8), 0, (v) => `${fmt(v)}회`);
   }
@@ -796,8 +804,8 @@
       const r = el.getBoundingClientRect();
       const cs = doc.defaultView.getComputedStyle(el);
       if (r.width < 2 || r.height < 2 || cs.visibility === 'hidden' || cs.display === 'none') return;
-      if (r.right < 0 || r.bottom < 0 || r.left > w || r.top > hgt) return; // 미리보기 화면 밖
-      boxes.set(label, r);
+      // 미리보기 화면 밖(스크롤해야 보이는 곳)이면 위치 대신 '화면 밖'으로 표시
+      boxes.set(label, r.right < 0 || r.bottom < 0 || r.left > w || r.top > hgt ? { off: true } : r);
     });
     return boxes;
   }
@@ -810,13 +818,21 @@
   function paintHeat() {
     const [w, hgt] = REF[heat.device];
     const boxes = targetBoxes(w, hgt);
+    let offCount = 0;
     const pts = heatClicks().map((c, i) => {
       const b = c.target && boxes.get(c.target);
+      // 누른 요소가 미리보기에서 스크롤해야 보이는 곳에 있음: 방문자 화면 비율로 찍으면 다른 카드 위에 찍혀서 빼고 셈
+      if (b && b.off) return (offCount++, null);
       if (!b) return { x: c.x * w, y: c.y * hgt };
       const [u, v] = spread(c.session + c.created_at + i);
       return { x: b.left + b.width * (0.3 + u * 0.4), y: b.top + b.height * (0.3 + v * 0.4) };
     });
-    drawHeat($('#heat-canvas'), pts, w, hgt);
+    drawHeat($('#heat-canvas'), pts.filter(Boolean), w, hgt);
+    const note = $('#heat-off');
+    if (note) {
+      note.hidden = !offCount;
+      note.textContent = `미리보기에서 스크롤해야 보이는 곳의 클릭 ${fmt(offCount)}회는 점 대신 오른쪽 목록에만 셉니다`;
+    }
   }
   // 미리보기가 다 그려진 뒤(등장 애니메이션 포함) 버튼 위치에 맞춰 다시 찍음
   //   (미리보기는 불러온 뒤에 내용을 채우므로 몇 번 나눠서 다시 찍음)
