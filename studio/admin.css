@@ -562,3 +562,10 @@ body.is-readonly .app-main { padding-top: 64px; }
 .stats-tag select { height: 36px; max-width: 260px; padding: 0 30px 0 12px; border: 1px solid var(--line, #333); border-radius: 8px; background: var(--card, #1a1a1a); color: inherit; font: inherit; font-size: 13.5px; }
 .stats-tag select:focus-visible { outline: 2px solid #90de93; outline-offset: 1px; }
 .stats-tag.is-on select { border-color: #90de93; color: #fff; }
+
+/* 링크 프리셋: 끌어서 순서 바꾸기 */
+.pr-grip { position: absolute; z-index: 2; left: 12px; top: 12px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 6px; background: rgba(0, 0, 0, .6); color: #f4f4ef; font-size: 13px; line-height: 1; cursor: grab; touch-action: none; }
+.pr-grip:hover { background: rgba(0, 0, 0, .85); }
+.pr-tile.is-dragging { opacity: .9; outline: 2px dashed var(--accent, #90de93); outline-offset: 2px; transform: scale(1.02); z-index: 3; cursor: grabbing; }
+.pr-order-hint { margin-left: auto; }
+@media (max-width: 700px) { .pr-order-hint { display: none; } }

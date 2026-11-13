@@ -960,9 +960,16 @@
     works: db.projects || [],
     timeline: (Array.isArray(db.settings?.timeline) ? db.settings.timeline : []).filter((x) => x.id),
   });
-  function prTiles(hide = { works: [], timeline: [] }) {
-    const { works, timeline } = prItems();
-    const hw = new Set(hide.works || []), ht = new Set(hide.timeline || []);
+  // 이 링크의 작업물 순서: 프리셋에 order가 있으면 그 순서, 없으면 사이트 순서
+  const prOrdered = (works, order = []) => {
+    if (!order.length) return works;
+    const rank = (id) => (order.indexOf(id) < 0 ? 1e6 : order.indexOf(id));
+    return works.map((p, k) => [p, k]).sort((a, b) => rank(a[0].id) - rank(b[0].id) || a[1] - b[1]).map((x) => x[0]);
+  };
+  function prTiles(hide = { works: [], timeline: [] }, show = [], order = []) {
+    const { works: all, timeline } = prItems();
+    const works = prOrdered(all, order);
+    const hw = new Set(hide.works || []), ht = new Set(hide.timeline || []), sw = new Set(show || []);
     const tile = (kind, id, on, ...kids) => {
       const b = h('button', { type: 'button', className: 'pr-tile' }, h('i', { className: 'pr-check', ariaHidden: 'true' }), ...kids);
       b.dataset.kind = kind;
@@ -973,7 +980,14 @@
     $('#pr-works').replaceChildren(
       ...works.map((p) => {
         const t = p.thumb || p.cover;
-        return tile('works', p.id, !hw.has(p.id), t ? img(t, { className: 'pr-thumb' }) : h('span', { className: 'pr-thumb empty' }), h('b', { textContent: p.title }), h('small', { textContent: [p.docType, p.visible === false ? '비공개' : ''].filter(Boolean).join(' · ') }));
+        // 공개 작업물은 숨기지 않았으면 켜짐, 비공개 작업물은 이 링크에서 보이게 고른 것만 켜짐
+        const on = p.visible === false ? sw.has(p.id) : !hw.has(p.id);
+        const b = tile('works', p.id, on, t ? img(t, { className: 'pr-thumb' }) : h('span', { className: 'pr-thumb empty' }), h('b', { textContent: p.title }), h('small', { textContent: [p.docType, p.visible === false ? '비공개 · 켜면 이 링크에서만' : ''].filter(Boolean).join(' · ') }));
+        b.dataset.private = p.visible === false ? '1' : '';
+        const grip = h('span', { className: 'pr-grip', title: '끌어서 이 링크에서 보일 순서 바꾸기', textContent: '⠿' });
+        grip.addEventListener('pointerdown', (e) => prStartDrag(e, b));
+        b.prepend(grip);
+        return b;
       })
     );
     $('#pr-timeline').replaceChildren(
@@ -982,6 +996,58 @@
         : [h('p', { className: 'muted sm', textContent: '사이트 설정에서 타임라인 경력을 저장하면 여기에 나와요.' })])
     );
     prCount();
+  }
+  let prDrag = null;
+  function prStartDrag(e, tileEl) {
+    if (e.button > 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    prDrag = { tile: tileEl, box: $('#pr-works'), moved: false };
+    tileEl.classList.add('is-dragging');
+    document.body.classList.add('no-select');
+    window.addEventListener('pointermove', prOnDrag, { passive: false });
+    window.addEventListener('pointerup', prEndDrag);
+    window.addEventListener('pointercancel', prEndDrag);
+  }
+  function prOnDrag(e) {
+    if (!prDrag) return;
+    e.preventDefault();
+    const { tile: t, box } = prDrag;
+    const others = $$('.pr-tile', box).filter((x) => x !== t);
+    let best = null;
+    let dist = Infinity;
+    others.forEach((o) => {
+      const r = o.getBoundingClientRect();
+      const d = Math.hypot(e.clientX - (r.left + r.width / 2), e.clientY - (r.top + r.height / 2));
+      if (d < dist) (dist = d), (best = o);
+    });
+    if (best) {
+      const r = best.getBoundingClientRect();
+      const before = e.clientX < r.left + r.width / 2;
+      const ref = before ? best : best.nextElementSibling;
+      if (ref !== t && t.nextElementSibling !== ref) {
+        box.insertBefore(t, ref);
+        prDrag.moved = true;
+      }
+    }
+    if (e.clientY < 90) window.scrollBy(0, -14);
+    else if (e.clientY > window.innerHeight - 60) window.scrollBy(0, 14);
+  }
+  function prEndDrag() {
+    if (!prDrag) return;
+    prDrag.tile.classList.remove('is-dragging');
+    document.body.classList.remove('no-select');
+    window.removeEventListener('pointermove', prOnDrag);
+    window.removeEventListener('pointerup', prEndDrag);
+    window.removeEventListener('pointercancel', prEndDrag);
+    if (prDrag.moved) prOrderNote();
+    prDrag = null;
+  }
+  // 사이트 순서와 다르면 안내 + '사이트 순서로' 버튼
+  function prOrderNote() {
+    const site = (db.projects || []).map((p) => p.id).join();
+    const now = $$('#pr-works .pr-tile').map((b) => b.dataset.id).join();
+    $('#pr-order-reset').hidden = site === now;
   }
   function prCount() {
     const n = (kind, on) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => on === undefined || (b.getAttribute('aria-pressed') === 'true') === on).length;
@@ -994,7 +1060,7 @@
     $('#pr-slots').replaceChildren(
       ...(links.length
         ? links.map((l) => {
-            const w = works.filter((p) => !(l.hide?.works || []).includes(p.id)).length;
+            const w = works.filter((p) => (p.visible === false ? (l.show || []).includes(p.id) : !(l.hide?.works || []).includes(p.id))).length;
             const t = timeline.filter((x) => !(l.hide?.timeline || []).includes(x.id)).length;
             const copy = h('button', { type: 'button', className: 'btn sm primary', textContent: '링크 복사' });
             copy.onclick = () => copyText(presetUrl(l.tag));
@@ -1044,6 +1110,7 @@
     $('#pr-tag').dataset.touched = '';
     $('#pr-result').hidden = true;
     prTiles();
+    prOrderNote();
     prSlots();
   }
   function prLoad(l) {
@@ -1057,7 +1124,8 @@
     $('#pr-tag').dataset.touched = '1';
     $('#pr-url').value = presetUrl(l.tag);
     $('#pr-result').hidden = false;
-    prTiles(l.hide);
+    prTiles(l.hide, l.show, l.order);
+    prOrderNote();
     prSlots();
     $('#pr-builder').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -1078,6 +1146,13 @@
     prReset();
   }
   $('#pr-builder')?.addEventListener('click', (e) => {
+    if (e.target.closest('.pr-grip')) return;
+    if (e.target.closest('#pr-order-reset')) {
+      const box = $('#pr-works');
+      const byId = new Map($$('.pr-tile', box).map((b) => [b.dataset.id, b]));
+      (db.projects || []).forEach((p) => byId.get(p.id) && box.append(byId.get(p.id)));
+      return prOrderNote();
+    }
     const t = e.target.closest('.pr-tile');
     if (t) {
       t.setAttribute('aria-pressed', String(t.getAttribute('aria-pressed') !== 'true'));
@@ -1109,10 +1184,13 @@
     if (!name && !tag) return $('#pr-name').focus(), toast('프리셋 이름을 정해 주세요.', true);
     if (!tag) return $('#pr-tag').focus(), toast('링크 이름표를 정해 주세요.', true);
     if ((db.settings?.links || []).some((l) => l.tag === tag && l.tag !== prEditing)) return $('#pr-tag').focus(), toast(`이름표 ‘${tag}’는 이미 다른 프리셋이 쓰고 있어요.`, true);
-    const off = (kind) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => b.getAttribute('aria-pressed') !== 'true').map((b) => b.dataset.id);
+    const off = (kind) => $$(`#pr-builder .pr-tile[data-kind="${kind}"]`).filter((b) => b.getAttribute('aria-pressed') !== 'true' && !b.dataset.private).map((b) => b.dataset.id);
+    const showIds = $$('#pr-works .pr-tile').filter((b) => b.dataset.private && b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.id);
+    const orderIds = $$('#pr-works .pr-tile').map((b) => b.dataset.id);
+    const sameOrder = orderIds.join() === (db.projects || []).map((p) => p.id).join();
     const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked };
     Object.keys(site).forEach((k) => !site[k] && delete site[k]);
-    const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}) };
+    const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}), ...(showIds.length ? { show: showIds } : {}), ...(sameOrder ? {} : { order: orderIds }) };
     const btn = $('#pr-create');
     btn.disabled = true;
     const old = prEditing;
@@ -1122,7 +1200,7 @@
         const i = list.findIndex((x) => x.tag === (old || tag));
         // 편집 칸이 없는 값(show: 이 링크에서만 보일 작업물, order: 작업물 순서)은 그대로 둠
         if (i > -1) {
-          const { name: _n, tag: _t, hide: _h, site: _s, ...keep } = list[i];
+          const { name: _n, tag: _t, hide: _h, site: _s, show: _w, order: _o, ...keep } = list[i];
           list[i] = { ...keep, ...preset };
         }
         else list.push(preset);
