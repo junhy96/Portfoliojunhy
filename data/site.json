@@ -581,6 +581,10 @@
         "tag": "abutton",
         "hide": {
           "works": [
+            "w-arachne",
+            "w-nameless-knights",
+            "w-midcore-rpg",
+            "w-browndust2",
             "w-dressroom",
             "w-lostark-giyen",
             "w-obung"
@@ -595,14 +599,14 @@
           "careerTotal": true
         },
         "order": [
-          "w-lies-of-p-chapter",
-          "w-arachne",
-          "w-beast-friends",
           "w-stellar-belial",
-          "w-steampunk-boss",
-          "w-part-break",
           "w-odin-detect",
           "w-gamedesign-workbench",
+          "w-lies-of-p-chapter",
+          "w-beast-friends",
+          "w-steampunk-boss",
+          "w-part-break",
+          "w-arachne",
           "w-nameless-knights",
           "w-midcore-rpg",
           "w-browndust2",
@@ -1119,5 +1123,5 @@
       ]
     }
   ],
-  "rev": 1794550792015
+  "rev": 1794550938064
 }
