@@ -1,13 +1,15 @@
 /**
- * Works — 문서 종류 필터 + 가로로 이어지는 카드 목록
- * - 처음에는 카드가 화면 가득(보통 4열 × 2줄 + 오른쪽에 다음 열이 살짝) 보이고,
- *   휠을 내리거나 마우스로 끌면 타임라인처럼 옆으로 밀려남. 끝까지 가면 다음 페이지로 (main.js Deck이 wheel/page를 먼저 물어봄)
- * - 카드 비율은 초안 그대로(그림 16:10 + 아래 제목줄), 화면 높이에 들어가는 만큼 줄 수를 정함
+ * Works — 문서 종류 필터 + 위아래로 스크롤되는 4열 카드 격자
+ * - 카드를 4열(좁은 창은 3열)로 놓고, 한 화면에 다 안 들어가면 격자 안에서 휠로 아래로 내림. 끝에 닿으면 다음 페이지로 (main.js가 data-scroll로 처리)
+ *   (예전엔 옆으로 이어져서 버튼·끌기로 넘겨야 했고, 처음 보이는 4열 × 2줄 뒤는 잘 안 봤음)
+ * - 다음 줄이 화면 아래에 살짝 걸쳐 보이게 카드 크기를 맞춰, 아래에 더 있다는 걸 알림
+ * - 카드 비율은 그대로(그림 16:10 + 아래 제목줄). 좁은 창에서는 글을 줄이고 그림을 16:9로 (is-compact)
  * - 카드(li)는 main.js가 모두 그려 두고, 여기서는 필터로 보일 카드만 고름 (data-index는 그대로라 클릭·모핑 동작 유지)
- * - 휴대폰은 위아래로 스크롤되는 한 줄 목록
+ * - 휴대폰은 위아래로 스크롤되는 2열 목록 (CSS)
  */
 const META_H = 106; // 카드 아래 글 높이 기본값 (실제 카드로 다시 잼)
-const PEEK = 0.35; // 오른쪽에 살짝 보이는 다음 열 (열 너비 대비)
+const COMPACT_W = 250; // 카드가 이보다 좁아지면 글을 줄인 작은 카드(is-compact)로
+const PEEK = 0.3; // 화면 아래에 걸쳐 보이는 다음 줄 (그림 높이 대비)
 const mobile = () => matchMedia('(max-width: 820px)').matches;
 // slide-in-bck 9방향 (가운데·위·아래·왼쪽·오른쪽·대각선 4곳) 중 무작위
 const DIRS = [[0, 0, 600], [0, -1, 700], [0, 1, 700], [-1, 0, 700], [1, 0, 700], [-1, -1, 700], [1, -1, 700], [-1, 1, 700], [1, 1, 700]];
@@ -45,103 +47,79 @@ export function initWorks(panel, projects, docTypes = []) {
     return b;
   };
   chips.append(chip('전체', '', items.length), ...order.map((t) => chip(t, t, counts.get(t))));
-  // 오른쪽: 진행 막대 + 좌우 버튼 (넘칠 때만)
-  const nav = el('div', 'works-pager small');
-  const prog = el('span', 'works-progress');
-  const fill = el('i');
-  prog.append(fill);
-  const prev = el('button', 'works-pager-btn', '‹');
-  const next = el('button', 'works-pager-btn', '›');
-  prev.type = next.type = 'button';
-  prev.setAttribute('aria-label', '왼쪽으로');
-  next.setAttribute('aria-label', '오른쪽으로');
-  nav.append(prog, prev, next);
-  bar.replaceChildren(chips, nav);
+  bar.replaceChildren(chips);
   if (!items.length) bar.hidden = true;
 
   let filter = '';
-  let step = 300; // 열 하나 폭 + 간격
-  let cur = 0;
-  let target = 0;
-  let raf = 0;
-  let snapTimer = 0;
-  let lastDir = 1;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 가로로 갈 수 있는 끝: 카드 배치로 계산 (날아오는 애니메이션 중엔 scrollWidth가 잠깐 커지므로 쓰지 않음)
-  let contentW = 0;
-  const max = () => (mobile() ? 0 : Math.max(0, contentW - grid.clientWidth));
   const shown = () => items.filter((li) => !filter || typeOf(li) === filter);
 
-  // 열 너비·줄 수: 4열(좁으면 3열) + 다음 열이 살짝, 줄 수는 높이에 맞춤
+  // 카드 아래 글 높이 (작은 카드일 때는 글이 줄어 더 낮음)
+  const metaH = () => {
+    const probe = items.find((li) => li.offsetHeight > 0)?.querySelector('.card-meta');
+    return probe ? probe.offsetHeight + parseFloat(getComputedStyle(probe).marginTop || 0) + 2 : META_H;
+  };
+  // 아래에 더 있으면 격자 아래쪽을 흐리게, 끝까지 내리면 흐림을 뺌
+  const fade = () => grid.classList.toggle('at-end', grid.scrollTop >= grid.scrollHeight - grid.clientHeight - 2);
+
+  // 4열(좁은 창은 3열) 큰 카드. 한 화면에 다 안 들어가면 격자 안에서 위아래로 스크롤하고, 다음 줄이 살짝 걸쳐 보이게 함
   const layout = () => {
+    grid.classList.remove('is-scroll', 'is-compact', 'no-sub');
+    grid.style.removeProperty('--thumb-ar');
     if (mobile()) {
-      grid.style.removeProperty('--colw');
-      grid.style.removeProperty('--rows');
+      grid.style.removeProperty('--cols');
       return;
     }
-    const cs = getComputedStyle(grid);
-    const colGap = parseFloat(cs.columnGap) || 0;
-    const rowGap = parseFloat(cs.rowGap) || 0;
-    const probe = items.find((li) => li.offsetHeight > 0)?.querySelector('.card-meta');
-    const metaH = probe ? probe.offsetHeight + parseFloat(getComputedStyle(probe).marginTop || 0) + 2 : META_H;
-    const W = grid.clientWidth;
-    const cols = W >= 1000 ? 4 : 3;
     const n = shown().length;
+    if (!n) return;
+    const W = grid.clientWidth;
     const H = grid.clientHeight;
-    let colW = (W - cols * colGap) / (cols + PEEK);
-    let rows = Math.max(1, Math.floor((H + rowGap) / ((colW * 10) / 16 + metaH + rowGap)));
-    // 카드를 조금(최대 18%)만 줄이면 한 줄 더 들어가면 그렇게 함
-    const more = rows + 1;
-    const colW2 = ((H - (more - 1) * rowGap) / more - metaH) * 1.6;
-    if (n > cols * rows && colW2 >= colW * 0.82) {
-      rows = more;
-      colW = colW2;
+    const cols = W >= 1000 ? 4 : 3;
+    const gaps = () => {
+      const cs = getComputedStyle(grid);
+      return [parseFloat(cs.columnGap) || 0, parseFloat(cs.rowGap) || 0];
+    };
+    let [colGap, rowGap] = gaps();
+    let colW = (W - (cols - 1) * colGap) / cols;
+    const compact = colW < COMPACT_W; // 좁은 창: 글을 줄인 작은 카드
+    if (compact) {
+      grid.classList.add('is-compact');
+      [colGap, rowGap] = gaps();
+      colW = (W - (cols - 1) * colGap) / cols;
     }
-    // 다 들어가면 오른쪽 여백 없이 꽉 채움
-    if (n <= cols * rows) colW = (W - (cols - 1) * colGap - parseFloat(cs.paddingRight || 0)) / cols;
-    rows = Math.max(1, Math.min(rows, Math.ceil(n / cols)));
-    grid.style.setProperty('--colw', colW + 'px');
-    grid.style.setProperty('--rows', rows);
-    step = colW + colGap;
-    const colsTotal = Math.ceil(n / rows);
-    contentW = colsTotal * colW + Math.max(0, colsTotal - 1) * colGap + (parseFloat(cs.paddingRight) || 0);
-  };
-
-  const paint = () => {
-    const m = max();
-    grid.classList.toggle('fade-l', cur > 2);
-    grid.classList.toggle('fade-r', cur < m - 2);
-    nav.hidden = m < 2 || mobile();
-    fill.style.width = (m ? ((cur + grid.clientWidth) / contentW) * 100 : 100) + '%';
-    prev.disabled = cur <= 2;
-    next.disabled = cur >= m - 2;
-  };
-  const frame = () => {
-    raf = 0;
-    target = Math.max(0, Math.min(max(), target));
-    if (Math.abs(target - cur) > 0.5) {
-      cur += reduce ? target - cur : (target - cur) * 0.14;
-      grid.scrollLeft = cur;
-      raf = requestAnimationFrame(frame);
-    } else {
-      cur = target;
-      grid.scrollLeft = cur;
+    grid.style.setProperty('--cols', cols);
+    const rows = Math.ceil(n / cols);
+    const MAX_R = compact ? 9 / 16 : 10 / 16; // 그림 높이 ÷ 너비: 기본 비율
+    const MIN_R = 0.47; // 이보다 납작하게는 자르지 않음
+    // 그림 높이를 화면에 맞춤: 전부 들어가면 그대로, 아니면 k줄이 온전히 보이고 다음 줄 그림이 PEEK만큼 걸치게
+    // (줄이 화면 아래에 딱 맞게 끝나면 아래에 더 있는 줄 모르고 지나감)
+    // 돌려주는 값: r = 그림 비율, scroll = 스크롤 여부, peek = 화면 아래 끝이 다음 줄 그림에 걸치는지
+    const solve = (mh) => {
+      const all = ((H - (rows - 1) * rowGap) / rows - mh) / colW;
+      if (all >= MIN_R) return { r: Math.min(MAX_R, all), scroll: false, peek: true };
+      let best = null;
+      for (const p of [PEEK, 0.2]) {
+        for (let k = rows - 1; k >= 1; k--) {
+          const want = (H - k * (mh + rowGap)) / ((k + p) * colW);
+          if (want < MIN_R) continue;
+          const r = Math.min(MAX_R, want);
+          const cut = (H - k * (r * colW + mh + rowGap)) / (r * colW); // 다음 줄 그림이 보이는 비율
+          if (cut <= 1 && (!best || r > best.r)) best = { r, scroll: true, peek: true };
+        }
+        if (best) return best;
+      }
+      return { r: MAX_R, scroll: true, peek: false };
+    };
+    let best = solve(metaH());
+    if (!compact && best.scroll && (!best.peek || best.r < 9 / 16)) {
+      // 다음 줄이 안 걸치거나 그림이 너무 납작해지면: 카드의 한 줄 소개를 숨겨 그림 자리를 확보
+      grid.classList.add('no-sub');
+      const alt = solve(metaH());
+      if (!alt.scroll || (alt.peek && !best.peek) || (alt.peek === best.peek && alt.r > best.r)) best = alt;
+      else grid.classList.remove('no-sub');
     }
-    paint();
-  };
-  const kick = () => !raf && (raf = requestAnimationFrame(frame));
-  // 멈추면 굴린 방향의 다음 열에 맞춤
-  const snapSoon = () => {
-    clearTimeout(snapTimer);
-    snapTimer = setTimeout(() => {
-      const k = lastDir > 0 ? Math.ceil((target - 24) / step) : Math.floor((target + 24) / step);
-      target = Math.max(0, Math.min(max(), k * step));
-      kick();
-    }, 140);
-  };
-  const go = (x) => {
-    target = Math.max(0, Math.min(max(), x));
-    kick();
+    grid.style.setProperty('--thumb-ar', `1 / ${best.r.toFixed(4)}`);
+    grid.classList.toggle('is-scroll', best.scroll);
+    fade();
   };
 
   // animate: Works 페이지에 들어올 때·필터를 바꿀 때만 카드가 날아옴 (처음 준비할 때는 그냥 둠)
@@ -159,10 +137,10 @@ export function initWorks(panel, projects, docTypes = []) {
         void li.offsetWidth; // 다시 날아오는 애니메이션
         li.classList.add('is-show');
       });
-    cur = target = 0;
-    grid.scrollLeft = 0;
-    paint();
+    grid.scrollTop = 0;
+    fade();
   };
+  grid.addEventListener('scroll', fade, { passive: true });
 
   chips.addEventListener('click', (e) => {
     const b = e.target.closest('.works-chip');
@@ -171,89 +149,18 @@ export function initWorks(panel, projects, docTypes = []) {
     chips.querySelectorAll('.works-chip').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
     show();
   });
-  const pageW = () => Math.max(step, Math.floor(grid.clientWidth / step) * step);
-  prev.addEventListener('click', () => go(target - pageW()));
-  next.addEventListener('click', () => go(target + pageW()));
-
-  // 손가락·트랙패드로 직접 옆으로 밀었을 때
-  grid.addEventListener('scroll', () => {
-    if (grid.scrollLeft > max() + 1) {
-      grid.scrollLeft = max(); // 애니메이션 중 늘어난 영역으로는 못 가게
-      return;
-    }
-    if (Math.abs(grid.scrollLeft - cur) > 2) {
-      lastDir = Math.sign(grid.scrollLeft - cur) || lastDir;
-      cur = target = grid.scrollLeft;
-      if (!mobile()) snapSoon();
-    }
-    paint();
-  }, { passive: true });
-
-  // 마우스로 끌어서 옆으로 (조금이라도 끌었으면 카드 클릭은 무시)
-  let drag = null;
-  grid.addEventListener('pointerdown', (e) => {
-    if (e.pointerType !== 'mouse' || e.button !== 0 || mobile() || max() < 2) return;
-    drag = { x: e.clientX, start: target, moved: false };
-  });
-  window.addEventListener('pointermove', (e) => {
-    if (!drag) return;
-    const dx = e.clientX - drag.x;
-    if (!drag.moved && Math.abs(dx) < 6) return;
-    if (!drag.moved) grid.classList.add('is-dragging');
-    drag.moved = true;
-    lastDir = dx < 0 ? 1 : -1;
-    cur = target = Math.max(0, Math.min(max(), drag.start - dx));
-    grid.scrollLeft = cur;
-    paint();
-  });
-  window.addEventListener('pointerup', () => {
-    if (!drag) return;
-    if (drag.moved) {
-      grid.classList.remove('is-dragging');
-      // 끌고 난 직후의 클릭(카드 열기)은 막음
-      const stop = (ev) => {
-        ev.stopPropagation();
-        ev.preventDefault();
-      };
-      window.addEventListener('click', stop, { capture: true, once: true });
-      setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 0);
-      snapSoon();
-    }
-    drag = null;
-  });
 
   let rt;
   window.addEventListener('resize', () => {
     clearTimeout(rt);
-    rt = setTimeout(() => {
-      layout();
-      go(target);
-      paint();
-    }, 200);
+    rt = setTimeout(layout, 200);
   });
   matchMedia('(max-width: 820px)').addEventListener('change', () => show(false));
   show(false);
 
-  // Deck 연결: 휠·방향키를 옆으로 미는 데 씀. 끝에 닿았고 화면도 다 따라왔으면 false → 이전/다음 페이지
+  // Deck 연결: 옆으로 넘길 게 없으니 방향키는 그대로 이전·다음 페이지로 (격자 안 스크롤은 main.js가 data-scroll로 처리)
   panel._h = {
-    debug: () => ({ cur: Math.round(cur), target: Math.round(target), max: Math.round(max()), real: grid.scrollWidth - grid.clientWidth, left: grid.scrollLeft }),
-    wheel(dy) {
-      if (mobile()) return false;
-      const m = max();
-      if ((dy > 0 && target >= m - 1) || (dy < 0 && target <= 1)) return Math.abs(target - cur) > 40;
-      lastDir = Math.sign(dy);
-      go(target + dy * 1.1);
-      snapSoon();
-      return true;
-    },
-    page(dir) {
-      if (mobile()) return false;
-      const m = max();
-      if ((dir > 0 && target >= m - 1) || (dir < 0 && target <= 1)) return Math.abs(target - cur) > 40;
-      lastDir = dir;
-      go(target + dir * step);
-      return true;
-    },
+    page: () => false,
     activate(on) {
       if (!on) return;
       show();
