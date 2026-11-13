@@ -534,11 +534,13 @@
           "works": [
             "w-stellar-belial",
             "w-obung",
+            "w-beast-friends",
             "w-part-break",
             "w-arachne",
             "w-browndust2",
             "w-lies-of-p-chapter",
             "w-steampunk-boss",
+            "w-odin-detect",
             "w-lostark-giyen",
             "w-dressroom"
           ],
@@ -559,15 +561,15 @@
           "w-studio",
           "w-midcore-rpg",
           "w-gamedesign-workbench",
-          "w-beast-friends",
-          "w-odin-detect",
           "w-stellar-belial",
           "w-obung",
+          "w-beast-friends",
           "w-part-break",
           "w-arachne",
           "w-browndust2",
           "w-lies-of-p-chapter",
           "w-steampunk-boss",
+          "w-odin-detect",
           "w-lostark-giyen",
           "w-dressroom"
         ]
