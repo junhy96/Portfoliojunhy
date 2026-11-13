@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611130036';
-import { PdfViewer } from './pdf-viewer.js?v=202611130036';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611130036';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611130036';
-import { initWorks } from './works.js?v=202611130036';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611130036';
+import { MorphStage, FallbackStage } from './morph.js?v=202611130050';
+import { PdfViewer } from './pdf-viewer.js?v=202611130050';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611130050';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611130050';
+import { initWorks } from './works.js?v=202611130050';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611130050';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -61,7 +61,7 @@ function workItem(p, i, variant) {
     return im;
   };
   // 직접 써 볼 수 있는 사이트·툴: 오른쪽 아래 표시
-  const siteBadge = () => (/^https?:\/\//i.test(p.link || '') ? el('span', { className: 'card-site', textContent: '사이트 ↗' }) : null);
+  const siteBadge = () => (/^https?:\/\//i.test(p.link || '') ? el('span', { className: 'card-site', textContent: (p.linkLabel ? p.linkLabel.replace(/\s*\(.*\)\s*$/, '') : '사이트') + ' ↗' }) : null);
   // 유튜브 표시: 가운데 재생 버튼 + 왼쪽 아래 YouTube 로고
   const ytBadges = () =>
     p._yt
@@ -481,7 +481,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611130036';
+const BUILD = '?v=202611130050';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];

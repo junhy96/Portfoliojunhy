@@ -308,7 +308,8 @@
             "w-nameless-knights",
             "w-odin-detect",
             "w-lostark-giyen",
-            "w-dressroom"
+            "w-dressroom",
+            "w-beast-friends"
           ],
           "timeline": []
         },
@@ -532,6 +533,61 @@
       ],
       "pdfName": "오벙없_방장봇_통합운영시스템_기획서_v1.5.pdf",
       "pdfSize": 4458563
+    },
+    {
+      "id": "w-beast-friends",
+      "title": "짐승 친구들 키우기 시스템 기획서",
+      "subtitle": "방치형 RPG · 레드닷 게임즈 라이브 기획서 원본 (엑셀)",
+      "category": "방치형 RPG",
+      "year": "2024",
+      "tags": [
+        "라이브 기획",
+        "시스템 기획",
+        "BM"
+      ],
+      "summary": "레드닷 게임즈에서 시스템 기획을 총괄하며 쓴 기획서 원본. 복귀 유저·별자리 수집·통합 프리셋·집사 초월·수집 이벤트 BM을 시트별로 정리",
+      "description": "웹툰 IP를 쓴 방치형 RPG 「짐승 친구들 키우기」의 라이브 서비스에서 작성한 기획서 원본입니다. 한 파일에 시트별로 기획서를 모아 두었습니다.\n복귀 유저 시스템은 미접속 기간에 따라 복귀·준복귀 단계를 나누고, 전용 UI·출석부·경험치 버프·전용 퀘스트와 보상 가치(보석·현금 환산)까지 표로 정했습니다. 신규 수집형 콘텐츠인 별자리 시스템, 집사 초월 시스템, 캐릭터·장신구·스톤·훈장을 한 번에 바꾸는 통합 프리셋, 알파벳·콜라보 수집 이벤트의 BM 개선, 뽑기 이벤트 정책을 담았습니다.\n각 기획서는 규칙, UI 흐름, 데이터 테이블, 아트 리소스 요청 사항까지 개발에 바로 넘길 수 있는 단위로 작성했습니다.",
+      "thumb": "uploads/works/beast-friends-thumb.jpg",
+      "pdf": null,
+      "docType": "시스템·UI 기획",
+      "link": "https://docs.google.com/spreadsheets/d/1YWwMZQNwm9Evaep_h3FyoHN11nT9adPM/edit?gid=596344998#gid=596344998",
+      "linkLabel": "기획서 원본 (Google 시트)",
+      "video": null,
+      "visible": true,
+      "createdAt": "2026-11-13T09:00:00.000Z",
+      "updatedAt": "2026-11-13T09:00:00.000Z",
+      "gallery": [
+        {
+          "src": "uploads/works/gallery/beast-1-police.jpg",
+          "caption": "우주 경찰서 지령서 · 단계별 콘텐츠와 성장 연계",
+          "w": 979
+        },
+        {
+          "src": "uploads/works/gallery/beast-2-guild.jpg",
+          "caption": "길드 레이드 · 길드 점수 순위와 보상",
+          "w": 1088
+        },
+        {
+          "src": "uploads/works/gallery/beast-3-preset.jpg",
+          "caption": "통합 프리셋 · 캐릭터·장신구·스톤을 한 번에 바꾸기",
+          "w": 785
+        },
+        {
+          "src": "uploads/works/gallery/beast-4-alphabet.jpg",
+          "caption": "알파벳 수집 이벤트 · 시즌형 수집 BM",
+          "w": 944
+        },
+        {
+          "src": "uploads/works/gallery/beast-5-boss.jpg",
+          "caption": "보스 습격 · 프리셋으로 바로 진입",
+          "w": 726
+        },
+        {
+          "src": "uploads/works/gallery/beast-6-raid.jpg",
+          "caption": "레이드 전투 화면",
+          "w": 1094
+        }
+      ]
     },
     {
       "id": "w-part-break",

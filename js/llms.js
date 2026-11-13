@@ -172,7 +172,7 @@
         var meta = [str(p.docType), str(p.category), str(p.year)].filter(Boolean).join(' · ');
         var more = [];
         if (p.video) more.push('영상 ' + str(p.video));
-        if (p.link) more.push('사이트 ' + str(p.link));
+        if (p.link) more.push((p.linkLabel ? str(p.linkLabel) : '사이트') + ' ' + str(p.link));
         push('- [' + str(p.title) + '](' + url + '): ' + [meta, oneLine(p.summary || p.subtitle)].filter(Boolean).join('. ') + (more.length ? ' (' + more.join(', ') + ')' : ''));
         if (full) {
           if (p.subtitle && p.summary) push('  - ' + oneLine(p.subtitle));
