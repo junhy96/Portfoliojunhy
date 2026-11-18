@@ -1085,7 +1085,7 @@
       "pdf": null,
       "docType": "툴 제작",
       "link": "https://junhy96.github.io/Portfoliojunhy/studio/",
-      "visible": false,
+      "visible": true,
       "createdAt": "2026-11-12T09:00:00.000Z",
       "updatedAt": "2026-11-18T10:11:56.872Z",
       "gallery": [
@@ -1116,5 +1116,5 @@
       ]
     }
   ],
-  "rev": 1794996718388
+  "rev": 1794996728822
 }
