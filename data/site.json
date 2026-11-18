@@ -1085,43 +1085,36 @@
       "pdf": null,
       "docType": "툴 제작",
       "link": "https://junhy96.github.io/Portfoliojunhy/studio/",
-      "video": null,
-      "visible": true,
+      "visible": false,
       "createdAt": "2026-11-12T09:00:00.000Z",
-      "updatedAt": "2026-11-12T09:00:00.000Z",
+      "updatedAt": "2026-11-18T10:11:56.872Z",
       "gallery": [
         {
           "src": "uploads/works/gallery/studio-1-preset.jpg",
-          "caption": "링크 프리셋 · 지원처마다 보여 줄 기획서와 경력 고르기",
-          "w": 1036
+          "caption": "링크 프리셋 · 지원처마다 보여 줄 기획서와 경력 고르기"
         },
         {
           "src": "uploads/works/gallery/studio-2-links.jpg",
-          "caption": "링크 프리셋 · 만든 링크 목록과 통계 보기",
-          "w": 1036
+          "caption": "링크 프리셋 · 만든 링크 목록과 통계 보기"
         },
         {
           "src": "uploads/works/gallery/studio-3-dwell.jpg",
-          "caption": "기획서별 체류 시간 · 평균 체류 · 읽은 쪽 · 끝까지 본 방문 (예시 데이터)",
-          "w": 1036
+          "caption": "기획서별 체류 시간 · 평균 체류 · 읽은 쪽 · 끝까지 본 방문 (예시 데이터)"
         },
         {
           "src": "uploads/works/gallery/studio-4-heat.jpg",
-          "caption": "클릭 히트맵 · 섹션 · PC/모바일별 클릭 위치 (예시 데이터)",
-          "w": 1036
+          "caption": "클릭 히트맵 · 섹션 · PC/모바일별 클릭 위치 (예시 데이터)"
         },
         {
           "src": "uploads/works/gallery/studio-5-sources.jpg",
-          "caption": "지원처별 방문 · 링크마다 연 기획서와 본 시간 (예시 데이터)",
-          "w": 1036
+          "caption": "지원처별 방문 · 링크마다 연 기획서와 본 시간 (예시 데이터)"
         },
         {
           "src": "uploads/works/gallery/studio-6-board.jpg",
-          "caption": "포트폴리오 게시판 · 끌어서 순서 바꾸기 · GitHub API로 바로 배포",
-          "w": 1036
+          "caption": "포트폴리오 게시판 · 끌어서 순서 바꾸기 · GitHub API로 바로 배포"
         }
       ]
     }
   ],
-  "rev": 1794996705846
+  "rev": 1794996718388
 }
