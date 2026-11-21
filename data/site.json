@@ -846,6 +846,24 @@
           "w": 1160
         },
         {
+          "src": "uploads/works/gallery/obung-0-server-pc.jpg",
+          "caption": "봇 서버 PC · 왼쪽은 봇 실행 로그, 가운데 · 오른쪽은 봇이 읽고 답하는 카카오톡 방 (이름은 모자이크)",
+          "w": 2000,
+          "side": true
+        },
+        {
+          "src": "uploads/works/gallery/obung-0b-bot-chat.png",
+          "caption": "!봇 · 방에서 물어보면 봇이 바로 답하는 챗봇 (다른 멤버 이름은 모자이크)",
+          "w": 367,
+          "side": true
+        },
+        {
+          "src": "uploads/works/gallery/obung-0c-bot-card.png",
+          "caption": "!캐릭터 · !경험치 · 넥슨 API로 조회해 서버가 그린 카드를 사진으로 답장",
+          "w": 367,
+          "side": true
+        },
+        {
           "src": "uploads/works/gallery/obung-8-admin.jpg",
           "caption": "방장봇 운영툴 · 노트북 봇 상태와 벙 목록 (예시 데이터)",
           "w": 1500,
