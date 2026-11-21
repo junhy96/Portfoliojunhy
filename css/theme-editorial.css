@@ -1166,10 +1166,10 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
    영상 | 가운데 칸 | 화면 미리보기. 가운데 칸 이미지는 원래 비율 그대로 */
 .vside[hidden] { display: none; }
 .vside-title { flex: none; font-size: 13px; letter-spacing: .02em; color: var(--fg-3); scroll-snap-align: start; padding-top: 2px; }
-.vside .vg-item img { aspect-ratio: auto !important; object-fit: initial !important; padding: 0 !important; background: none !important; }
+.vside.is-group .vg-item img { aspect-ratio: auto !important; object-fit: initial !important; padding: 0 !important; background: none !important; }
 .viewer-video.has-side .vside { display: flex; flex-direction: column; gap: 22px; margin-top: 36px; }
 .viewer-video.has-side .vside .vg-item { width: 100%; padding: 0; border: 0; background: none; text-align: left; }
-.vside .vg-item img { width: auto !important; max-width: 100%; align-self: flex-start; }
+.vside.is-group .vg-item img { width: auto !important; max-width: 100%; align-self: flex-start; }
 @media (min-width: 821px) {
   .viewer-video.has-side:not(.no-video) .vside {
     margin: 0; min-height: 0; height: 100%; padding: 0 10px 24px 0;
@@ -1581,12 +1581,13 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
 .viewer-why.has-video .vw-list li { font-size: 16px; }
 @media (min-width: 821px) {
   .viewer-video.is-two.has-gallery:not(.no-video) {
-    display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-rows: minmax(0, 1fr) !important;
-    gap: 28px; padding: 20px 28px; overflow: hidden;
+    display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-rows: auto !important;
+    align-items: start; gap: 28px; padding: 20px 28px 40px; overflow-y: auto !important; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin;
   }
+  /* 두 열은 한 번에 같이 스크롤 (휠 하나) */
   .viewer-video.is-two .vside, .viewer-video.is-two .vgallery {
-    grid-row: 1 !important; height: 100%; max-width: none; min-height: 0; margin: 0 !important; padding: 0 10px 24px 0;
-    display: flex; flex-direction: column; gap: 22px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin;
+    grid-row: 1 !important; height: auto !important; max-width: none; min-height: 0; margin: 0 !important; padding: 0;
+    display: flex; flex-direction: column; gap: 22px; overflow: visible !important; scroll-snap-type: none;
   }
   .viewer-video.is-two .vside { grid-column: 1 !important; }
   .viewer-video.is-two .vgallery { grid-column: 2 !important; }
@@ -1596,4 +1597,11 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
   .viewer-why.has-video .video-frame { width: 100%; }
   .viewer-why.has-video .video-frame.is-shorts { width: auto; height: 60vh; justify-self: center; }
   .viewer-why.has-video .viewer-why-inner { max-height: none; }
+}
+/* 묶음 칸(예: 방장봇 · 운영툴): 좁은 캡처는 두 장씩 같은 크기로 한 줄에 */
+@media (min-width: 821px) {
+  .viewer-video.is-two .vside.is-group { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+  .viewer-video.is-two .vside.is-group .vside-title { flex-basis: 100%; }
+  .viewer-video.is-two .vside.is-group .vg-item.is-small { width: calc(50% - 11px); }
+  .viewer-video.is-two .vside.is-group .vg-item.is-small img { width: 100% !important; }
 }

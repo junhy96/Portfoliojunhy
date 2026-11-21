@@ -236,7 +236,8 @@ export class PdfViewer {
     const useSide = two;
     const inSide = (g, i) => (hasSide ? !!g.side : i % 2 === 1);
     const item = (g, i) => {
-      const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' });
+      // 원래 폭이 좁은 캡처(카톡 화면 등)는 묶음 칸에서 두 장씩 한 줄로
+      const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' + (Number(g.w) && Number(g.w) <= 900 ? ' is-small' : '') });
       b.dataset.index = i;
       b.setAttribute('role', 'listitem');
       b.setAttribute('aria-label', `${g.caption || '소개 이미지 ' + (i + 1)} 크게 보기`);
@@ -253,6 +254,7 @@ export class PdfViewer {
       ...(useSide ? all.filter(([g, i]) => inSide(g, i)).map(([g, i]) => item(g, i)) : [])
     );
     sideBox.hidden = !useSide;
+    sideBox.classList.toggle('is-group', useSide && hasSide); // 따로 묶은 이미지(원래 크기)인지, 화면 미리보기를 두 열로 나눈 것인지
     sideBox.scrollTop = 0;
     $('viewer-video').classList.toggle('has-side', useSide);
     $('viewer-video').classList.toggle('is-two', two);
