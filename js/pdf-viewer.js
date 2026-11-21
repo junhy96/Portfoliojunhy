@@ -153,7 +153,7 @@ export class PdfViewer {
     // 영상·화면과 기획서가 둘 다 있으면: 처음엔 영상 + 화면 미리보기(기획 워크벤치와 같은 구성), 기획서는 위쪽 버튼으로
     // (화면 미리보기가 없는 카드는 예전처럼 위쪽 '기획서 / 영상' 탭, 기획서 먼저)
     const showcase = this.gallery.length > 0;
-    $('viewer-tabs').hidden = showcase || !(media && project.pdf);
+    $('viewer-tabs').hidden = showcase || this._stripVideo || !(media && project.pdf);
     $('viewer-plan').hidden = !(showcase && project.pdf);
     this.root.querySelector('.vtab[data-act="tab-video"]').textContent = yt ? '영상' : '화면';
     // 인쇄 · PDF: 기획서가 있으면 그 PDF를, 없으면 이 작업 요약(설명 · 소개 이미지 · 링크)을 새 창에서
@@ -259,11 +259,14 @@ export class PdfViewer {
     // 영상 칸 옮기기: 두 열이면 '만든 이유' 띠 왼쪽, 아니면 원래 자리
     const frame = $('viewer-frame');
     const why = $('viewer-why');
-    if (two) {
+    // 기획서 + 영상(이미지 없음, 예: 벨리알): 기획서는 아래, 영상은 위 '만든 이유' 띠 왼쪽 (탭으로 오가지 않게)
+    const stripPdf = !!this.project?._yt && !!this.project?.pdf && !this.gallery.length;
+    this._stripVideo = two || stripPdf;
+    if (two || stripPdf) {
       why.prepend(frame);
       why.hidden = false;
     } else if (frame.parentElement !== $('viewer-video')) $('viewer-video').prepend(frame);
-    why.classList.toggle('has-video', two);
+    why.classList.toggle('has-video', two || stripPdf);
     box.hidden = !this.gallery.length;
     $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
     box.scrollTop = 0;
@@ -324,10 +327,12 @@ export class PdfViewer {
     const frame = $('viewer-frame');
     frame.classList.toggle('is-shorts', /youtube\.com\/shorts\//i.test(this.project?.video || ''));
     frame.hidden = !yt;
-    if (video && yt) {
+    if ((video || this._stripVideo) && yt) {
       if (!frame.firstChild) {
         const f = document.createElement('iframe');
-        f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=1&mute=1&rel=0&playsinline=1&modestbranding=1`;
+        // 기획서를 읽는 동안 옆에 둔 영상은 자동 재생하지 않음 (썸네일 + 재생 버튼)
+        const auto = video ? 1 : 0;
+        f.src = `https://www.youtube-nocookie.com/embed/${yt}?autoplay=${auto}&mute=1&rel=0&playsinline=1&modestbranding=1`;
         f.title = (this.project.title || '') + ' 영상';
         f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
         f.allowFullscreen = true;
