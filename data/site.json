@@ -701,7 +701,7 @@
   "projects": [
     {
       "id": "w-stellar-belial",
-      "title": "벨리알 전투 리메이크 구현",
+      "title": "벨리알 보스 전투 리메이크",
       "subtitle": "스텔라 블레이드 · 보스 패턴 재현과 신규 기믹",
       "category": "3D 액션 RPG",
       "year": "2026",
@@ -712,10 +712,10 @@
       ],
       "summary": "원작 보스 벨리알을 리버스 엔지니어링으로 재현하고, 3페이즈와 가짜 클리어 연출을 새로 설계한 전투 기획",
       "description": "스텔라 블레이드의 보스 벨리알을 데이터 마이닝으로 분석해 UE5로 옮기고, 신규 패턴·페이즈·등장 시네마틱을 추가 기획했습니다.\n학습(P1) → 압박과 열차 돌진(P2) → 가짜 클리어 후 폭주(P3)로 한 번의 보스전에 세 가지 경험을 담았습니다.\n콤보·캔슬 창·타격 판정 설계부터 C++ 전투 시스템, VFX·사운드 복원까지 1인으로 작업했습니다.",
-      "thumb": "uploads/works/stellar-belial-remake.jpg",
+      "thumb": "uploads/works/stellar-belial-boss.jpg",
       "pdf": "uploads/works/stellar-belial.pdf",
-      "pdfName": "스텔라블레이드_벨리알_전투리메이크구현.pdf",
-      "pdfSize": "4255022",
+      "pdfName": "스텔라블레이드_벨리알_보스전투리메이크.pdf",
+      "pdfSize": "4254715",
       "docType": "전투 기획",
       "visible": true,
       "createdAt": "2026-11-10T09:00:00.000Z",
