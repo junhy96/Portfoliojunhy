@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611211257';
-import { cleanTag } from './analytics.js?v=202611211257';
+import { timelineItems, careerTotal } from './timeline.js?v=202611211301';
+import { cleanTag } from './analytics.js?v=202611211301';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -233,6 +233,13 @@ function works(data) {
   add(doc, header(s, `작업 목록 · ${data.projects.length}건`), grid, footer(s));
   return '작업 목록';
 }
+/** 한 줄 = 한 항목 */
+function bullets(t) {
+  const ul = el('ul', 'd-bullets');
+  String(t || '').split('\n').map((x) => x.replace(/^[·•-]\s*/, '').trim()).filter(Boolean).forEach((x) => ul.append(el('li', null, x)));
+  return ul;
+}
+
 function work(data) {
   const s = data.settings;
   const p = data.projects.find((x) => x.id === q.get('id'));
@@ -249,8 +256,8 @@ function work(data) {
     header(s, '포트폴리오'),
     add(el('section', 'd-sec d-work-head'), el('p', 'd-kicker', metaOf(p)), el('h2', 'd-work-title', p.title), p.subtitle ? el('p', 'd-work-sub', p.subtitle) : null, p.summary ? el('p', 'd-intro', p.summary) : null),
     img ? add(el('figure', 'd-cover'), Object.assign(el('img'), { src: img, alt: '' })) : null,
-    p.why ? section('만든 이유', el('p', 'd-text', p.why)) : null,
-    p.intent ? section('의도', el('p', 'd-text', p.intent)) : null,
+    p.why ? section('만든 이유', bullets(p.why)) : null,
+    p.intent ? section('의도', bullets(p.intent)) : null,
     p.description ? section('설명', el('p', 'd-text', p.description)) : null,
     p.tags?.length ? add(el('ul', 'd-tags'), ...p.tags.map((t) => el('li', null, '#' + t.replace(/\s+/g, '')))) : null,
     links(p, true) ? section('링크', links(p, true)) : null,

@@ -51,6 +51,8 @@ ul, ol { padding: 0; list-style: none; }
 .d-intro { font-size: 12pt; line-height: 1.7; white-space: pre-line; color: var(--ink); }
 .d-intro.small { font-size: 10pt; color: var(--ink-2); }
 .d-text { white-space: pre-line; color: var(--ink-2); }
+.d-bullets { margin: 0; padding-left: 1.2em; color: var(--ink-2); }
+.d-bullets li { margin: .25em 0; line-height: 1.55; }
 .d-cols { display: grid; grid-template-columns: 1.4fr 1fr; gap: 8mm; }
 .d-empty { padding: 20mm 0; text-align: center; color: var(--ink-3); }
 .d-tag { display: inline-block; margin-left: 2mm; padding: 0 2mm; border: 1px solid var(--line); border-radius: 3px; font-size: 8pt; color: var(--ink-2); }

@@ -105,8 +105,10 @@ export class PdfViewer {
     $('viewer-why').hidden = !(project.why || project.intent);
     $('viewer-why-a').hidden = !project.why;
     $('viewer-why-b').hidden = !project.intent;
-    $('viewer-why-text').textContent = project.why || '';
-    $('viewer-intent-text').textContent = project.intent || '';
+    // 한 줄 = 한 항목 (줄글보다 빨리 읽히게)
+    const items = (t) => String(t || '').split('\n').map((x) => x.replace(/^[·•-]\s*/, '').trim()).filter(Boolean).map((x) => Object.assign(document.createElement('li'), { textContent: x }));
+    $('viewer-why-text').replaceChildren(...items(project.why));
+    $('viewer-intent-text').replaceChildren(...items(project.intent));
     const tags = $('viewer-tags');
     tags.replaceChildren(...(project.tags || []).map((t) => Object.assign(document.createElement('li'), { textContent: t })));
     const dl = $('viewer-download');
