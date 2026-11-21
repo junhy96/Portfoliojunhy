@@ -33,10 +33,10 @@
 - Confluence 80
 - Jira · Redmine 80
 - SVN · Git 80
-- Blender 70
 - Unity 70
 - Lua Script 60
 - Python · VBA 60
+- Blender 60
 
 ## 작업물
 

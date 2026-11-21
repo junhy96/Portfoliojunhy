@@ -270,7 +270,7 @@
       },
       {
         "name": "Blender",
-        "level": 70,
+        "level": 60,
         "icon": "blender",
         "group": "tool",
         "desc": "3D 작업은 Claude와 함께 합니다.\n· MCP: Claude와 MCP로 연결해 3D 모델링, 이펙트 제작\n· 변환: 벨리알 V2에서 원작 데이터를 FBX로 변환"
@@ -280,7 +280,7 @@
         "level": 70,
         "icon": "unity",
         "group": "tool",
-        "desc": "실무에서 사용한 상용 엔진입니다.\n· 실무: 레드닷 게임즈(방치형 RPG 「짐승 친구들 키우기」)에서 Jenkins · Redis와 함께 사용"
+        "desc": "실무와 개인 프로젝트에서 쓰는 상용 엔진입니다.\n· 실무: 레드닷 게임즈에서 방치형 RPG 「짐승 친구들 키우기」 라이브 서비스, Jenkins · Redis와 함께 사용\n· 개인: Unity에 MCP를 붙여 개인 메트로배니아 프로젝트 제작 중"
       }
     ],
     "contact": {
