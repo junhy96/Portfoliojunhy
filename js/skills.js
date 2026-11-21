@@ -14,6 +14,29 @@ const LEVELS = [[90, '전문가'], [75, '능숙'], [55, '실무 가능'], [35, '
 const GROUPS = [['plan', '기획 스킬'], ['tool', '툴 스킬']];
 
 export const levelLabel = (v) => LEVELS.find(([min]) => v >= min)[1];
+
+// 설명 글: 일반 줄은 문단, "· 규칙: ..." 줄은 굵은 이름이 붙은 목록 (긴 설명이면 말풍선을 넓힘)
+function appendDesc(tip, text) {
+  const lines = String(text || '').split('\n').map((l) => l.trim()).filter(Boolean);
+  tip.classList.toggle('is-wide', String(text || '').length > 180);
+  let p = null, ul = null;
+  lines.forEach((line) => {
+    const m = line.match(/^[·•-]\s*(?:([^:：]{1,12})[:：]\s*)?(.+)$/);
+    if (m) {
+      p = null;
+      if (!ul) tip.append((ul = Object.assign(document.createElement('ul'), { className: 'tip-list' })));
+      const li = document.createElement('li');
+      if (m[1]) li.append(Object.assign(document.createElement('b'), { textContent: m[1] }), ' ');
+      li.append(m[2]);
+      ul.append(li);
+    } else {
+      ul = null;
+      if (!p) tip.append((p = Object.assign(document.createElement('p'), { className: 'tip-desc' })));
+      else p.append(document.createElement('br'));
+      p.append(line);
+    }
+  });
+}
 const clamp = (v) => Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
 const svg = (tag, attrs = {}) => {
   const n = document.createElementNS(NS, tag);
@@ -226,12 +249,7 @@ export function renderSkillChart(root, skills) {
     meter.className = 'tip-meter';
     meter.style.setProperty('--w', s.level + '%');
     tip.append(head, score, meter);
-    if (s.desc) {
-      const d = document.createElement('p');
-      d.className = 'tip-desc';
-      d.textContent = s.desc;
-      tip.append(d);
-    }
+    appendDesc(tip, s.desc);
     // 조각의 숙련도 끝 지점 옆에 말풍선 (오른쪽 조각은 오른쪽, 왼쪽 조각은 왼쪽)
     const i = Number(g.dataset.index);
     const mid = -Math.PI / 2 + i * step;
@@ -342,12 +360,7 @@ export function renderToolBars(root, tools) {
     meter.className = 'tip-meter';
     meter.style.setProperty('--w', s.level + '%');
     tip.append(head, score, meter);
-    if (s.desc) {
-      const d = document.createElement('p');
-      d.className = 'tip-desc';
-      d.textContent = s.desc;
-      tip.append(d);
-    }
+    appendDesc(tip, s.desc);
     // 아이콘 왼쪽에 말풍선 (화면이 좁으면 행 아래)
     tip.classList.add('show');
     const rb = root.getBoundingClientRect();

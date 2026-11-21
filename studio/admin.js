@@ -1243,7 +1243,7 @@
       const setBar = () => bar.style.setProperty('--w', Math.max(0, Math.min(100, Number(level.value) || 0)) + '%');
       level.addEventListener('input', setBar);
       setBar();
-      const desc = h('input', { value: it.desc || '', placeholder: '말풍선 설명: 이 스킬로 무엇을 할 수 있는지', maxLength: 160 });
+      const desc = h('textarea', { className: 'skill-desc', value: it.desc || '', rows: Math.min(6, Math.max(1, (it.desc || '').split('\n').length)), placeholder: '말풍선 설명: 이 스킬로 무엇을 할 수 있는지 (Enter로 줄바꿈)', maxLength: 500 });
       const up = h('button', { type: 'button', className: 'icon-btn', textContent: '▲', title: '위로' });
       const down = h('button', { type: 'button', className: 'icon-btn', textContent: '▼', title: '아래로' });
       const del = h('button', { type: 'button', className: 'icon-btn danger', textContent: '✕', title: '삭제' });
@@ -1256,7 +1256,7 @@
       r.append(h('span', { className: 'skill-icon-cell' }, preview, icon), name, group, h('span', { className: 'skill-level-cell' }, level, bar), desc, h('span', { className: 'acts' }, up, down, del));
       return r;
     };
-    const head = h('div', { className: 'skill-row head muted sm' }, h('span', { textContent: '아이콘' }), h('span', { textContent: '스킬 이름' }), h('span', { textContent: '묶음' }), h('span', { textContent: '숙련도 (0~100)' }), h('span', { textContent: '설명' }), h('span'));
+    const head = h('div', { className: 'skill-row head muted sm' }, h('span', { textContent: '아이콘' }), h('span', { textContent: '스킬 이름' }), h('span', { textContent: '묶음' }), h('span', { textContent: '숙련도 (0~100)' }), h('span'));
     const add = h('button', { type: 'button', className: 'btn sm rep-add', textContent: '+ 스킬 추가' });
     add.onclick = () => {
       if ($$('.skill-row:not(.head)', box).length >= 24) return toast('스킬은 24개까지 넣을 수 있어요. 묶음마다 6~12개가 보기 좋아요.', true);
@@ -1269,7 +1269,7 @@
     return $$('#skill-editor .skill-row:not(.head)')
       .map((r) => {
         const [name, level, desc] = $$('input', r);
-        return { name: name.value.trim(), level: Math.max(0, Math.min(100, Math.round(Number(level.value) || 0))), icon: $('.skill-icon-select', r).value, group: $('.skill-group-select', r).value, desc: desc.value.trim() };
+        return { name: name.value.trim(), level: Math.max(0, Math.min(100, Math.round(Number(level.value) || 0))), icon: $('.skill-icon-select', r).value, group: $('.skill-group-select', r).value, desc: desc.value.replace(/\r/g, '').trim() };
       })
       .filter((s) => s.name);
   }

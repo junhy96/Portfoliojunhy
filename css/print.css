@@ -73,7 +73,7 @@ ul, ol { padding: 0; list-style: none; }
 .d-tools em { font-style: normal; text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 9.5pt; }
 .d-tools.is-wide { grid-template-columns: 1fr; gap: 1.4mm; }
 .d-tools.is-wide li { grid-template-columns: 5mm 44mm 1fr 10mm; row-gap: .6mm; padding: .8mm 0 1.6mm; border-bottom: 1px solid var(--line); }
-.d-tool-desc { grid-column: 2 / -1; font-size: 8.8pt; line-height: 1.45; color: var(--ink-3); }
+.d-tool-desc { grid-column: 2 / -1; font-size: 8.8pt; line-height: 1.45; color: var(--ink-3); white-space: pre-line; }
 
 /* 연혁 */
 .d-tl { display: grid; gap: 5mm; }

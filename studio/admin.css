@@ -315,9 +315,12 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 
 /* 스킬 차트 편집기 */
 .skill-editor { display: grid; gap: 8px; }
-.skill-row { display: grid; grid-template-columns: 170px minmax(120px, 1fr) 112px 150px minmax(160px, 2fr) auto; gap: 8px; align-items: center; }
+.skill-row { display: grid; grid-template-columns: 170px minmax(120px, 1fr) 112px 150px auto; gap: 8px; align-items: center; }
+.skill-row:not(.head) { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .skill-group-select { height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
 .skill-row.head { padding: 0 2px; }
+/* 설명은 스킬 줄 아래 전체 폭 (말풍선 글이 길어도 한눈에 보이게, 글 길이만큼 늘어남) */
+.skill-row > .skill-desc { grid-column: 1 / -1; order: 9; min-height: 38px; max-height: 260px; padding: 8px 12px; line-height: 1.6; font-size: 13px; field-sizing: content; }
 .skill-icon-cell { display: flex; align-items: center; gap: 8px; }
 .skill-icon-preview { display: grid; place-items: center; width: 34px; height: 38px; flex: none; border: 1px solid var(--line-2); border-radius: 8px; color: var(--fg); }
 .skill-icon-select { flex: 1; min-width: 0; height: 38px; padding: 0 8px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--bg); color: var(--fg); }
@@ -328,7 +331,6 @@ table.visits td.tag { color: var(--fg); font-weight: 600; }
 @media (max-width: 900px) {
   .skill-row { grid-template-columns: 1fr 1fr; }
   .skill-row.head { display: none; }
-  .skill-row > input:nth-of-type(2) { grid-column: 1 / -1; }
 }
 
 /* 타임라인(연혁) 편집기 */
