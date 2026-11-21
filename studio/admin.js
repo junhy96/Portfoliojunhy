@@ -542,7 +542,14 @@
           dirty = true;
           renderGal();
         };
-        return h('li', { className: 'gal-row' }, g.blob ? h('img', { src: g.url, alt: '' }) : img(g.path), cap, h('div', { className: 'acts' }, up, down, del));
+        // 가운데 칸: 영상과 화면 미리보기 사이 따로 묶어 보여 줄 이미지 (예: 운영툴 · 봇)
+        const sideBox = h('input', { type: 'checkbox', checked: !!g.side });
+        sideBox.addEventListener('change', () => {
+          g.side = sideBox.checked;
+          dirty = true;
+        });
+        const sideSw = h('label', { className: 'gal-side', title: '영상과 화면 미리보기 사이 가운데 칸에 따로 보여 줌' }, sideBox, h('span', { textContent: '가운데 칸' }));
+        return h('li', { className: 'gal-row' }, g.blob ? h('img', { src: g.url, alt: '' }) : img(g.path), cap, sideSw, h('div', { className: 'acts' }, up, down, del));
       })
     );
     list.hidden = !items.length;
@@ -566,7 +573,7 @@
     form.reset();
     Object.assign(state, { pdfFile: null, removePdf: false, options: [], selected: null, loadingPages: false });
     // 소개 이미지: 이미 올린 것은 path, 새로 고른 것은 blob
-    state.gallery = (p?.gallery || []).filter((g) => g?.src).map((g) => ({ path: g.src, caption: g.caption || '' }));
+    state.gallery = (p?.gallery || []).filter((g) => g?.src).map((g) => ({ path: g.src, caption: g.caption || '', w: g.w, side: !!g.side }));
     renderGal();
     $('#editor-title').textContent = p ? '포트폴리오 수정' : '새 포트폴리오 등록';
     $('#save-post').textContent = p ? '수정 완료' : '게시하기';
@@ -777,10 +784,11 @@
     }
     // 소개 이미지: 새로 고른 것만 올리고, 순서·설명은 그대로 저장
     const gallery = (state.gallery || []).map((g) => {
-      if (!g.blob) return { src: g.path, caption: g.caption.trim() };
+      const keep = { ...(g.w ? { w: g.w } : {}), ...(g.side ? { side: true } : {}) };
+      if (!g.blob) return { src: g.path, caption: g.caption.trim(), ...keep };
       const path = `uploads/${id}-${uid()}-g.${extOf(g.blob)}`;
       files.push({ path, blob: g.blob });
-      return { src: path, caption: g.caption.trim() };
+      return { src: path, caption: g.caption.trim(), ...keep };
     });
     fields.gallery = gallery.length ? gallery : undefined;
     const sel = state.options.find((o) => o.key === state.selected);

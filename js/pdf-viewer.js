@@ -218,19 +218,29 @@ export class PdfViewer {
 
   _renderGallery() {
     const box = $('viewer-gallery');
-    box.replaceChildren(
-      ...this.gallery.map((g, i) => {
-        const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' });
-        b.dataset.index = i;
-        b.setAttribute('role', 'listitem');
-        b.setAttribute('aria-label', `${g.caption || '소개 이미지 ' + (i + 1)} 크게 보기`);
-        // 원래 화면에서의 폭(w)으로 보여 줘서 누르지 않아도 글자가 읽히게 (모르면 900px)
-        b.style.setProperty('--w', `${Math.max(320, Math.min(1400, Number(g.w) || 900))}px`);
-        b.append(Object.assign(document.createElement('img'), { src: g.src, alt: g.caption || '', loading: i < 2 ? 'eager' : 'lazy', decoding: 'async' }));
-        if (g.caption) b.append(Object.assign(document.createElement('span'), { textContent: g.caption }));
-        return b;
-      })
+    const sideBox = $('viewer-side');
+    // side 표시가 붙은 이미지는 영상과 화면 미리보기 사이 가운데 칸으로 (영상이 없으면 한 줄로 합침)
+    const useSide = !!this.project?._yt && this.gallery.some((g) => g.side);
+    const item = (g, i) => {
+      const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' });
+      b.dataset.index = i;
+      b.setAttribute('role', 'listitem');
+      b.setAttribute('aria-label', `${g.caption || '소개 이미지 ' + (i + 1)} 크게 보기`);
+      // 원래 화면에서의 폭(w)으로 보여 줘서 누르지 않아도 글자가 읽히게 (모르면 900px)
+      b.style.setProperty('--w', `${Math.max(320, Math.min(1400, Number(g.w) || 900))}px`);
+      b.append(Object.assign(document.createElement('img'), { src: g.src, alt: g.caption || '', loading: i < 2 ? 'eager' : 'lazy', decoding: 'async' }));
+      if (g.caption) b.append(Object.assign(document.createElement('span'), { textContent: g.caption }));
+      return b;
+    };
+    const all = this.gallery.map((g, i) => [g, i]);
+    box.replaceChildren(...all.filter(([g]) => !(useSide && g.side)).map(([g, i]) => item(g, i)));
+    sideBox.replaceChildren(
+      ...(useSide ? [Object.assign(document.createElement('p'), { className: 'vside-title', textContent: this.project.sideTitle || '함께 쓰는 도구' })] : []),
+      ...(useSide ? all.filter(([g]) => g.side).map(([g, i]) => item(g, i)) : [])
     );
+    sideBox.hidden = !useSide;
+    sideBox.scrollTop = 0;
+    $('viewer-video').classList.toggle('has-side', useSide);
     box.hidden = !this.gallery.length;
     $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
     box.scrollTop = 0;

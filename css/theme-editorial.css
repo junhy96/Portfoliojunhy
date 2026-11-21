@@ -1160,6 +1160,34 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
   .viewer-video.has-gallery:not(.no-video) .vgallery { justify-content: flex-start; }
 }
 
+/* ===================== 팝업 가운데 칸 (예: 오벙없의 방장봇 · 운영툴) =====================
+   영상 | 가운데 칸 | 화면 미리보기. 가운데 칸 이미지는 원래 비율 그대로 */
+.vside[hidden] { display: none; }
+.vside-title { flex: none; font-size: 13px; letter-spacing: .02em; color: var(--fg-3); scroll-snap-align: start; padding-top: 2px; }
+.vside .vg-item img { aspect-ratio: auto !important; object-fit: initial !important; padding: 0 !important; background: none !important; }
+.viewer-video.has-side .vside { display: flex; flex-direction: column; gap: 22px; margin-top: 36px; }
+.viewer-video.has-side .vside .vg-item { width: 100%; padding: 0; border: 0; background: none; text-align: left; }
+@media (min-width: 821px) {
+  .viewer-video.has-side:not(.no-video) .vside {
+    margin: 0; min-height: 0; height: 100%; padding: 0 10px 24px 0;
+    overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scroll-snap-type: y proximity; scrollbar-width: thin;
+  }
+  .viewer-video.has-side:not(.no-video) .vside .vg-item { flex: none; scroll-snap-align: start; }
+  /* 화면이 아주 넓지 않으면: 영상 왼쪽, 오른쪽 위 가운데 칸 · 오른쪽 아래 화면 미리보기 */
+  .viewer-video.has-side:not(.no-video),
+  .viewer-video.has-side.is-shorts:not(.no-video) { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+  .viewer-video.has-side:not(.no-video) .video-frame { grid-row: 1 / span 2; }
+  .viewer-video.has-side:not(.no-video) .vside { grid-column: 2; grid-row: 1; }
+  .viewer-video.has-side:not(.no-video) .vgallery { grid-column: 2; grid-row: 2; }
+}
+@media (min-width: 1280px) {
+  /* 넓은 화면 + 쇼츠: 세 칸으로 나란히 (영상 | 가운데 칸 | 화면 미리보기) */
+  .viewer-video.has-side.is-shorts:not(.no-video) { grid-template-columns: auto minmax(340px, 1fr) minmax(380px, 1fr); grid-template-rows: minmax(0, 1fr); }
+  .viewer-video.has-side.is-shorts:not(.no-video) .video-frame { grid-row: 1; }
+  .viewer-video.has-side.is-shorts:not(.no-video) .vside { grid-column: 2; grid-row: 1; }
+  .viewer-video.has-side.is-shorts:not(.no-video) .vgallery { grid-column: 3; grid-row: 1; }
+}
+
 /* ===================== 타임라인: 업무 자료 쪽 미리보기 ===================== */
 .tl-work { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .tl-work-page {
