@@ -230,7 +230,11 @@ export class PdfViewer {
     const box = $('viewer-gallery');
     const sideBox = $('viewer-side');
     // side 표시가 붙은 이미지는 영상과 화면 미리보기 사이 가운데 칸으로 (영상이 없으면 한 줄로 합침)
-    const useSide = !!this.project?._yt && this.gallery.some((g) => g.side);
+    const hasSide = this.gallery.some((g) => g.side);
+    // 영상 + 이미지: 영상은 위 '만든 이유' 띠 왼쪽으로, 이미지는 아래 두 열(각자 스크롤)
+    const two = !!this.project?._yt && this.gallery.length > 1;
+    const useSide = two;
+    const inSide = (g, i) => (hasSide ? !!g.side : i % 2 === 1);
     const item = (g, i) => {
       const b = Object.assign(document.createElement('button'), { type: 'button', className: 'vg-item' });
       b.dataset.index = i;
@@ -243,14 +247,23 @@ export class PdfViewer {
       return b;
     };
     const all = this.gallery.map((g, i) => [g, i]);
-    box.replaceChildren(...all.filter(([g]) => !(useSide && g.side)).map(([g, i]) => item(g, i)));
+    box.replaceChildren(...all.filter(([g, i]) => !(useSide && inSide(g, i))).map(([g, i]) => item(g, i)));
     sideBox.replaceChildren(
-      ...(useSide ? [Object.assign(document.createElement('p'), { className: 'vside-title', textContent: this.project.sideTitle || '함께 쓰는 도구' })] : []),
-      ...(useSide ? all.filter(([g]) => g.side).map(([g, i]) => item(g, i)) : [])
+      ...(useSide ? [Object.assign(document.createElement('p'), { className: 'vside-title', textContent: hasSide ? this.project.sideTitle || '함께 쓰는 도구' : '화면 미리보기  ·  누르면 크게' })] : []),
+      ...(useSide ? all.filter(([g, i]) => inSide(g, i)).map(([g, i]) => item(g, i)) : [])
     );
     sideBox.hidden = !useSide;
     sideBox.scrollTop = 0;
     $('viewer-video').classList.toggle('has-side', useSide);
+    $('viewer-video').classList.toggle('is-two', two);
+    // 영상 칸 옮기기: 두 열이면 '만든 이유' 띠 왼쪽, 아니면 원래 자리
+    const frame = $('viewer-frame');
+    const why = $('viewer-why');
+    if (two) {
+      why.prepend(frame);
+      why.hidden = false;
+    } else if (frame.parentElement !== $('viewer-video')) $('viewer-video').prepend(frame);
+    why.classList.toggle('has-video', two);
     box.hidden = !this.gallery.length;
     $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
     box.scrollTop = 0;

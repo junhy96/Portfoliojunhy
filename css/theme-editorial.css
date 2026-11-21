@@ -1571,3 +1571,29 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
 /* Skills 차트: 마우스를 올린 조각의 복사본은 애니메이션 없이, 마우스는 원래 조각이 받음 */
 .skill-wedge.is-clone { pointer-events: none; }
 .skill-wedge.is-clone .fillg, .skill-wedge.is-clone .fill { animation: none !important; }
+
+/* ===================== 팝업(영상 + 이미지 여러 장): 영상은 위 띠 왼쪽, 이미지는 아래 두 열 =====================
+   한 열에 정보가 몰리지 않게. 두 열은 각자 스크롤 */
+.viewer-why.has-video { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 32px; align-items: start; max-height: 46vh; overflow: hidden; }
+.viewer-why.has-video .video-frame { margin: 0; width: min(34vw, 560px, calc((46vh - 40px) * 16 / 9)); height: auto; aspect-ratio: 16 / 9; max-height: none; box-shadow: 0 16px 40px rgba(0, 0, 0, .45); }
+.viewer-why.has-video .video-frame.is-shorts { width: auto; height: min(calc(46vh - 40px), 440px); aspect-ratio: 9 / 16; }
+.viewer-why.has-video .viewer-why-inner { max-height: calc(46vh - 40px); overflow-y: auto; padding-right: 8px; scrollbar-width: thin; }
+.viewer-why.has-video .vw-list li { font-size: 16px; }
+@media (min-width: 821px) {
+  .viewer-video.is-two.has-gallery:not(.no-video) {
+    display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; grid-template-rows: minmax(0, 1fr) !important;
+    gap: 28px; padding: 20px 28px; overflow: hidden;
+  }
+  .viewer-video.is-two .vside, .viewer-video.is-two .vgallery {
+    grid-row: 1 !important; height: 100%; max-width: none; min-height: 0; margin: 0 !important; padding: 0 10px 24px 0;
+    display: flex; flex-direction: column; gap: 22px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin;
+  }
+  .viewer-video.is-two .vside { grid-column: 1 !important; }
+  .viewer-video.is-two .vgallery { grid-column: 2 !important; }
+}
+@media (max-width: 820px) {
+  .viewer-why.has-video { grid-template-columns: minmax(0, 1fr); max-height: none; }
+  .viewer-why.has-video .video-frame { width: 100%; }
+  .viewer-why.has-video .video-frame.is-shorts { width: auto; height: 60vh; justify-self: center; }
+  .viewer-why.has-video .viewer-why-inner { max-height: none; }
+}
