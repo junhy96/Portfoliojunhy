@@ -1,3 +1,4 @@
+:root { --key: #90de93; --key-rgb: 144, 222, 147; --key-hi: #b4ecb6; }
 /* =========================================================
    Game Designer Portfolio — Monotone
    ========================================================= */
@@ -489,4 +490,4 @@ html.is-framed body { background: #141414; }
 .frame-guard { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; color: #f4f4ef; font-family: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', sans-serif; }
 .frame-guard b { font-size: 20px; letter-spacing: -.01em; }
 .frame-guard p { margin: 0; font-size: 14px; line-height: 1.7; color: rgba(244, 244, 239, .7); }
-.frame-guard a { margin-top: 6px; padding: 10px 18px; border-radius: 8px; background: #90de93; color: #10200f; font-weight: 600; text-decoration: none; }
+.frame-guard a { margin-top: 6px; padding: 10px 18px; border-radius: 8px; background: var(--key); color: #10200f; font-weight: 600; text-decoration: none; }

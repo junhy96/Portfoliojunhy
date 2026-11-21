@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611211725';
-import { PdfViewer } from './pdf-viewer.js?v=202611211725';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611211725';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211725';
-import { initWorks } from './works.js?v=202611211725';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611211725';
+import { MorphStage, FallbackStage } from './morph.js?v=202611211730';
+import { PdfViewer } from './pdf-viewer.js?v=202611211730';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611211730';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211730';
+import { initWorks } from './works.js?v=202611211730';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611211730';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -442,6 +442,19 @@ function presetWorks(data, preset, hideW) {
   }
 }
 
+/** 링크 프리셋의 키 컬러(#rrggbb)를 사이트 강조 색 변수에 적용 (밝은 색 --key-hi는 흰색과 35% 섞음) */
+function applyKeyColor(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || '').trim());
+  if (!m) return;
+  const n = parseInt(m[1], 16), rgb = [n >> 16, (n >> 8) & 255, n & 255];
+  const hi = rgb.map((c) => Math.round(c + (255 - c) * 0.35));
+  const st = document.documentElement.style;
+  st.setProperty('--key', '#' + m[1]);
+  st.setProperty('--key-rgb', rgb.join(', '));
+  st.setProperty('--key-hi', `rgb(${hi.join(', ')})`);
+  st.setProperty('--pt', '#' + m[1]);
+}
+
 function applyLinkPreset(data) {
   const tag = cleanTag(new URLSearchParams(location.search).get('from'));
   const preset = tag && (data.settings?.links || []).find((l) => cleanTag(l.tag) === tag);
@@ -458,6 +471,7 @@ function applyLinkPreset(data) {
   if (ov.coverLetter) data.settings.about = { ...(data.settings.about || {}), coverLetter: ov.coverLetter };
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
   // 회사 업무 자료(타임라인 PDF 미리보기)를 이 링크에서는 빼기: 사내 자료를 싣지 말라는 지원처용
+  if (ov.keyColor) applyKeyColor(ov.keyColor);
   if (ov.noWorkDocs && Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.map(({ work, ...x }) => x);
   document.documentElement.dataset.link = tag;
 }
@@ -483,7 +497,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611211725';
+const BUILD = '?v=202611211730';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];

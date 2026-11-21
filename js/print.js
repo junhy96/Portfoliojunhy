@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611211725';
-import { cleanTag } from './analytics.js?v=202611211725';
+import { timelineItems, careerTotal } from './timeline.js?v=202611211730';
+import { cleanTag } from './analytics.js?v=202611211730';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -57,6 +57,14 @@ function applyPreset(data) {
   if (ov.role) data.settings.role = ov.role;
   if (ov.intro) data.settings.intro = ov.intro;
   if (ov.careerTotal) data.settings._careerTotal = true;
+  // 링크 키 컬러: 강조 막대는 그 색, 글자 강조는 같은 색을 흰 종이에서 읽히게 어둡게 (55%)
+  const km = /^#?([0-9a-f]{6})$/i.exec(String(ov.keyColor || ''));
+  if (km) {
+    const n = parseInt(km[1], 16);
+    const dark = [n >> 16, (n >> 8) & 255, n & 255].map((c) => Math.round(c * 0.55));
+    document.documentElement.style.setProperty('--pt', '#' + km[1]);
+    document.documentElement.style.setProperty('--pt-ink', `rgb(${dark.join(', ')})`);
+  }
   if (ov.coverLetter) data.settings.about = { ...(data.settings.about || {}), coverLetter: ov.coverLetter };
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
 }

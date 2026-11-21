@@ -1111,6 +1111,8 @@
     set('#pr-site-letter', site.coverLetter, s.about?.coverLetter ? '기본 자기소개서' : '');
     $('#pr-site-total').checked = !!site.careerTotal;
     $('#pr-site-nodocs').checked = !!site.noWorkDocs;
+    $('#pr-site-keyon').checked = !!site.keyColor;
+    $('#pr-site-key').value = site.keyColor || '#90de93';
   }
   function prReset() {
     prEditing = null;
@@ -1201,7 +1203,7 @@
     const showIds = $$('#pr-works .pr-tile').filter((b) => b.dataset.private && b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.id);
     const orderIds = $$('#pr-works .pr-tile').map((b) => b.dataset.id);
     const sameOrder = orderIds.join() === (db.projects || []).map((p) => p.id).join();
-    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked, noWorkDocs: $('#pr-site-nodocs').checked };
+    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked, noWorkDocs: $('#pr-site-nodocs').checked, keyColor: $('#pr-site-keyon').checked ? $('#pr-site-key').value : '' };
     Object.keys(site).forEach((k) => !site[k] && delete site[k]);
     const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}), ...(showIds.length ? { show: showIds } : {}), ...(sameOrder ? {} : { order: orderIds }) };
     const btn = $('#pr-create');

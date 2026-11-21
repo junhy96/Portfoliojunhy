@@ -606,7 +606,8 @@
           "title": "AI Game Maker · 전현영 포트폴리오",
           "role": "AI Game Maker",
           "intro": "불편한 일이 보이면 먼저 만들어서 돌려 보는 전현영입니다.\n기획한 것을 Claude Code와 UE5로 직접 구현하고, 실제로 쓰면서 고칩니다.",
-          "noWorkDocs": true
+          "noWorkDocs": true,
+          "keyColor": "#00bdea"
         },
         "show": [
           "w-studio"

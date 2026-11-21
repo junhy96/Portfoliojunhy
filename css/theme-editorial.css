@@ -1,3 +1,5 @@
+/* 핵심 키 컬러: 링크 프리셋의 keyColor로 바뀜 (main.js applyLinkPreset) */
+:root { --key: #90de93; --key-rgb: 144, 222, 147; --key-hi: #b4ecb6; }
 /* =========================================================
    Style · EDITORIAL — 레퍼런스: Que(왼쪽 레일, 01/06 카운터, 하단 유리 띠)
                       + HBO(상단 작은 칼럼, 초대형 굵은 타이틀)
@@ -857,7 +859,7 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 @media (prefers-reduced-motion: reduce) { html[data-theme="editorial"] .deck { transition-duration: .45s; } }
 
 /* ===================== 스킬 차트: 레퍼런스 색감 · 차오름 · 마우스 올리면 커짐 ===================== */
-.skill-chart { --pt: #90de93; --pt-hi: #b4ecb6; } /* 레퍼런스 색 #90DE93, 마우스를 올리면 한 톤 밝게 */
+.skill-chart { --pt: var(--key); --pt-hi: var(--key-hi); } /* 레퍼런스 색 var(--key), 마우스를 올리면 한 톤 밝게 */
 .skill-grid .grid-bg { fill: #232323; }
 .skill-grid .grid-ring { stroke: rgba(244, 244, 239, .07); stroke-width: .45; }
 .skill-grid .grid-ring.is-half { stroke: rgba(244, 244, 239, .14); }
@@ -887,7 +889,7 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 @media (prefers-reduced-motion: reduce) { .panel.is-active .skill-wedge .fillg { animation: none; } }
 
 /* ===================== 2페이지: 툴 가로 게이지 ===================== */
-.tool-bars { position: relative; --pt: #90de93; }
+.tool-bars { position: relative; --pt: var(--key); }
 .tb-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 40px; }
 .tb-row {
   display: grid; grid-template-columns: 28px minmax(0, 148px) 1fr 32px; align-items: center; gap: 12px;
@@ -925,26 +927,26 @@ body.is-flow .panel :is(.ed-name, .section-title) { animation: none !important; 
 /* Works 카드: 밝은 표지(문서 PDF) 위에서도 번호·문서 종류가 읽히도록 위쪽에 어두운 그라데이션 */
 .works-grid .card-media::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 64px; z-index: 1; pointer-events: none; background: linear-gradient(rgba(12, 12, 12, .72), rgba(12, 12, 12, 0)); }
 .works-grid .card-no, .works-grid .card-doc { z-index: 2; mix-blend-mode: normal; color: #f4f4ef; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
-/* ===================== 타임라인 강조 색 (#90DE93, 스킬 차트와 같은 색) =====================
+/* ===================== 타임라인 강조 색 (var(--key), 스킬 차트와 같은 색) =====================
    지금 보는 연도 · 진행 선 끝 · 보고 있는 항목의 점/선/기간/업무 표시에만 살짝 */
-.panel-timeline { --tl-pt: #90de93; }
+.panel-timeline { --tl-pt: var(--key); }
 .tl-year.is-in.is-cur .tl-year-num { color: var(--tl-pt); }
 .tl-year-num { transition: opacity .5s ease, transform .6s var(--ease-out), color .4s ease; }
 .tl-year.is-cur .tl-tick { background: var(--tl-pt); }
-.tl-line-done { background: linear-gradient(90deg, rgba(144, 222, 147, .08), var(--tl-pt) 90%); }
-.tl-line-done::after { background: var(--tl-pt); box-shadow: 0 0 0 4px rgba(144, 222, 147, .18); }
-.tl-item.is-focus .tl-dot { background: var(--tl-pt); border-color: var(--tl-pt); box-shadow: 0 0 0 6px rgba(144, 222, 147, .16); }
+.tl-line-done { background: linear-gradient(90deg, rgba(var(--key-rgb), .08), var(--tl-pt) 90%); }
+.tl-line-done::after { background: var(--tl-pt); box-shadow: 0 0 0 4px rgba(var(--key-rgb), .18); }
+.tl-item.is-focus .tl-dot { background: var(--tl-pt); border-color: var(--tl-pt); box-shadow: 0 0 0 6px rgba(var(--key-rgb), .16); }
 .tl-item.is-focus .tl-stem { background: var(--tl-pt); }
 .tl-item.is-focus .tl-card { border-left-color: var(--tl-pt); }
 .tl-item.is-focus .tl-period { color: var(--tl-pt); }
 .tl-item.is-focus .tl-tasks li::before { background: var(--tl-pt); }
-/* ===================== 강조 색 (#90DE93): 로딩 게이지 · 상단 메뉴 밑줄 · 왼쪽 진행 막대 ===================== */
-:root { --pt-accent: #90de93; }
+/* ===================== 강조 색 (var(--key)): 로딩 게이지 · 상단 메뉴 밑줄 · 왼쪽 진행 막대 ===================== */
+:root { --pt-accent: var(--key); }
 .loader-bar { height: 2px; border-radius: 2px; }
 .loader-bar i { background: var(--pt-accent); }
 html[data-theme="editorial"] .nav a::after { background: var(--pt-accent); }
 .rail-fill { background: var(--pt-accent); }
-.rail-fill::after { background: var(--pt-accent); box-shadow: 0 0 0 4px rgba(144, 222, 147, .18); }
+.rail-fill::after { background: var(--pt-accent); box-shadow: 0 0 0 4px rgba(var(--key-rgb), .18); }
 @media (max-width: 820px) { .m-bar i { background: var(--pt-accent); } }
 /* 강조 색 2: 왼쪽 레일 지금 번호·이름 · 왼쪽 위 이름 · Works 필터 선택 · 마지막 페이지 THANK */
 .rail-step.is-active { color: var(--pt-accent); }
@@ -1019,7 +1021,7 @@ html[data-theme="editorial"] .works-grid .card-site { right: 6px; top: 6px; }
 /* ===================== 인쇄 · PDF 버튼 (상단바, 페이지마다) ===================== */
 .topbar-print {
   display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px; margin-left: 18px; flex: none;
-  border: 1px solid rgba(144, 222, 147, .55); border-radius: 999px; color: var(--pt-accent); font-size: 13.5px; white-space: nowrap;
+  border: 1px solid rgba(var(--key-rgb), .55); border-radius: 999px; color: var(--pt-accent); font-size: 13.5px; white-space: nowrap;
   text-decoration: none; transition: background .2s, color .2s;
 }
 .topbar-print svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
@@ -1061,7 +1063,7 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
   .hj b { font-size: 16px; }
 }
 /* 팝업의 인쇄 버튼 */
-.vbtn.print-link { border-color: rgba(144, 222, 147, .5); color: var(--pt-accent); }
+.vbtn.print-link { border-color: rgba(var(--key-rgb), .5); color: var(--pt-accent); }
 .vbtn.print-link:hover { background: var(--pt-accent); color: #10200f; border-color: var(--pt-accent); }
 /* 휴대폰: 바로가기를 소개 바로 아래로 (경력·교육보다 먼저) */
 @media (max-width: 820px) {
@@ -1080,7 +1082,7 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
 @media (max-width: 820px) {
   html[data-theme="editorial"] .viewer-tools { flex-wrap: wrap; row-gap: 6px; }
   html[data-theme="editorial"] .viewer-tools .viewer-page { margin-right: 4px; }
-  html[data-theme="editorial"] .viewer-tools .vbtn.site-link, html[data-theme="editorial"] .viewer-tools .vbtn.print-link { border-color: rgba(144, 222, 147, .5); }
+  html[data-theme="editorial"] .viewer-tools .vbtn.site-link, html[data-theme="editorial"] .viewer-tools .vbtn.print-link { border-color: rgba(var(--key-rgb), .5); }
 }
 
 /* ===================== 팝업 소개 이미지: 누르지 않아도 읽히게 크게 =====================
@@ -1294,7 +1296,7 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
 /* 기획서 보기 버튼 */
 .vbtn.plan-btn { background: var(--pt-accent); border-color: var(--pt-accent); color: #10200f; font-weight: 600; }
 .vbtn.plan-btn:hover { filter: brightness(1.08); background: var(--pt-accent); color: #10200f; }
-.vbtn.plan-btn.is-back { background: none; color: var(--pt-accent); border-color: rgba(144, 222, 147, .55); font-weight: 500; }
+.vbtn.plan-btn.is-back { background: none; color: var(--pt-accent); border-color: rgba(var(--key-rgb), .55); font-weight: 500; }
 .vbtn.plan-btn[hidden] { display: none; }
 /* 기획서를 보는 중에는 확대·쪽 표시, 영상·화면을 보는 중에는 숨김 */
 .viewer:not(.is-video) .site-link, .viewer:not(.is-video) .yt-link { display: none; }
@@ -1391,7 +1393,7 @@ html.menu-dock .panel-hero .ed-hero-name { bottom: calc(var(--dock, 128px) + 16p
   position: absolute; right: 12px; top: 12px; width: 42%; height: calc(100% - 12px); object-fit: cover; object-position: top left;
   border-radius: 6px 6px 0 0; box-shadow: 0 6px 18px rgba(0, 0, 0, .25); transition: transform .3s var(--ease-out);
 }
-.hd-card.c1 { background: #90de93; }
+.hd-card.c1 { background: var(--key); }
 .hd-card.c2 { background: #bccaf5; }
 .hd-card.c3 { background: #f2dc93; }
 .hd-card.c4 { background: #f1b5aa; }
@@ -1412,7 +1414,7 @@ html.menu-dock[data-theme="editorial"] .panel-hero .ed-hero-name { bottom: calc(
 /* 왼쪽 위: 게임기 아이콘 (사이트 아이콘과 같은 모양), 누르면 맨 처음 페이지 */
 html[data-theme="editorial"] .rail-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; color: var(--pt-accent); transition: background .2s, transform .2s; }
 html[data-theme="editorial"] .rail-mark svg { width: 40px; height: 40px; }
-html[data-theme="editorial"] .rail-mark:hover, html[data-theme="editorial"] .rail-mark:focus-visible { background: rgba(144, 222, 147, .12); outline: none; }
+html[data-theme="editorial"] .rail-mark:hover, html[data-theme="editorial"] .rail-mark:focus-visible { background: rgba(var(--key-rgb), .12); outline: none; }
 html[data-theme="editorial"] .rail-mark:hover svg { animation: wobble-hor-bottom .8s both; }
 
 /* 열리는 화면: 뒤로 작업 이미지가 천천히 흘러감 + Loading... */
@@ -1509,7 +1511,7 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
 .md-tabs { display: flex; gap: 6px; margin: 16px 24px 10px; }
 .md-tabs button { height: 32px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: 999px; background: none; color: var(--fg-2); font: inherit; font-size: 13px; cursor: pointer; }
 .md-tabs button small { margin-left: 4px; font-size: 11px; color: var(--fg-3); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.md-tabs button[aria-selected="true"] { border-color: var(--pt-accent); color: var(--fg); background: rgba(144, 222, 147, .1); }
+.md-tabs button[aria-selected="true"] { border-color: var(--pt-accent); color: var(--fg); background: rgba(var(--key-rgb), .1); }
 .md-pre {
   flex: 1; min-height: 160px; margin: 0 24px; padding: 16px 18px; overflow: auto; overscroll-behavior: contain;
   border: 1px solid var(--line); border-radius: 10px; background: #0e0e0e; color: #d9d9d4;

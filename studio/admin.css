@@ -573,3 +573,6 @@ body.is-readonly .app-main { padding-top: 64px; }
 .pr-tile.is-dragging { opacity: .9; outline: 2px dashed var(--accent, #90de93); outline-offset: 2px; transform: scale(1.02); z-index: 3; cursor: grabbing; }
 .pr-order-hint { margin-left: auto; }
 @media (max-width: 700px) { .pr-order-hint { display: none; } }
+
+.pr-key { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pr-key input[type=color] { width: 44px; height: 30px; padding: 0; border: 1px solid var(--line-2); border-radius: 6px; background: none; cursor: pointer; }
