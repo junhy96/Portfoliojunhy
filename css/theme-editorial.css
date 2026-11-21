@@ -673,6 +673,8 @@ html[data-tone="mono"] .ed-more:hover, html[data-tone="mono"] .card-open, html[d
 html[data-tone="mono"] .card-media { background: #262626; }
 html[data-tone="mono"] .tl-dot { background: #191919; }
 html[data-tone="mono"] .skill-tip { background: rgba(26, 26, 26, .94); }
+html[data-theme="editorial"][data-tone="mono"] .viewer { background: #1a1a1a; }
+html[data-tone="mono"] .viewer-backdrop { background: rgba(6, 6, 6, .62); }
 html[data-tone="mono"] .m-menu { background: rgba(18, 18, 18, .94); }
 html[data-tone="mono"] .rotate-tip { background: rgba(16, 16, 16, .88); }
 
