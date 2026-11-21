@@ -102,7 +102,10 @@ export class PdfViewer {
     $('viewer-summary').textContent = project.summary || project.subtitle || '';
     $('viewer-description').textContent = project.description || project.summary || '';
     // 제목 아래 띠: 왜 만들었는지(불편)와 의도
-    $('viewer-why').hidden = !(project.why || project.intent);
+    const stack = (Array.isArray(project.stack) ? project.stack : []).filter(Boolean);
+    $('viewer-why').hidden = !(project.why || project.intent || stack.length);
+    $('viewer-stack').hidden = !stack.length;
+    $('viewer-stack-list').replaceChildren(...stack.map((t) => Object.assign(document.createElement('li'), { textContent: t })));
     $('viewer-why-a').hidden = !project.why;
     $('viewer-why-b').hidden = !project.intent;
     // 한 줄 = 한 항목 (줄글보다 빨리 읽히게)

@@ -178,6 +178,7 @@
           if (p.subtitle && p.summary) push('  - ' + oneLine(p.subtitle));
           if (p.why) push('  - 만든 이유: ' + oneLine(p.why));
           if (p.intent) push('  - 의도: ' + oneLine(p.intent));
+          if (Array.isArray(p.stack) && p.stack.length) push('  - 사용 기술: ' + p.stack.join(', '));
           if (p.description) push('  - ' + oneLine(p.description));
           var tags = Array.isArray(p.tags) ? p.tags : [];
           if (tags.length) push('  - 키워드: ' + tags.join(', '));

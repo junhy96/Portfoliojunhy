@@ -581,6 +581,7 @@
     ytPreview();
     if (p) {
       ['title', 'subtitle', 'category', 'year', 'summary', 'description', 'why', 'intent'].forEach((k) => (form[k].value = p[k] || ''));
+      form.stack.value = (p.stack || []).join(', ');
       form.tags.value = (p.tags || []).join(', ');
       form.video.value = p.video || '';
       form.link.value = p.link || '';
@@ -770,6 +771,7 @@
       description: form.description.value.trim(),
       why: form.why.value.trim() || undefined,
       intent: form.intent.value.trim() || undefined,
+      stack: form.stack.value.split(',').map((t) => t.trim()).filter(Boolean).length ? form.stack.value.split(',').map((t) => t.trim()).filter(Boolean) : undefined,
       visible: form.visible.checked,
       updatedAt: now,
     };

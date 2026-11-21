@@ -8,8 +8,8 @@
  *   &from=태그     링크 프리셋에서 숨긴 기획서·연혁은 인쇄에서도 뺌
  * 사이트와 같은 data/site.json을 읽어 A4 문서로 그리고, 다 그려지면 인쇄 창을 엶
  */
-import { timelineItems, careerTotal } from './timeline.js?v=202611211320';
-import { cleanTag } from './analytics.js?v=202611211320';
+import { timelineItems, careerTotal } from './timeline.js?v=202611211322';
+import { cleanTag } from './analytics.js?v=202611211322';
 
 const q = new URLSearchParams(location.search);
 const part = q.get('part') || 'resume';
@@ -258,6 +258,7 @@ function work(data) {
     img ? add(el('figure', 'd-cover'), Object.assign(el('img'), { src: img, alt: '' })) : null,
     p.why ? section('만든 이유', bullets(p.why)) : null,
     p.intent ? section('의도', bullets(p.intent)) : null,
+    p.stack?.length ? section('사용 기술', el('p', 'd-text', p.stack.join(' · '))) : null,
     p.description ? section('설명', el('p', 'd-text', p.description)) : null,
     p.tags?.length ? add(el('ul', 'd-tags'), ...p.tags.map((t) => el('li', null, '#' + t.replace(/\s+/g, '')))) : null,
     links(p, true) ? section('링크', links(p, true)) : null,
