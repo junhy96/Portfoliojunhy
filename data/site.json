@@ -130,7 +130,7 @@
         "period": "2025.01 — 2025.07",
         "title": "네오플 · 던전앤파이터",
         "org": "콘텐츠 기획팀 · 전투 콘텐츠 기획",
-        "desc": "던전앤파이터 던전 및 몬스터 패턴 기획 · 제작",
+        "desc": "던전앤파이터 던전 및 몬스터 패턴 기획 · 제작\n※ 인턴 기간 동안 진행한 기획 · 구현 과제로, 실제 게임 업데이트와는 무관합니다.",
         "id": "t0eh77hll",
         "tasks": [
           "이내 여명 작전 콘텐츠 기획",
@@ -149,7 +149,8 @@
             "uploads/site/tl-work/neople-4.jpg",
             "uploads/site/tl-work/neople-5.jpg",
             "uploads/site/tl-work/neople-6.jpg"
-          ]
+          ],
+          "note": "인턴 기간 기획 · 구현 과제, 실제 업데이트와 무관"
         }
       },
       {

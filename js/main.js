@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611211719';
-import { PdfViewer } from './pdf-viewer.js?v=202611211719';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611211719';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211719';
-import { initWorks } from './works.js?v=202611211719';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611211719';
+import { MorphStage, FallbackStage } from './morph.js?v=202611211725';
+import { PdfViewer } from './pdf-viewer.js?v=202611211725';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611211725';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211725';
+import { initWorks } from './works.js?v=202611211725';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611211725';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -361,8 +361,8 @@ class Deck {
     }
     this.gestureUsed = true;
     this.stepAt = now;
-    // 위로 굴리면 연혁을 하나씩 되감지 않고 바로 이전 페이지로 (다시 내려오면 2022부터)
-    if (tl && dir > 0 && tl.page(dir)) {
+    // 위아래 모두 연혁 한 항목씩 (중간 항목을 다시 보려고 올릴 때 바로 이전 페이지로 가 버리던 문제). 첫·마지막 항목에서 더 굴리면 이전·다음 페이지
+    if (tl && tl.page(dir)) {
       this.tlLockUntil = now + 450;
       this.tlDir = dir;
       return;
@@ -483,7 +483,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611211719';
+const BUILD = '?v=202611211725';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];

@@ -82,7 +82,7 @@ export function renderTimeline(root, items, { onFocus } = {}) {
 
   // 업무 자료 한 쪽을 크게 (PDF 보기 창)
   const openWork = (x, k, opener) =>
-    window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener, doc: { id: 'tl-' + (x.id || x._i), title: `${x.title} · 업무 자료`, summary: x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, showDesc: true, description: x.tasks.length ? '주요 업무\n' + x.tasks.map((t) => '– ' + t).join('\n') : '', pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
+    window.dispatchEvent(new CustomEvent('pf-open-doc', { detail: { page: k + 1, opener, doc: { id: 'tl-' + (x.id || x._i), title: `${x.title} · 업무 자료`, summary: x.work.note || x.desc || x.org || '', category: x.period || '', docType: x.type || '', pdf: x.work.pdf, showDesc: true, description: x.tasks.length ? '주요 업무\n' + x.tasks.map((t) => '– ' + t).join('\n') : '', pdfName: `${x.title.replace(/\s*·\s*/g, '_')}_업무자료.pdf` } } }));
 
   // 오른쪽 위 빈 자리: 보고 있는 연혁의 업무 자료를 크게, 천천히 한 쪽씩 넘김 (누르면 그 쪽부터 크게)
   const body = root.parentElement;
@@ -109,7 +109,8 @@ export function renderTimeline(root, items, { onFocus } = {}) {
     next.classList.add('is-on');
     showImgs[showFront].classList.remove('is-on');
     showFront = 1 - showFront;
-    showCap.textContent = `업무 자료 ${showPage + 1} / ${n} · 누르면 크게`;
+    // 업무 자료에 붙인 안내(예: 인턴 과제라 실제 업데이트와 무관)는 미리보기 아래 글에도 표시
+    showCap.textContent = `업무 자료 ${showPage + 1} / ${n}${x.work.note ? ' · ' + x.work.note : ''} · 누르면 크게`;
     showDots.replaceChildren(...pagesOf(x).map((_, k) => el('i', k === showPage ? 'is-on' : '')));
     show.setAttribute('aria-label', `${x.title} 업무 자료 ${showPage + 1}쪽 크게 보기`);
   };
