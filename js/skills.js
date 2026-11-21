@@ -225,12 +225,22 @@ export function renderSkillChart(root, skills) {
     });
   };
 
+  let raised = null; // 마우스를 올린 조각의 복사본 (맨 위에 그림)
   const labelOf = (g) => chart?.querySelector('.skill-labels')?.children[Number(g.dataset.index)];
   const show = (g) => {
     if (current === g) return;
     hide();
     current = g;
-    g.parentNode.insertBefore(g, chart.querySelector('.skill-grid-top'));
+    // 위로 올리기: 조각 자체를 옮기면(DOM 재삽입) 차오름 애니메이션이 처음부터 다시 돌아 사라졌다 나타남 → 복사본을 위에 띄움
+    raised?.remove();
+    raised = g.cloneNode(true);
+    raised.classList.add('is-clone');
+    raised.removeAttribute('tabindex');
+    raised.removeAttribute('role');
+    raised.removeAttribute('aria-label');
+    raised.setAttribute('aria-hidden', 'true');
+    g.parentNode.insertBefore(raised, chart.querySelector('.skill-grid-top'));
+    requestAnimationFrame(() => raised?.classList.add('is-on'));
     g.classList.add('is-on');
     labelOf(g)?.classList.add('is-on');
     const s = list[g.dataset.index];
@@ -273,6 +283,8 @@ export function renderSkillChart(root, skills) {
     tip.style.setProperty('--tail-y', Math.max(16, Math.min(th - 16, cy - y)) + 'px');
   };
   const hide = () => {
+    raised?.remove();
+    raised = null;
     if (current) labelOf(current)?.classList.remove('is-on');
     current?.classList.remove('is-on');
     current = null;

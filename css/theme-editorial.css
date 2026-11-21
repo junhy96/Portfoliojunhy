@@ -1544,3 +1544,27 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
   .md-btn { font-size: 12px; padding: 0 6px; }
   .md-desc { font-size: 12.5px; }
 }
+
+/* ===================== 작업물 팝업: 화면 위에 뜨는 창 =====================
+   창을 조금 줄여 뒤 배경이 보이게, 바깥을 누르면 닫힘. 버튼은 제목 아래 한 줄로 */
+.viewer-backdrop { position: fixed; inset: 0; z-index: 39; background: rgba(4, 8, 8, .6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; transition: opacity .35s ease; cursor: zoom-out; }
+.viewer-backdrop[hidden] { display: none; }
+.viewer-backdrop.is-open { opacity: 1; }
+@media (min-width: 821px) {
+  .viewer {
+    inset: clamp(14px, 3.4vh, 40px) clamp(16px, 3.4vw, 60px);
+    border: 1px solid var(--line-2); border-radius: 18px; overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0, 0, 0, .65);
+    transform: translateY(16px) scale(.985); transition: opacity .35s ease, transform .5s var(--ease-out);
+  }
+  .viewer.is-open { transform: none; }
+  .viewer-bar { flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 12px; padding: 18px 26px 14px; }
+  .viewer-info { padding-right: 64px; }
+  .viewer-summary { max-width: 100%; }
+  .viewer-tools { flex-wrap: wrap; justify-content: flex-start; row-gap: 8px; }
+  .viewer-tools .vbtn.close { position: absolute; top: 16px; right: 18px; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .viewer { transform: none !important; } }
+/* Skills 차트: 마우스를 올린 조각의 복사본은 애니메이션 없이, 마우스는 원래 조각이 받음 */
+.skill-wedge.is-clone { pointer-events: none; }
+.skill-wedge.is-clone .fillg, .skill-wedge.is-clone .fill { animation: none !important; }

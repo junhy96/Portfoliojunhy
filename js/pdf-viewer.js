@@ -39,6 +39,9 @@ export class PdfViewer {
     this.doc = null;
     this.session = 0;
 
+    // 창 바깥(뒤 배경)을 누르면 닫기
+    this.backdrop = $('viewer-backdrop');
+    this.backdrop?.addEventListener('click', () => this.close());
     this.root.addEventListener('click', (e) => {
       const g = e.target.closest('.vg-item');
       if (g) return this.showLight(Number(g.dataset.index));
@@ -133,7 +136,11 @@ export class PdfViewer {
     this._clear();
     this.root.hidden = false;
     document.body.classList.add('viewer-open');
-    requestAnimationFrame(() => this.root.classList.add('is-open'));
+    if (this.backdrop) this.backdrop.hidden = false;
+    requestAnimationFrame(() => {
+      this.root.classList.add('is-open');
+      this.backdrop?.classList.add('is-open');
+    });
     this.root.querySelector('[data-act="close"]').focus({ preventScroll: true });
     this.onOpen?.();
 
@@ -323,10 +330,12 @@ export class PdfViewer {
     this.closeLight();
     $('viewer-frame').replaceChildren();
     this.root.classList.remove('is-open');
+    this.backdrop?.classList.remove('is-open');
     document.body.classList.remove('viewer-open');
     setTimeout(() => {
       if (this.root.classList.contains('is-open')) return;
       this.root.hidden = true;
+      if (this.backdrop) this.backdrop.hidden = true;
       this._clear();
     }, 450);
     this.onClose?.();

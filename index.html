@@ -52,8 +52,8 @@
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;700;800;900&display=swap" /></noscript>
   <link rel="alternate" type="text/markdown" href="llms.txt" title="AI 에이전트용 요약 (llms.txt)" />
   <link rel="alternate" type="text/markdown" href="llms-full.txt" title="AI 에이전트용 전체 내용 (llms-full.txt)" />
-  <link rel="stylesheet" href="css/style.css?v=202611211322" />
-  <link rel="stylesheet" href="css/theme-editorial.css?v=202611211322" />
+  <link rel="stylesheet" href="css/style.css?v=202611211337" />
+  <link rel="stylesheet" href="css/theme-editorial.css?v=202611211337" />
 </head>
 <body data-section="hero">
   <!-- 모핑 캔버스 (Mono·Editorial: 화면 전체 배경 / Pixel: 각 섹션의 이미지 박스 안으로 이동) -->
@@ -270,7 +270,8 @@
   </nav>
 
 
-  <!-- PDF 전체화면 뷰어 -->
+  <!-- PDF 뷰어: 화면 위에 뜨는 창. 바깥(뒤 배경)을 누르면 닫힘 -->
+  <div class="viewer-backdrop" id="viewer-backdrop" hidden></div>
   <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="viewer-title" hidden>
     <div class="viewer-bar">
       <div class="viewer-info">
@@ -402,8 +403,8 @@
 </pre>
   </section>
   <!-- ai-brief:end -->
-  <script src="js/icons.js?v=202611211322"></script>
-  <script src="js/llms.js?v=202611211322"></script>
-  <script type="module" src="js/main.js?v=202611211322"></script>
+  <script src="js/icons.js?v=202611211337"></script>
+  <script src="js/llms.js?v=202611211337"></script>
+  <script type="module" src="js/main.js?v=202611211337"></script>
 </body>
 </html>
