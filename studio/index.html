@@ -10,7 +10,7 @@
   <link rel="apple-touch-icon" href="../apple-touch-icon.png?v=3" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&display=swap" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="admin.css?v=202611211242" />
+  <link rel="stylesheet" href="admin.css?v=202611211249" />
 </head>
 <body>
   <!-- GitHub 연결 (로그인) -->
@@ -187,6 +187,14 @@
                 <span>상세 설명 <small>PDF 팝업의 ‘설명’ 버튼을 누르면 보입니다</small></span>
                 <textarea name="description" rows="8" maxlength="20000" placeholder="기획 의도, 맡은 역할, 성과 등을 자유롭게 작성하세요."></textarea>
               </label>
+              <label class="field">
+                <span>만든 이유 <small>팝업 제목 바로 아래에 보입니다. 어떤 불편에서 시작했는지</small></span>
+                <textarea name="why" rows="3" maxlength="2000" placeholder="예: 엑셀로는 기대값만 나오고 분포가 안 보였습니다."></textarea>
+              </label>
+              <label class="field">
+                <span>의도 <small>만든 이유 옆에 보입니다. 무엇을 하려고 만들었는지</small></span>
+                <textarea name="intent" rows="3" maxlength="2000" placeholder="예: 확률 검증을 브라우저에서 바로 돌려 보고 링크 하나로 공유합니다."></textarea>
+              </label>
             </div>
           </div>
 
@@ -257,6 +265,7 @@
             <label class="field"><span>첫 화면 소개 문구 <small>줄바꿈 그대로</small></span><textarea id="pr-site-intro" rows="2" maxlength="1200"></textarea></label>
             <label class="field"><span>자기소개서 <small>이 링크로 인쇄·PDF를 뽑을 때만 쓰임. 〈소제목〉 줄은 소제목으로</small></span><textarea id="pr-site-letter" rows="8" maxlength="8000"></textarea></label>
             <label class="switch"><input type="checkbox" id="pr-site-total" /><i></i><span>경력 옆에 총경력 표시 (예: 총 2년 3개월, 첫 화면과 이력서 PDF)</span></label>
+            <label class="switch"><input type="checkbox" id="pr-site-nodocs" /><i></i><span>타임라인의 회사 업무 자료(PDF 미리보기) 숨김 (사내 자료를 싣지 말라는 지원처용)</span></label>
           </div>
 
           <p class="pr-step"><b>4</b> 프리셋을 만들고 링크를 복사하세요</p>
@@ -552,10 +561,10 @@
   </dialog>
 
   <script src="../vendor/pdfjs/pdf.min.js"></script>
-  <script src="../js/icons.js?v=202611211242"></script>
-  <script src="../js/llms.js?v=202611211242"></script>
-  <script src="github.js?v=202611211242"></script>
-  <script src="admin.js?v=202611211242"></script>
-  <script src="stats.js?v=202611211242"></script>
+  <script src="../js/icons.js?v=202611211249"></script>
+  <script src="../js/llms.js?v=202611211249"></script>
+  <script src="github.js?v=202611211249"></script>
+  <script src="admin.js?v=202611211249"></script>
+  <script src="stats.js?v=202611211249"></script>
 </body>
 </html>

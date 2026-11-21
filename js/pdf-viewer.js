@@ -101,6 +101,12 @@ export class PdfViewer {
     $('viewer-title').textContent = project.title;
     $('viewer-summary').textContent = project.summary || project.subtitle || '';
     $('viewer-description').textContent = project.description || project.summary || '';
+    // 제목 아래 띠: 왜 만들었는지(불편)와 의도
+    $('viewer-why').hidden = !(project.why || project.intent);
+    $('viewer-why-a').hidden = !project.why;
+    $('viewer-why-b').hidden = !project.intent;
+    $('viewer-why-text').textContent = project.why || '';
+    $('viewer-intent-text').textContent = project.intent || '';
     const tags = $('viewer-tags');
     tags.replaceChildren(...(project.tags || []).map((t) => Object.assign(document.createElement('li'), { textContent: t })));
     const dl = $('viewer-download');

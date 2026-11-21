@@ -1231,6 +1231,13 @@ body.viewer-open .topbar-print { opacity: 0; pointer-events: none; }
 }
 /* 뷰어 설명(주요 업무): 줄 바꿈 그대로 */
 .viewer-desc p { white-space: pre-line; }
+/* 작업물 팝업: 제목 아래 '만든 이유 · 의도' 띠 */
+.viewer-why { flex: none; border-bottom: 1px solid var(--line); padding: 14px var(--gutter) 16px; max-height: 32vh; overflow-y: auto; }
+.viewer-why[hidden] { display: none; }
+.viewer-why-inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px 40px; max-width: 1400px; }
+.vw-col[hidden] { display: none; }
+.vw-label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--accent, var(--fg)); }
+.vw-col p { font-size: 14px; line-height: 1.65; color: var(--fg-2); white-space: pre-line; word-break: keep-all; }
 /* 뷰어에 펼친 주요 업무: 넓은 화면은 두 칸으로 짧게 */
 @media (min-width: 1100px) { .viewer-desc-inner { max-width: 1200px; } }
 /* 스킬 · 툴 말풍선: 설명이 길어져 조금 넓게 */

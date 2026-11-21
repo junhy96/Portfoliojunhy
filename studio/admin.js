@@ -573,7 +573,7 @@
     fillDocTypes('');
     ytPreview();
     if (p) {
-      ['title', 'subtitle', 'category', 'year', 'summary', 'description'].forEach((k) => (form[k].value = p[k] || ''));
+      ['title', 'subtitle', 'category', 'year', 'summary', 'description', 'why', 'intent'].forEach((k) => (form[k].value = p[k] || ''));
       form.tags.value = (p.tags || []).join(', ');
       form.video.value = p.video || '';
       form.link.value = p.link || '';
@@ -761,6 +761,8 @@
       tags: form.tags.value.split(',').map((t) => t.trim()).filter(Boolean),
       summary: form.summary.value.trim(),
       description: form.description.value.trim(),
+      why: form.why.value.trim() || undefined,
+      intent: form.intent.value.trim() || undefined,
       visible: form.visible.checked,
       updatedAt: now,
     };
@@ -1098,6 +1100,7 @@
     set('#pr-site-intro', site.intro, s.intro);
     set('#pr-site-letter', site.coverLetter, s.about?.coverLetter ? '기본 자기소개서' : '');
     $('#pr-site-total').checked = !!site.careerTotal;
+    $('#pr-site-nodocs').checked = !!site.noWorkDocs;
   }
   function prReset() {
     prEditing = null;
@@ -1188,7 +1191,7 @@
     const showIds = $$('#pr-works .pr-tile').filter((b) => b.dataset.private && b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.id);
     const orderIds = $$('#pr-works .pr-tile').map((b) => b.dataset.id);
     const sameOrder = orderIds.join() === (db.projects || []).map((p) => p.id).join();
-    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked };
+    const site = { title: $('#pr-site-title').value.trim(), role: $('#pr-site-role').value.trim(), intro: $('#pr-site-intro').value.trim(), coverLetter: $('#pr-site-letter').value.trim(), careerTotal: $('#pr-site-total').checked, noWorkDocs: $('#pr-site-nodocs').checked };
     Object.keys(site).forEach((k) => !site[k] && delete site[k]);
     const preset = { name: name || tag, tag, hide: { works: off('works'), timeline: off('timeline') }, ...(Object.keys(site).length ? { site } : {}), ...(showIds.length ? { show: showIds } : {}), ...(sameOrder ? {} : { order: orderIds }) };
     const btn = $('#pr-create');

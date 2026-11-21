@@ -1,9 +1,9 @@
-import { MorphStage, FallbackStage } from './morph.js?v=202611211242';
-import { PdfViewer } from './pdf-viewer.js?v=202611211242';
-import { renderSkillChart, renderToolBars } from './skills.js?v=202611211242';
-import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211242';
-import { initWorks } from './works.js?v=202611211242';
-import { initAnalytics, cleanTag } from './analytics.js?v=202611211242';
+import { MorphStage, FallbackStage } from './morph.js?v=202611211249';
+import { PdfViewer } from './pdf-viewer.js?v=202611211249';
+import { renderSkillChart, renderToolBars } from './skills.js?v=202611211249';
+import { renderTimeline, timelineItems, careerTotal } from './timeline.js?v=202611211249';
+import { initWorks } from './works.js?v=202611211249';
+import { initAnalytics, cleanTag } from './analytics.js?v=202611211249';
 
 // 관리자 대시보드의 클릭 히트맵 미리보기용 (?embed): 기록·전환 버튼 없이 화면만
 const EMBED = new URLSearchParams(location.search).has('embed');
@@ -457,6 +457,8 @@ function applyLinkPreset(data) {
   if (ov.careerTotal) data.settings._careerTotal = true;
   if (ov.coverLetter) data.settings.about = { ...(data.settings.about || {}), coverLetter: ov.coverLetter };
   if (Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.filter((x) => !hideT.has(x.id));
+  // 회사 업무 자료(타임라인 PDF 미리보기)를 이 링크에서는 빼기: 사내 자료를 싣지 말라는 지원처용
+  if (ov.noWorkDocs && Array.isArray(data.settings.timeline)) data.settings.timeline = data.settings.timeline.map(({ work, ...x }) => x);
   document.documentElement.dataset.link = tag;
 }
 
@@ -481,7 +483,7 @@ function forceDesktop(on) {
 }
 
 // 배포 직후 브라우저에 남은 예전 index.html이 새 main.js를 부르면 화면 일부가 비는 일이 있어 한 번 새로 고침
-const BUILD = '?v=202611211242';
+const BUILD = '?v=202611211249';
 function staleHtml() {
   const src = document.querySelector('script[src*="js/main.js"]')?.getAttribute('src') || '';
   const v = (src.match(/\?v=\w+/) || [''])[0];
