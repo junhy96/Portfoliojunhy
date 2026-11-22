@@ -174,6 +174,8 @@ export class PdfViewer {
     site.hidden = !link;
     if (link) site.href = link;
     site.textContent = (project.linkLabel || '사이트 열기') + ' ↗';
+    // 추가 링크(예: 오벙없의 메이플 길드 봇 영상)
+    $('viewer-extra').replaceChildren(...(Array.isArray(project.extraLinks) ? project.extraLinks : []).filter((l) => /^https?:\/\//.test(l?.url || '')).map((l) => Object.assign(document.createElement('a'), { className: 'vbtn yt-link', href: l.url, target: '_blank', rel: 'noopener', textContent: (l.label || '링크') + ' ↗' })));
     const ytLink = $('viewer-yt');
     ytLink.hidden = !yt;
     if (yt) ytLink.href = `https://www.youtube.com/watch?v=${yt}`;

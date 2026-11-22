@@ -1607,3 +1607,4 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
   .viewer-video.is-two .vside.is-group .vg-item.is-small { width: calc(50% - 11px); }
   .viewer-video.is-two .vside.is-group .vg-item.is-small img { width: 100% !important; }
 }
+.vextra { display: contents; }

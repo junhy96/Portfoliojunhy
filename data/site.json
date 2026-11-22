@@ -807,7 +807,7 @@
       "pdf": "uploads/works/obung.pdf",
       "docType": "툴 제작",
       "link": "https://obung.pages.dev/",
-      "video": "https://www.youtube.com/shorts/kA7ycbWYFR8",
+      "video": "https://www.youtube.com/watch?v=BcsVpByoM2Y",
       "visible": true,
       "createdAt": "2026-11-10T09:30:00.000Z",
       "updatedAt": "2026-11-21T09:00:00.000Z",
@@ -914,6 +914,12 @@
         "Claude Console",
         "Cloudflare Pages",
         "Playwright"
+      ],
+      "extraLinks": [
+        {
+          "label": "메이플 길드 봇 영상",
+          "url": "https://www.youtube.com/watch?v=YvJER0d76zw"
+        }
       ]
     },
     {
