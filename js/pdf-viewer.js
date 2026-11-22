@@ -271,6 +271,17 @@ export class PdfViewer {
       why.hidden = false;
     } else if (frame.parentElement !== $('viewer-video')) $('viewer-video').prepend(frame);
     why.classList.toggle('has-video', two || stripPdf);
+    // 추가 링크 중 유튜브 영상이 있으면 띠에 두 번째 플레이어를 나란히 (예: 오벙없 + 메이플 길드 봇)
+    why.querySelector('.video-frame.is-extra')?.remove();
+    const ex = (two || stripPdf) && (this.project?.extraLinks || []).map((l) => /(?:youtu\.be\/|v=|shorts\/)([\w-]{11})/.exec(l?.url || '')).find(Boolean);
+    why.classList.toggle('has-2video', !!ex);
+    if (ex) {
+      const f2 = Object.assign(document.createElement('div'), { className: 'video-frame is-extra' });
+      const ifr = Object.assign(document.createElement('iframe'), { src: `https://www.youtube-nocookie.com/embed/${ex[1]}?autoplay=0&mute=1&rel=0&playsinline=1&modestbranding=1`, title: '추가 영상', allowFullscreen: true, referrerPolicy: 'strict-origin-when-cross-origin' });
+      ifr.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+      f2.append(ifr);
+      frame.after(f2);
+    }
     box.hidden = !this.gallery.length;
     $('viewer-video').scrollTop = 0; // 다른 카드에서 내려 둔 위치가 남지 않게
     box.scrollTop = 0;

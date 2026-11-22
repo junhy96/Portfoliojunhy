@@ -1608,3 +1608,8 @@ body.viewer-open .topbar-md { opacity: 0; pointer-events: none; }
   .viewer-video.is-two .vside.is-group .vg-item.is-small img { width: 100% !important; }
 }
 .vextra { display: contents; }
+/* 띠에 영상 두 개: 영상 | 영상 | 만든 이유 · 의도 */
+.viewer-why.has-2video { grid-template-columns: auto auto minmax(0, 1fr); gap: 24px; }
+.viewer-why.has-2video .video-frame:not(.is-shorts) { width: min(24vw, 440px, calc((46vh - 40px) * 16 / 9)); }
+.viewer-why.has-2video .viewer-why-inner { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 820px) { .viewer-why.has-2video { grid-template-columns: minmax(0, 1fr); } .viewer-why.has-2video .video-frame:not(.is-shorts) { width: 100%; } }
